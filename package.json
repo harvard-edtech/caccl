@@ -26,5 +26,12 @@
   "bugs": {
     "url": "https://github.com/harvard-edtech/caccl/issues"
   },
-  "homepage": "https://github.com/harvard-edtech/caccl#readme"
+  "homepage": "https://github.com/harvard-edtech/caccl#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "http": "0.0.0",
+    "randomstring": "^1.1.5"
+  }
 }
