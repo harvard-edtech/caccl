@@ -56,8 +56,13 @@ const genExpressApp = require('./genExpressApp.js');
  *   (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
  * @param {boolean} [authorizeOnLaunch=false] - if truthy, user is automatically
  *   authorized upon launch
+ * @param {string} [sessionSecret=randomly generated string] - the session
+ *   secret to use when encrypting sessions
+ * @param {string} [cookieName=CACCL-based-app-session-<timestamp>-<random str>]
+ *   - the cookie name to send to client's browser
+ * @param {number} [sessionMins=360 (6 hours)] - number of minutes the session
+ *   should last for
  */
- // TODO: Add express app config options to config above
  // TODO: Group config options into objects so that it is easier to input and
  //   read
  // TODO: Validate config object and give human-readable feedback
@@ -79,12 +84,18 @@ module.exports = (config = {}) => {
   }
 
   // Initialize express app (if not already done)
-  const app = config.app || genExpressApp();
-
-  // TODO: add param autoAuthorizeOnLaunch and if truthy, sets
-  // redirectToAfterLaunch
+  let app = config.app;
+  if (!config.app) {
+    app = genExpressApp({
+      sessionSecret: config.sessionSecret,
+      cookieName: config.cookieName,
+      sessionMins: config.sessionMins,
+    });
+  }
 
   // Set up server
+  // TODO: don't require developer credentials unless api is being served or
+  // used or authorization is happening (allow LTI-only apps)
   if (type === 'server') {
     // > Add token manager and have it auto-refresh routesWithAPI
     const updatedAuthorizePath = initTokenManager({
@@ -133,5 +144,7 @@ module.exports = (config = {}) => {
         return next();
       });
     });
+
+    return app;
   }
 };

@@ -7,12 +7,23 @@ const randomstring = require('randomstring');
 /**
  * Creates a new express app with memory-based session, listening on env PORT or
  *   8080, and with randomized session secret and cookie name.
+ * @param {number} [port=env.PORT || 8080] - the port to listen to
+ * @param {string} [sessionSecret=randomly generated string] - the session
+ *   secret to use when encrypting sessions
+ * @param {string} [cookieName=CACCL-based-app-session-<timestamp>-<random str>]
+ *   - the cookie name to send to client's browser
+ * @param {number} [sessionMins=360 (6 hours)] - number of minutes the session
+ *   should last for
  * @author Gabriel Abrams
  * @return {object} express app
  */
-module.exports = () => {
+module.exports = (config = {}) => {
   const app = express();
-  const port = process.env.PORT || 8080;
+  const port = (
+    config.port
+    || process.env.PORT
+    || 8080
+  );
 
   // Set up body json parsing
   app.use(bodyParser.json({
@@ -27,11 +38,11 @@ module.exports = () => {
 
   // Set up session (memory-based)
   // > Create random session secret
-  const sessionSecret = randomstring.generate(48);
+  const sessionSecret = config.sessionSecret || randomstring.generate(48);
   // > Create cookie name
-  const cookieName = `CACCL-based-app-session-${new Date().getTime()}-${randomstring.generate(10)}`;
+  const cookieName = config.cookieName || `CACCL-based-app-session-${new Date().getTime()}-${randomstring.generate(10)}`;
   // > Set session duration to 6 hours
-  const sessionDurationMillis = (6 * 60 * 60000);
+  const sessionDurationMillis = ((config.sessionMins || 360) * 60000);
   // > Add session
   app.use(session({
     cookie: {
