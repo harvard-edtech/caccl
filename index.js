@@ -3,25 +3,42 @@ const initTokenManager = require('../caccl-token-manager'); // TODO: use real mo
 const initLTIManager = require('../caccl-lti-manager'); // TODO: use real module
 
 
-const validateConfig = require('./validateConfig.js');
+const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/index.js');
 
 /**
  * Initializes the CACCL library
  * @author Gabriel Abrams
- * @param {string} [type=script] - the type of app being initialized. If
+ * @param {string} [type=server] - the type of app being initialized. If
  *   'script', only the API is returned. If 'server', api is added via
  *   middleware as req.api (if user is authenticated) and we add an LTI launch
  *   path, and a "kickoff authorization" path.
+ *
+ * APP:
  * @param {object} [app=generate new express app] - the express app to use and
  *   add middleware to. Required if type is 'server'. If excluded and type is
  *   'server', we generate a new express app (see sessionSecret, cookieName, and
- *   sessionMins)
+ *   sessionMins, onListenSuccess, onListenFail, sslKey, sslCertificate, sslCA)
  * @param {string} [sessionSecret=randomly generated string] - the session
- *   secret to use when encrypting sessions
+ *   secret to use when encrypting sessions. Only valid if app is excluded
  * @param {string} [cookieName=CACCL-based-app-session-<timestamp>-<random str>]
- *   - the cookie name to send to client's browser
+ *   - the cookie name to send to client's browser. Only valid if app is
+ *   excluded
  * @param {number} [sessionMins=360 (6 hours)] - number of minutes the session
- *   should last for
+ *   should last for. Only valid if app is excluded
+ * @param {function} [onListenSuccess=console log] - called when server is
+ *   successfully listening for requests. Only valid if app is excluded
+ * @param {function} [onListeningFail=console log] - called if server fails
+ *   to start listening for requests. Argument: error. . Only valid if app is
+ *   excluded
+ * @param {string} [sslKey] - ssl key to use to secure the connection. Only
+ *   valid if both sslKey and sslCertificate are included. Only valid if app is
+ *   excluded
+ * @param {string} [sslCertificate] - ssl certificate  to use to secure the
+ *   connection. Only valid if both sslKey and sslCertificate are included. Only
+ *   valid if app is excluded
+ * @param {string|array.<string>} [sslCA] - certificate chain linking a
+ *   certificate authority to our ssl certificate. If string, certificates will
+ *   be automatically split. Only valid if app is excluded
  *
  * API:
  * @param {boolean} [disableServerSideAPI] - if falsy, automatically adds
@@ -82,7 +99,7 @@ const validateConfig = require('./validateConfig.js');
  *   at launchPath
  * @param {object} [installationCredentials] - installation consumer credentials
  *   to use to verify LTI launch requests in the form
- *   { consumer_id, consumer_secret}. Required if type is 'server'
+ *   { consumer_key, consumer_secret}. Required if type is 'server'
  * @param {string} [launchPath=/launch] - the path to accept POST launch
  *   requests from Canvas
  * @param {string} [redirectToAfterLaunch=same as launchPath] - the path to
@@ -94,16 +111,12 @@ const validateConfig = require('./validateConfig.js');
  *   authorized upon launch. If truthy, type must be 'server' and either
  *   disableClientSideAPI or disableServerSideAPI must be falsy
  */
-module.exports = (config = {}) => {
+module.exports = (oldConfig = {}) => {
   // Validate config
-  validateConfig(config);
-
-  // TODO: set up authorization if disableAuthorization is falsy
-
-  const type = config.type || 'script';
+  const config = validateConfigAndSetDefaults(oldConfig);
 
   // Set up script
-  if (type === 'script') {
+  if (config.type === 'script') {
     return new API({
       accessToken: config.accessToken,
       canvasHost: config.canvasHost,
@@ -115,69 +128,83 @@ module.exports = (config = {}) => {
     });
   }
 
-  // Initialize express app (if not already done)
-  let app = config.app;
-  if (!config.app) {
-    app = genExpressApp({
-      sessionSecret: config.sessionSecret,
-      cookieName: config.cookieName,
-      sessionMins: config.sessionMins,
-    });
-  }
-
-  const apiForwardPathPrefix = config.apiForwardPathPrefix || '/canvas';
-
   // Set up server
-  // TODO: don't require developer credentials unless api is being served or
-  // used or authorization is happening (allow LTI-only apps)
-  if (type === 'server') {
-    // > Add token manager and have it auto-refresh routesWithAPI
-    const updatedAuthorizePath = initTokenManager({
-      app,
-      canvasHost: config.canvasHost,
-      developerCredentials: config.developerCredentials,
-      authorizePath: config.authorizePath,
-      defaultAuthorizedRedirect: config.defaultAuthorizedRedirect,
-      autoRefreshRoutes: (config.routesWithAPI || ['*']),
-      tokenStore: config.tokenStore,
-    });
+  if (config.type === 'server') {
+    /**
+     * Adds the api to a request object, using the canvasHost and accessToken
+     *   stored in the session (if possible), falling back on defaults set in
+     *   the config
+     * @author Gabriel Abrams
+     * @param {object} [req] - express request object
+     */
+    const addAPIToReq = (req) => {
+      // Use current user's values or defaults
+      const canvasHost = (req.session.canvasHost || config.canvasHost);
+      const accessToken = (req.session.accessToken || config.accessToken);
+
+      // Add api
+      req.api = new API({
+        req,
+        canvasHost,
+        accessToken,
+        cache: config.cache,
+        sendRequest: config.sendRequest,
+        defaultNumRetries: config.defaultNumRetries,
+        defaultItemsPerPage: config.defaultItemsPerPage,
+      });
+    };
+
+    // Add token manager and have it auto-refresh routesWithAPI and addAPIToReq
+    // upon manual login
+    if (!config.disableAuthorization) {
+      initTokenManager({
+        app: config.app,
+        canvasHost: config.canvasHost,
+        developerCredentials: config.developerCredentials,
+        authorizePath: config.authorizePath,
+        defaultAuthorizedRedirect: config.defaultAuthorizedRedirect,
+        autoRefreshRoutes: config.routesWithAPI,
+        tokenStore: config.tokenStore,
+        onManualLogin: addAPIToReq,
+      });
+    }
 
     // > Initialize LTI manager
-    initLTIManager({
-      app,
-      installationCredentials: config.installationCredentials,
-      launchPath: config.launchPath,
-      redirectToAfterLaunch: config.redirectToAfterLaunch,
-      nonceStore: config.nonceStore,
-      authorizePath: updatedAuthorizePath,
-      authorizeOnLaunch: config.authorizeOnLaunch,
-    });
-
-    // > Install middleware to add req.api
-    (config.routesWithAPI || ['*']).forEach((route) => {
-      app.use(route, (req, res, next) => {
-        // Don't add api if we don't have an access token
-        if (
-          !req.session
-          || !req.session.accessToken
-        ) {
-          return next();
-        }
-
-        // Add api
-        req.api = new API({
-          req,
-          accessToken: req.session.accessToken,
-          canvasHost: config.canvasHost,
-          cache: apiConfig.cache,
-          sendRequest: apiConfig.sendRequest,
-          defaultNumRetries: apiConfig.defaultNumRetries,
-          defaultItemsPerPage: apiConfig.defaultItemsPerPage,
-        });
-        return next();
+    if (!config.disableLTI) {
+      initLTIManager({
+        app: config.app,
+        installationCredentials: config.installationCredentials,
+        launchPath: config.launchPath,
+        redirectToAfterLaunch: config.redirectToAfterLaunch,
+        nonceStore: config.nonceStore,
+        authorizePath: config.authorizePath,
+        authorizeOnLaunch: config.authorizeOnLaunch,
       });
-    });
+    }
 
-    return app;
+    // > Install server-side api
+    if (!config.disableServerSideAPI) {
+      // Install middleware to add req.api
+      config.routesWithAPI.forEach((route) => {
+        config.app.use(route, (req, res, next) => {
+          // Don't add api if we don't have an access token
+          if (
+            !req.session
+            || !req.session.accessToken
+          ) {
+            return next();
+          }
+
+          // Add api
+          addAPIToReq(req);
+
+          return next();
+        });
+      });
+    }
+
+    // TODO: add support for API forwarding
+
+    return config.app;
   }
 };
