@@ -93,6 +93,7 @@ module.exports = (oldConfig) => {
       sslCertificate: config.sslCertificate,
       sslCA: config.sslCA,
       verbose: config.verbose,
+      port: config.port,
     });
   }
 

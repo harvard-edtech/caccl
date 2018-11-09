@@ -10,7 +10,8 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint.js')
 /**
  * Creates a new express app with memory-based session, listening on env PORT or
  *   8080, and with randomized session secret and cookie name.
- * @param {number} [port=env.PORT || 8080] - the port to listen to
+ * @param {number} [port=config.port || env.PORT || 8080] - the port to listen
+ *   to
  * @param {string} [sessionSecret=randomly generated string] - the session
  *   secret to use when encrypting sessions
  * @param {string} [cookieName=CACCL-based-app-session-<timestamp>-<random str>]
