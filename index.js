@@ -128,6 +128,18 @@ module.exports = (oldConfig = {}) => {
     });
   }
 
+  // Set up client
+  if (config.type === 'client') {
+    return new API({
+      canvasHost: config.canvasHost,
+      cacheType: 'memory',
+      sendRequest: config.sendRequest,
+      defaultNumRetries: config.defaultNumRetries,
+      defaultItemsPerPage: config.defaultItemsPerPage,
+      apiPathPrefix: config.apiForwardPathPrefix,
+    });
+  }
+
   // Set up server
   if (config.type === 'server') {
     /**
