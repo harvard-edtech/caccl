@@ -1,6 +1,8 @@
-const print = require('../print.js');
+const initPrint = require('./helpers/initPrint.js');
 
 module.exports = (config) => {
+  const print = initPrint(config.verbose);
+
   // No requirements at all!
   // If verbose, give more information about accessToken and canvasHost
   if (config.verbose) {
