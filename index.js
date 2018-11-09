@@ -1,7 +1,7 @@
 const API = require('../caccl-canvas-api'); // TODO: use real module
 const initTokenManager = require('../caccl-token-manager'); // TODO: use real module
 const initLTIManager = require('../caccl-lti-manager'); // TODO: use real module
-
+const initAPIForwarding = require('../caccl-api-forwarder'); // TODO: use real module
 
 const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/index.js');
 
@@ -157,6 +157,13 @@ module.exports = (oldConfig = {}) => {
     // Add token manager and have it auto-refresh routesWithAPI and addAPIToReq
     // upon manual login
     if (!config.disableAuthorization) {
+      // Set up the list of routes to auto-refresh access tokens
+      const autoRefreshRoutes = config.routesWithAPI;
+      // Add forward paths as well (if client-side api is enabled)
+      if (!config.disableClientSideAPI) {
+        autoRefreshRoutes.push(`${config.apiForwardPathPrefix}*`);
+      }
+
       initTokenManager({
         app: config.app,
         canvasHost: config.canvasHost,
@@ -169,7 +176,7 @@ module.exports = (oldConfig = {}) => {
       });
     }
 
-    // > Initialize LTI manager
+    // Add LTI support: initialize LTI manager
     if (!config.disableLTI) {
       initLTIManager({
         app: config.app,
@@ -182,7 +189,7 @@ module.exports = (oldConfig = {}) => {
       });
     }
 
-    // > Install server-side api
+    // Add server-side api
     if (!config.disableServerSideAPI) {
       // Install middleware to add req.api
       config.routesWithAPI.forEach((route) => {
@@ -203,7 +210,16 @@ module.exports = (oldConfig = {}) => {
       });
     }
 
-    // TODO: add support for API forwarding
+    // Add client-side api support (api forwarding)
+    if (!config.disableClientSideAPI) {
+      initAPIForwarding({
+        app: config.app,
+        canvasHost: config.canvasHost,
+        accessToken: config.accessToken,
+        apiForwardPathPrefix: config.apiForwardPathPrefix,
+        numRetries: config.defaultNumRetries,
+      });
+    }
 
     return config.app;
   }
