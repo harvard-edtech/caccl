@@ -83,7 +83,7 @@ module.exports = (config = {}) => {
     const key = config.sslKey;
     const cert = config.sslCertificate;
     // Parse CA certificates
-    let ca = options.config.sslCA || [];
+    let ca = config.sslCA || [];
     // If file isn't split already, split it
     if (typeof ca === 'string') {
       // Not split yet
