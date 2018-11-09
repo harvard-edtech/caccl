@@ -2,9 +2,10 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const http = require('http');
+const https = require('https');
 const randomstring = require('randomstring');
 
-const print = require('./print.js');
+const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint.js');
 
 /**
  * Creates a new express app with memory-based session, listening on env PORT or
@@ -22,6 +23,7 @@ const print = require('./print.js');
  */
 module.exports = (config = {}) => {
   const app = express();
+  const print = initPrint(config.verbose);
   const port = (
     config.port
     || process.env.PORT
@@ -29,8 +31,8 @@ module.exports = (config = {}) => {
   );
 
   if (config.verbose) {
-    print.head('Creating a new express app:');
-    print.sub(`Will attempt to listen on port: ${port}.`);
+    print.subtitle('Creating a new express app:');
+    print.subsubtitle(`Will attempt to listen on port: ${port}`);
   }
 
   // Set up body json parsing
@@ -48,17 +50,17 @@ module.exports = (config = {}) => {
   // > Create random session secret
   const sessionSecret = config.sessionSecret || randomstring.generate(48);
   if (config.verbose) {
-    print.sub(`Using session secret: ${sessionSecret}.`);
+    print.subsubtitle(`Using session secret: ${sessionSecret}`);
   }
   // > Create cookie name
   const cookieName = config.cookieName || `CACCL-based-app-session-${new Date().getTime()}-${randomstring.generate(10)}`;
   if (config.verbose) {
-    print.sub(`Using cookie name: ${cookieName}.`);
+    print.subsubtitle(`Using cookie name: ${cookieName}`);
   }
   // > Set session duration to 6 hours
   const sessionDurationMillis = ((config.sessionMins || 360) * 60000);
   if (config.verbose) {
-    print.sub(`Session duration: ${sessionDurationMillis/60000} minutes.`);
+    print.subsubtitle(`Session duration: ${sessionDurationMillis/60000} minutes`);
   }
   // > Add session
   app.use(session({
@@ -71,15 +73,71 @@ module.exports = (config = {}) => {
     secret: sessionSecret
   }));
 
-  // Start server
-  let server = http.createServer(app);
-  server.listen(port).on('listening', (err) => {
-    if (err) {
-      console.log(`An error occurred while trying to listen on port ${port}:`, err);
-    } else {
-      console.log(`Now listening on port ${port}`);
+  // Start Server
+  const useSSL = (config.sslKey && config.sslCertificate);
+  if (useSSL) {
+    // Use HTTPS
+
+    // Prep certificates
+    const key = config.sslKey;
+    const cert = config.sslCertificate;
+    // Parse CA certificates
+    let ca = options.config.sslCA || [];
+    // If file isn't split already, split it
+    if (typeof ca === 'string') {
+      // Not split yet
+      const caText = ca;
+      ca = [];
+      let currentCert = [];
+      caText.split('\n').forEach((line) => {
+        cert.push(line);
+        if (line.match(/-END CERTIFICATE-/)) {
+          ca.push(currentCert.join('\n'));
+          currentCert = [];
+        }
+      });
     }
-  });
+
+    // Start HTTPS server
+    const server = https.createServer({
+      key,
+      cert,
+      ca
+    }, app);
+    server.listen(port, (err) => {
+      if (err) {
+        if (config.onListenFail) {
+          config.onListenFail(err);
+        } else {
+          console.log(`An error occurred while trying to listen and use SSL on port ${port}:`, err);
+        }
+      } else {
+        if (config.onListenSuccess) {
+          config.onListenSuccess();
+        } else {
+          console.log(`Now listening and using SSL on port ${port}`);
+        }
+      }
+    });
+  } else {
+    // Use HTTP
+    const server = http.createServer(app);
+    server.listen(port).on('listening', (err) => {
+      if (err) {
+        if (config.onListenFail) {
+          config.onListenFail(err);
+        } else {
+          console.log(`An error occurred while trying to listen on port ${port}:`, err);
+        }
+      } else {
+        if (config.onListenSuccess) {
+          config.onListenSuccess();
+        } else {
+          console.log(`Now listening on port ${port}`);
+        }
+      }
+    });
+  }
 
   return app;
 };
