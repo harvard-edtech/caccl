@@ -69,11 +69,7 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ind
  * @param {array.<string>} [routesWithAPI=['*']] - the list of routes where the
  *   api should be added to as req.api. Only valid if enableServerSideAPI is
  *   truthy
- * @param {string} [authorizePath=/authorize] - the route to add to the express
- *   app (when a user visits this route, we will attempt to refresh their token
- *   and if we can't, we will prompt them to authorize the tool). All types of
- *   requests are listened for: POST, GET, etc.
- * @param {string} [defaultAuthorizedRedirect=authorizePath + '/done'] - the
+ * @param {string} [defaultAuthorizedRedirect='/'] - the
  *   default route to visit after authorization is complete (you can override
  *   this value for a specific authorization call by including query.next or
  *   body.next, a path/url to visit after completion)
@@ -102,14 +98,14 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ind
  *   { consumer_key, consumer_secret}. Required if type is 'server'
  * @param {string} [launchPath=/launch] - the path to accept POST launch
  *   requests from Canvas
- * @param {string} [redirectToAfterLaunch=same as launchPath] - the path to
+ * @param {string} [redirectToAfterLaunch=/] - the path to
  *   redirect to after a successful launch
  * @param {object} [nonceStore=memory store] - a nonce store to use for
  *   keeping track of used nonces of form { check } where check is a function:
  *   (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
- * @param {boolean} [authorizeOnLaunch=false] - if truthy, user is automatically
- *   authorized upon launch. If truthy, type must be 'server' and either
- *   disableClientSideAPI or disableServerSideAPI must be falsy
+ * @param {boolean} [disableAuthorizeOnLaunch=false] - if falsy, user is
+ *   automatically authorized upon launch. If truthy, type must be 'server' and
+ *   either disableClientSideAPI or disableServerSideAPI must be falsy
  */
 module.exports = (oldConfig = {}) => {
   // Validate config
@@ -180,7 +176,7 @@ module.exports = (oldConfig = {}) => {
         app: config.app,
         canvasHost: config.canvasHost,
         developerCredentials: config.developerCredentials,
-        authorizePath: config.authorizePath,
+        launchPath: config.launchPath,
         defaultAuthorizedRedirect: config.defaultAuthorizedRedirect,
         autoRefreshRoutes: config.routesWithAPI,
         tokenStore: config.tokenStore,

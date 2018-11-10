@@ -315,7 +315,7 @@ module.exports = (oldConfig) => {
       print.boolean('defaultAuthorizedRedirect', false, 'this is expected: authorization is disabled so we don\'t need a "defaultAuthorizedRedirect"');
     } else {
       // Authorization enabled
-      config.defaultAuthorizedRedirect = `${config.authorizePath}/done`;
+      config.defaultAuthorizedRedirect = '/';
       print.boolean('defaultAuthorizedRedirect', false, `we will use '${config.defaultAuthorizedRedirect}' as your "defaultAuthorizedRedirect"`);
     }
   }
@@ -421,7 +421,7 @@ module.exports = (oldConfig) => {
     if (config.disableLTI) {
       print.variable('redirectToAfterLaunch', false, 'this is expected: we have no need for a redirect path when LTI is disabled');
     } else {
-      config.redirectToAfterLaunch = config.launchPath;
+      config.redirectToAfterLaunch = '/';
       print.variable('redirectToAfterLaunch', false, `we will redirect the user to '${config.redirectToAfterLaunch}' upon a successful LTI launch`);
     }
   }
@@ -441,18 +441,18 @@ module.exports = (oldConfig) => {
     }
   }
 
-  // authorizeOnLaunch
-  if (config.authorizeOnLaunch) {
+  // disableAuthorizeOnLaunch
+  if (!config.disableAuthorizeOnLaunch) {
     if (!config.disableLTI && !config.disableAuthorization) {
-      print.boolean('authorizeOnLaunch', true, 'we will automatically authorize the user upon an LTI launch');
+      print.boolean('disableAuthorizeOnLaunch', false, 'we will automatically authorize the user upon an LTI launch');
     } else {
-      print.boolean('authorizeOnLaunch', true, 'this will be ignored: we cannot authorize on launch if LTI or authorization are disabled');
+      print.boolean('disableAuthorizeOnLaunch', false, 'this will be ignored: we cannot authorize on launch if LTI or authorization are disabled');
     }
   } else {
     if (!config.disableLTI && !config.disableAuthorization) {
-      print.boolean('authorizeOnLaunch', false, `users will not be automatically authorized on launch. Do manually authorize a user, direct them to the authorize path: '${config.authorizePath}'`);
+      print.boolean('disableAuthorizeOnLaunch', true, `users will not be automatically authorized on launch. Do manually authorize a user, direct them to the authorize path: '${config.authorizePath}'`);
     } else {
-      print.boolean('authorizeOnLaunch', false, 'this is expected: we cannot authorize on launch if LTI or authorization are disabled');
+      print.boolean('disableAuthorizeOnLaunch', true, 'this is expected: we cannot authorize on launch if LTI or authorization are disabled');
     }
   }
 
