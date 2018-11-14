@@ -390,18 +390,19 @@ module.exports = (oldConfig) => {
   // simulateLaunchOnAuthorize
   if (config.simulateLaunchOnAuthorize) {
     // Redirect included
-    if (config.disableAuthorization) {
+    if (config.disableAuthorization || config.disableServerSideAPI) {
       // Authorization disabled
       print.boolean('simulateLaunchOnAuthorize', true, 'this will be ignored: authorization is disabled so we can\'t simulate a launch upon authorization');
+      config.simulateLaunchOnAuthorize = false;
     } else {
       // Authorization enabled
       print.boolean('simulateLaunchOnAuthorize', true, `when a user visits '${config.launchPath}', they will be authorized as usual, but we will also simulate an LTI launch if they haven't already launched via LTI`);
     }
   } else {
     // Redirect not included (use default)
-    if (config.disableAuthorization) {
+    if (config.disableAuthorization || config.disableServerSideAPI) {
       // Authorization disabled
-      print.boolean('simulateLaunchOnAuthorize', false, 'this is expected: authorization is disabled so we can\'t simulate a launch upon authorization');
+      print.boolean('simulateLaunchOnAuthorize', false, 'this is expected: authorization is disabled or server-side api is disabled so we can\'t simulate a launch upon authorization');
     } else {
       // Authorization enabled
       print.boolean('simulateLaunchOnAuthorize', false, `we will not simulate launches upon authorization. Thus, if a user visits'${config.launchPath}' and the haven't already launched, they will receive an error.`);

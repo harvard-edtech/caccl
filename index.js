@@ -81,7 +81,8 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ind
  *   launch upon successful authorization (if the user hasn't already launched
  *   via LTI), essentially allowing users to either launch via LTI or launch
  *   the tool by visiting launchPath (GET). If falsy, when a user visits
- *   launchPath and has not launched via LTI, they will be given an error
+ *   launchPath and has not launched via LTI, they will be given an error. Not
+ *   valid if authorization is disabled or if server-side API is disabled
  *
  * API Forwarding:
  * @param {boolean} [disableClientSideAPI] - if falsy, adds appropriate
@@ -167,6 +168,27 @@ module.exports = (oldConfig = {}) => {
       });
     };
 
+    // Add server-side api
+    if (!config.disableServerSideAPI) {
+      // Install middleware to add req.api
+      config.routesWithAPI.forEach((route) => {
+        config.app.use(route, (req, res, next) => {
+          // Don't add api if we don't have an access token
+          if (
+            !req.session
+            || !req.session.accessToken
+          ) {
+            return next();
+          }
+
+          // Add api
+          addAPIToReq(req);
+
+          return next();
+        });
+      });
+    }
+
     // Add token manager and have it auto-refresh routesWithAPI and addAPIToReq
     // upon manual login
     if (!config.disableAuthorization) {
@@ -200,27 +222,6 @@ module.exports = (oldConfig = {}) => {
         nonceStore: config.nonceStore,
         authorizePath: config.authorizePath,
         authorizeOnLaunch: config.authorizeOnLaunch,
-      });
-    }
-
-    // Add server-side api
-    if (!config.disableServerSideAPI) {
-      // Install middleware to add req.api
-      config.routesWithAPI.forEach((route) => {
-        config.app.use(route, (req, res, next) => {
-          // Don't add api if we don't have an access token
-          if (
-            !req.session
-            || !req.session.accessToken
-          ) {
-            return next();
-          }
-
-          // Add api
-          addAPIToReq(req);
-
-          return next();
-        });
       });
     }
 
