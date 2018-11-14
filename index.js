@@ -186,6 +186,7 @@ module.exports = (oldConfig = {}) => {
         autoRefreshRoutes: config.routesWithAPI,
         tokenStore: config.tokenStore,
         onManualLogin: addAPIToReq,
+        simulateLaunchOnAuthorize: config.simulateLaunchOnAuthorize,
       });
     }
 
