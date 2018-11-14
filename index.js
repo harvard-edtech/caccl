@@ -82,7 +82,7 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ind
  *   via LTI), essentially allowing users to either launch via LTI or launch
  *   the tool by visiting launchPath (GET). If falsy, when a user visits
  *   launchPath and has not launched via LTI, they will be given an error. Not
- *   valid if authorization is disabled or if server-side API is disabled
+ *   valid if authorization, lti, or server-side API is disabled
  *
  * API Forwarding:
  * @param {boolean} [disableClientSideAPI] - if falsy, adds appropriate
@@ -189,6 +189,19 @@ module.exports = (oldConfig = {}) => {
       });
     }
 
+    // Add LTI support: initialize LTI manager
+    if (!config.disableLTI) {
+      initLTIManager({
+        app: config.app,
+        installationCredentials: config.installationCredentials,
+        launchPath: config.launchPath,
+        redirectToAfterLaunch: config.redirectToAfterLaunch,
+        nonceStore: config.nonceStore,
+        authorizePath: config.authorizePath,
+        authorizeOnLaunch: config.authorizeOnLaunch,
+      });
+    }
+
     // Add token manager and have it auto-refresh routesWithAPI and addAPIToReq
     // upon manual login
     if (!config.disableAuthorization) {
@@ -209,19 +222,6 @@ module.exports = (oldConfig = {}) => {
         tokenStore: config.tokenStore,
         onManualLogin: addAPIToReq,
         simulateLaunchOnAuthorize: config.simulateLaunchOnAuthorize,
-      });
-    }
-
-    // Add LTI support: initialize LTI manager
-    if (!config.disableLTI) {
-      initLTIManager({
-        app: config.app,
-        installationCredentials: config.installationCredentials,
-        launchPath: config.launchPath,
-        redirectToAfterLaunch: config.redirectToAfterLaunch,
-        nonceStore: config.nonceStore,
-        authorizePath: config.authorizePath,
-        authorizeOnLaunch: config.authorizeOnLaunch,
       });
     }
 
