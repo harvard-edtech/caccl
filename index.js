@@ -77,6 +77,11 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ind
  *   storage of refresh tokens, exclude to use memory token store,
  *   or include a custom token store of form { get(key), set(key, val) } where
  *   both functions return promises
+ * @param {boolean} [simulateLaunchOnAuthorize] - if truthy, simulates an LTI
+ *   launch upon successful authorization (if the user hasn't already launched
+ *   via LTI), essentially allowing users to either launch via LTI or launch
+ *   the tool by visiting launchPath (GET). If falsy, when a user visits
+ *   launchPath and has not launched via LTI, they will be given an error
  *
  * API Forwarding:
  * @param {boolean} [disableClientSideAPI] - if falsy, adds appropriate

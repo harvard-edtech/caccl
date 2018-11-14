@@ -251,124 +251,6 @@ module.exports = (oldConfig) => {
   }
 
   /*------------------------------------------------------------------------*/
-  /*                              Authorization                             */
-  /*------------------------------------------------------------------------*/
-
-  // disableAuthorization
-  if (apiEnabled) {
-    // API is enabled. We probably need authorization
-    if (config.disableAuthorization) {
-      // We don't have authorization. The programmer will need to manually add
-      // access tokens
-      if (config.accessToken) {
-        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so the default access token you included ("accessToken") will be used unless you manually authorize users. You can manually authorize a user by adding users\' access tokens to their session: req.session.accessToken');
-      } else {
-        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so you will need to manually authorize users. You can do this by adding users\' access tokens to req.session.accessToken');
-      }
-    } else {
-      print.boolean('disableAuthorization', false, 'this is the recommended value: the api is enabled and authorization is enabled so users can be authorized for api access');
-    }
-  } else {
-    // The API is disabled. We have no need for authorization
-    if (config.disableAuthorization) {
-      print.boolean('disableAuthorization', true, 'this is the recommended value: the api is disabled so we don\'t need authorization enabled unless you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
-    } else {
-      print.boolean('disableAuthorization', false, 'though the api is disabled, authorization is still enabled. This is only useful if you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
-    }
-  }
-
-  // authorizePath
-  if (config.authorizePath) {
-    // Included
-    if (config.disableAuthorization) {
-      // Authorization disabled
-      print.variable('authorizePath', true, 'this will be ignored: authorize path is not relevant when authorization is disabled');
-    } else {
-      print.variable('authorizePath', true, 'when the user visits your defined "authorizePath", they will be authorized');
-    }
-  } else {
-    // Excluded
-    if (config.disableAuthorization) {
-      // No path and no authorization
-      print.variable('authorizePath', false, 'this is as expected: authorization path is not relevant when authorization is disabled');
-    } else {
-      // No path but performing authorizations, set up authorizePath
-      config.authorizePath = '/authorize';
-      print.variable('authorizePath', false, `we will use '${config.authorizePath}' for the authorizePath`);
-    }
-  }
-
-  // defaultAuthorizedRedirect
-  if (config.defaultAuthorizedRedirect) {
-    // Redirect included
-    if (config.disableAuthorization) {
-      // Authorization disabled
-      print.boolean('defaultAuthorizedRedirect', true, 'this will be ignored: authorization is disabled so we don\'t need a "defaultAuthorizedRedirect"');
-    } else {
-      // Authorization enabled
-      print.boolean('defaultAuthorizedRedirect', true, 'we will use your redirect path');
-    }
-  } else {
-    // Redirect not included (use default)
-    if (config.disableAuthorization) {
-      // Authorization disabled
-      print.boolean('defaultAuthorizedRedirect', false, 'this is expected: authorization is disabled so we don\'t need a "defaultAuthorizedRedirect"');
-    } else {
-      // Authorization enabled
-      config.defaultAuthorizedRedirect = '/';
-      print.boolean('defaultAuthorizedRedirect', false, `we will use '${config.defaultAuthorizedRedirect}' as your "defaultAuthorizedRedirect"`);
-    }
-  }
-
-  // tokenStore
-  if (config.tokenStore) {
-    if (config.disableAuthorization) {
-      // Not authorizing so the tokenStore is irrelevant
-      print.variable('tokenStore', true, 'this will be ignored: authorization is disabled so we have no need for a token store');
-    } else {
-      print.variable('tokenStore', true, 'we will use your custom token store');
-    }
-  } else if (config.tokenStore === null) {
-    // No token store
-    if (config.disableAuthorization) {
-      print.variable('tokenStore', false, 'this is expected: no token store is required if authorization is turned off');
-    } else {
-      print.variable('tokenStore', false, 'we will not store refresh tokens for future sessions, we will only store tokens in the current session. Thus, the user will need to re-authorize every time they launch your app');
-    }
-  } else {
-    // Using a memory store
-    if (config.disableAuthorization) {
-      print.variable('tokenStore', false, 'this is expected: authorization is disabled so we have no need for a token store');
-    } else {
-      print.variable('tokenStore', false, 'we will use a memory store for refresh tokens');
-    }
-  }
-
-  // Developer credentials
-  const needDevCredentials = (apiEnabled && !config.disableAuthorization);
-  if (needDevCredentials) {
-    if (config.developerCredentials) {
-      if (config.verbose) {
-        print.variable('developerCredentials', true, 'we\'ll use these credentials in our authorization process');
-      }
-    } else {
-      // Need developerCredentials but don't have them
-      throw new Error('"developerCredentials" required. API is enabled (either disableClientSideAPI or disableServerSideAPI is falsy) and authorization is on (disableAuthorization is falsy). Thus, we need to be able to authorize. This is only possible with "developerCredentials".');
-    }
-  } else {
-    if (config.developerCredentials) {
-      // Don't need credentials but they were included
-      if (config.verbose) {
-        print.variable('developerCredentials', false, 'this will be ignored: either authorization or api is off, so we don\'t need credentials');
-      }
-    } else {
-      if (config.verbose) {
-        print.variable('developerCredentials', false, 'this is fine because we don\'t need credentials: either authorization or api is off, so we don\'t need credentials');
-      }
-    }
-  }
-
-  /*------------------------------------------------------------------------*/
   /*                                   LTI                                  */
   /*------------------------------------------------------------------------*/
 
@@ -453,6 +335,124 @@ module.exports = (oldConfig) => {
       print.boolean('disableAuthorizeOnLaunch', true, `users will not be automatically authorized on launch. Do manually authorize a user, direct them to the authorize path: '${config.authorizePath}'`);
     } else {
       print.boolean('disableAuthorizeOnLaunch', true, 'this is expected: we cannot authorize on launch if LTI or authorization are disabled');
+    }
+  }
+
+  /*------------------------------------------------------------------------*/
+  /*                              Authorization                             */
+  /*------------------------------------------------------------------------*/
+
+  // disableAuthorization
+  if (apiEnabled) {
+    // API is enabled. We probably need authorization
+    if (config.disableAuthorization) {
+      // We don't have authorization. The programmer will need to manually add
+      // access tokens
+      if (config.accessToken) {
+        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so the default access token you included ("accessToken") will be used unless you manually authorize users. You can manually authorize a user by adding users\' access tokens to their session: req.session.accessToken');
+      } else {
+        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so you will need to manually authorize users. You can do this by adding users\' access tokens to req.session.accessToken');
+      }
+    } else {
+      print.boolean('disableAuthorization', false, 'this is the recommended value: the api is enabled and authorization is enabled so users can be authorized for api access');
+    }
+  } else {
+    // The API is disabled. We have no need for authorization
+    if (config.disableAuthorization) {
+      print.boolean('disableAuthorization', true, 'this is the recommended value: the api is disabled so we don\'t need authorization enabled unless you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
+    } else {
+      print.boolean('disableAuthorization', false, 'though the api is disabled, authorization is still enabled. This is only useful if you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
+    }
+  }
+
+  // defaultAuthorizedRedirect
+  if (config.defaultAuthorizedRedirect) {
+    // Redirect included
+    if (config.disableAuthorization) {
+      // Authorization disabled
+      print.boolean('defaultAuthorizedRedirect', true, 'this will be ignored: authorization is disabled so we don\'t need a "defaultAuthorizedRedirect"');
+    } else {
+      // Authorization enabled
+      print.boolean('defaultAuthorizedRedirect', true, 'we will use your redirect path');
+    }
+  } else {
+    // Redirect not included (use default)
+    if (config.disableAuthorization) {
+      // Authorization disabled
+      print.boolean('defaultAuthorizedRedirect', false, 'this is expected: authorization is disabled so we don\'t need a "defaultAuthorizedRedirect"');
+    } else {
+      // Authorization enabled
+      config.defaultAuthorizedRedirect = '/';
+      print.boolean('defaultAuthorizedRedirect', false, `we will use '${config.defaultAuthorizedRedirect}' as your "defaultAuthorizedRedirect"`);
+    }
+  }
+
+  // simulateLaunchOnAuthorize
+  if (config.simulateLaunchOnAuthorize) {
+    // Redirect included
+    if (config.disableAuthorization) {
+      // Authorization disabled
+      print.boolean('simulateLaunchOnAuthorize', true, 'this will be ignored: authorization is disabled so we can\'t simulate a launch upon authorization');
+    } else {
+      // Authorization enabled
+      print.boolean('simulateLaunchOnAuthorize', true, `when a user visits '${config.launchPath}', they will be authorized as usual, but we will also simulate an LTI launch if they haven't already launched via LTI`);
+    }
+  } else {
+    // Redirect not included (use default)
+    if (config.disableAuthorization) {
+      // Authorization disabled
+      print.boolean('simulateLaunchOnAuthorize', false, 'this is expected: authorization is disabled so we can\'t simulate a launch upon authorization');
+    } else {
+      // Authorization enabled
+      print.boolean('simulateLaunchOnAuthorize', false, `we will not simulate launches upon authorization. Thus, if a user visits'${config.launchPath}' and the haven't already launched, they will receive an error.`);
+    }
+  }
+
+  // tokenStore
+  if (config.tokenStore) {
+    if (config.disableAuthorization) {
+      // Not authorizing so the tokenStore is irrelevant
+      print.variable('tokenStore', true, 'this will be ignored: authorization is disabled so we have no need for a token store');
+    } else {
+      print.variable('tokenStore', true, 'we will use your custom token store');
+    }
+  } else if (config.tokenStore === null) {
+    // No token store
+    if (config.disableAuthorization) {
+      print.variable('tokenStore', false, 'this is expected: no token store is required if authorization is turned off');
+    } else {
+      print.variable('tokenStore', false, 'we will not store refresh tokens for future sessions, we will only store tokens in the current session. Thus, the user will need to re-authorize every time they launch your app');
+    }
+  } else {
+    // Using a memory store
+    if (config.disableAuthorization) {
+      print.variable('tokenStore', false, 'this is expected: authorization is disabled so we have no need for a token store');
+    } else {
+      print.variable('tokenStore', false, 'we will use a memory store for refresh tokens');
+    }
+  }
+
+  // Developer credentials
+  const needDevCredentials = (apiEnabled && !config.disableAuthorization);
+  if (needDevCredentials) {
+    if (config.developerCredentials) {
+      if (config.verbose) {
+        print.variable('developerCredentials', true, 'we\'ll use these credentials in our authorization process');
+      }
+    } else {
+      // Need developerCredentials but don't have them
+      throw new Error('"developerCredentials" required. API is enabled (either disableClientSideAPI or disableServerSideAPI is falsy) and authorization is on (disableAuthorization is falsy). Thus, we need to be able to authorize. This is only possible with "developerCredentials".');
+    }
+  } else {
+    if (config.developerCredentials) {
+      // Don't need credentials but they were included
+      if (config.verbose) {
+        print.variable('developerCredentials', false, 'this will be ignored: either authorization or api is off, so we don\'t need credentials');
+      }
+    } else {
+      if (config.verbose) {
+        print.variable('developerCredentials', false, 'this is fine because we don\'t need credentials: either authorization or api is off, so we don\'t need credentials');
+      }
     }
   }
 
