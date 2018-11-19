@@ -1,0 +1,58 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "arrow-body-style": [
+      "warn",
+      "always"
+    ],
+    "arrow-parens": [ "warn", "always" ],
+    "comma-dangle": [ "error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "never"
+      }
+    ],
+    "consistent-return": "off",
+    "id-length": "off",
+    "max-len": [ "error",
+      {
+        "code": 80,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreUrls": true
+      }
+    ],
+    "newline-per-chained-call": [
+      "error",
+      {
+        "ignoreChainWithDepth": 2
+      }
+    ],
+    "no-plusplus": [ "warn", { "allowForLoopAfterthoughts": true }],
+    "prefer-template": "off",
+    "prefer-destructuring": [ "error",
+      {
+        "VariableDeclarator": {
+         "array": false,
+         "object": true
+        },
+        "AssignmentExpression": {
+          "array": false,
+          "object": true
+        }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "radix": "off",
+    "no-underscore-dangle": "off",
+    "max-params": [ "warn", { "max": 3 } ]
+  }
+}
