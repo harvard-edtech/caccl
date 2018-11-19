@@ -64,13 +64,13 @@ module.exports = (oldConfig) => {
     }
   } else if (config.cacheType) {
     print.variable('cacheType', true, 'api caching is on');
-    if (config.cacheType === 'memory') {
-      print.subtitle('API results will be cached in memory.');
-    } else if (config.cacheType === 'session') {
+    if (config.cacheType === 'session') {
       throw new Error('"cacheType" cannot be \'session\' on the client: we don\'t have access to the user\'s session when on the client');
+    } else if (config.cacheType === 'memory') {
+      print.subtitle('API results will be cached in memory.');
     } else {
       // Invalid cache type
-      throw new Error('"cacheType" must be either \'memory\', or not included.');
+      throw new Error('"cacheType" must be either \'memory\' or not included.');
     }
   } else {
     print.variable('cacheType', false, 'caching is off');
