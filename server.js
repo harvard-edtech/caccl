@@ -1,6 +1,6 @@
-const API = require('../caccl-canvas-api'); // TODO: use real module
-const initTokenManager = require('../caccl-token-manager'); // TODO: use real module
-const initLTIManager = require('../caccl-lti-manager'); // TODO: use real module
+const API = require('../caccl-api'); // TODO: use real module
+const initAuthorizer = require('../caccl-authorizer'); // TODO: use real module
+const initLTIManager = require('../caccl-lti'); // TODO: use real module
 const initAPIForwarding = require('../caccl-api-forwarder'); // TODO: use real module
 
 const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/server.js');
@@ -174,7 +174,7 @@ module.exports = (oldConfig = {}) => {
       autoRefreshRoutes.push(`${config.apiForwardPathPrefix}*`);
     }
 
-    initTokenManager({
+    initAuthorizer({
       app: config.app,
       canvasHost: config.canvasHost,
       developerCredentials: config.developerCredentials,

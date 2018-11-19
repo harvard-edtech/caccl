@@ -38,13 +38,13 @@ module.exports = (config = {}) => {
 
   // Set up body json parsing
   app.use(bodyParser.json({
-    limit: '5mb'
+    limit: '5mb',
   }));
 
   // Set up body application/x-www-form-urlencoded parsing
   app.use(bodyParser.urlencoded({
     extended: true,
-    limit: '5mb'
+    limit: '5mb',
   }));
 
   // Set up session (memory-based)
@@ -61,17 +61,17 @@ module.exports = (config = {}) => {
   // > Set session duration to 6 hours
   const sessionDurationMillis = ((config.sessionMins || 360) * 60000);
   if (config.verbose) {
-    print.subsubtitle(`Session duration: ${sessionDurationMillis/60000} minutes`);
+    print.subsubtitle(`Session duration: ${sessionDurationMillis / 60000} minutes`);
   }
   // > Add session
   app.use(session({
     cookie: {
-      maxAge: sessionDurationMillis
+      maxAge: sessionDurationMillis,
     },
     resave: true,
     name: cookieName,
     saveUninitialized: false,
-    secret: sessionSecret
+    secret: sessionSecret,
   }));
 
   // Start Server
@@ -103,7 +103,7 @@ module.exports = (config = {}) => {
     const server = https.createServer({
       key,
       cert,
-      ca
+      ca,
     }, app);
     server.listen(port, (err) => {
       if (err) {
@@ -112,12 +112,10 @@ module.exports = (config = {}) => {
         } else {
           console.log(`An error occurred while trying to listen and use SSL on port ${port}:`, err);
         }
+      } else if (config.onListenSuccess) {
+        config.onListenSuccess();
       } else {
-        if (config.onListenSuccess) {
-          config.onListenSuccess();
-        } else {
-          console.log(`Now listening and using SSL on port ${port}`);
-        }
+        console.log(`Now listening and using SSL on port ${port}`);
       }
     });
   } else {
@@ -130,12 +128,10 @@ module.exports = (config = {}) => {
         } else {
           console.log(`An error occurred while trying to listen on port ${port}:`, err);
         }
+      } else if (config.onListenSuccess) {
+        config.onListenSuccess();
       } else {
-        if (config.onListenSuccess) {
-          config.onListenSuccess();
-        } else {
-          console.log(`Now listening on port ${port}`);
-        }
+        console.log(`Now listening on port ${port}`);
       }
     });
   }

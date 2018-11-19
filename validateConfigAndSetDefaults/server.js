@@ -143,14 +143,12 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('routesWithAPI', true, 'this will be ignored: the server-side api is not enabled, so we have no routes with the api');
     }
+  } else if (!config.disableServerSideAPI) {
+    // server-side api enabled
+    config.routesWithAPI = ['*'];
+    print.variable('routesWithAPI', false, 'we will automatically add req.api to all routes. Also, if autorization is enabled, we will auto-refresh the user\'s access token when they visiting these routes (if their access token has expired)');
   } else {
-    if (!config.disableServerSideAPI) {
-      // server-side api enabled
-      config.routesWithAPI = ['*'];
-      print.variable('routesWithAPI', false, 'we will automatically add req.api to all routes. Also, if autorization is enabled, we will auto-refresh the user\'s access token when they visiting these routes (if their access token has expired)');
-    } else {
-      print.variable('routesWithAPI', false, 'this is expected: the server-side api is disabled so we have no need for routesWithAPI');
-    }
+    print.variable('routesWithAPI', false, 'this is expected: the server-side api is disabled so we have no need for routesWithAPI');
   }
 
   // API Caching
@@ -196,14 +194,12 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('defaultNumRetries', true, 'we will not retry failed requests (you set "defaultNumRetries" to 0)');
     }
+  } else if (config.disableServerSideAPI) {
+    print.variable('defaultNumRetries', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
   } else {
-    if (config.disableServerSideAPI) {
-      print.variable('defaultNumRetries', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
-    } else {
-      // Set defaultNumRetries to 3
-      config.defaultNumRetries = 3;
-      print.variable('defaultNumRetries', false, `we'll retry failed requests ${config.defaultNumRetries} time(s)`);
-    }
+    // Set defaultNumRetries to 3
+    config.defaultNumRetries = 3;
+    print.variable('defaultNumRetries', false, `we'll retry failed requests ${config.defaultNumRetries} time(s)`);
   }
 
   // API defaultItemsPerPage
@@ -213,14 +209,12 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('defaultItemsPerPage', true, 'we\'ll include this many items per page in GET requests');
     }
+  } else if (config.disableServerSideAPI) {
+    print.variable('defaultItemsPerPage', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
   } else {
-    if (config.disableServerSideAPI) {
-      print.variable('defaultItemsPerPage', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
-    } else {
-      // Set defaultItemsPerPage to 100
-      config.defaultItemsPerPage = 100;
-      print.variable('defaultItemsPerPage', false, `we'll include ${config.defaultItemsPerPage} item(s) per page in GET requests`);
-    }
+    // Set defaultItemsPerPage to 100
+    config.defaultItemsPerPage = 100;
+    print.variable('defaultItemsPerPage', false, `we'll include ${config.defaultItemsPerPage} item(s) per page in GET requests`);
   }
 
   /*------------------------------------------------------------------------*/
@@ -241,13 +235,11 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('apiForwardPathPrefix', true, 'we will use your "apiForwardPathPrefix" when forwarding requests from the client to Canvas. Remember to include the same "apiForwardPathPrefix" in the config for the client-side instance of CACCL');
     }
+  } else if (config.disableClientSideAPI) {
+    print.variable('apiForwardPathPrefix', true, 'this is expected: we have no need for an apiForwardPathPrefix when client-side api (and thus, api forwarding) are disabled');
   } else {
-    if (config.disableClientSideAPI) {
-      print.variable('apiForwardPathPrefix', true, 'this is expected: we have no need for an apiForwardPathPrefix when client-side api (and thus, api forwarding) are disabled');
-    } else {
-      config.apiForwardPathPrefix = '/canvas';
-      print.variable('apiForwardPathPrefix', false, `we will use '${config.apiForwardPathPrefix}' when forwarding requests from the client to Canvas. Remember that the client should have the same "apiForwardPathPrefix": either exclude "apiForwardPathPrefix" from the client-side config for CACCL or set "apiForwardPathPrefix" to '${config.apiForwardPathPrefix}'`);
-    }
+    config.apiForwardPathPrefix = '/canvas';
+    print.variable('apiForwardPathPrefix', false, `we will use '${config.apiForwardPathPrefix}' when forwarding requests from the client to Canvas. Remember that the client should have the same "apiForwardPathPrefix": either exclude "apiForwardPathPrefix" from the client-side config for CACCL or set "apiForwardPathPrefix" to '${config.apiForwardPathPrefix}'`);
   }
 
   /*------------------------------------------------------------------------*/
@@ -268,12 +260,10 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('installationCredentials', true, 'we will use your "installationCredentials" to verify the authenticity of LTI launch requests');
     }
+  } else if (config.disableLTI) {
+    print.variable('installationCredentials', false, 'this is expected: we have no need for "installationCredentials" when LTI is disabled');
   } else {
-    if (config.disableLTI) {
-      print.variable('installationCredentials', false, 'this is expected: we have no need for "installationCredentials" when LTI is disabled');
-    } else {
-      throw new Error('"installationCredentials" are required when LTI is enabled: we need the installationCredentials to be able to verify the authenticity of LTI launch requests');
-    }
+    throw new Error('"installationCredentials" are required when LTI is enabled: we need the installationCredentials to be able to verify the authenticity of LTI launch requests');
   }
 
   // launchPath
@@ -283,13 +273,11 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('launchPath', true, 'we will accept LTI launches at your launch path');
     }
+  } else if (config.disableLTI) {
+    print.variable('launchPath', false, 'this is expected: we have no need for a launch path when LTI is disabled');
   } else {
-    if (config.disableLTI) {
-      print.variable('launchPath', false, 'this is expected: we have no need for a launch path when LTI is disabled');
-    } else {
-      config.launchPath = '/launch';
-      print.variable('launchPath', false, `we will accept launches at '${config.launchPath}'`);
-    }
+    config.launchPath = '/launch';
+    print.variable('launchPath', false, `we will accept launches at '${config.launchPath}'`);
   }
 
   // redirectToAfterLaunch
@@ -299,13 +287,11 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('redirectToAfterLaunch', true, 'we will redirect to this path upon a successful LTI launch');
     }
+  } else if (config.disableLTI) {
+    print.variable('redirectToAfterLaunch', false, 'this is expected: we have no need for a redirect path when LTI is disabled');
   } else {
-    if (config.disableLTI) {
-      print.variable('redirectToAfterLaunch', false, 'this is expected: we have no need for a redirect path when LTI is disabled');
-    } else {
-      config.redirectToAfterLaunch = '/';
-      print.variable('redirectToAfterLaunch', false, `we will redirect the user to '${config.redirectToAfterLaunch}' upon a successful LTI launch`);
-    }
+    config.redirectToAfterLaunch = '/';
+    print.variable('redirectToAfterLaunch', false, `we will redirect the user to '${config.redirectToAfterLaunch}' upon a successful LTI launch`);
   }
 
   // nonceStore
@@ -315,12 +301,10 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('nonceStore', true, 'we will use your custom nonce store to keep track of nonces');
     }
+  } else if (config.disableLTI) {
+    print.variable('nonceStore', false, 'this is expected: we have no need for a nonce store when LTI is disabled');
   } else {
-    if (config.disableLTI) {
-      print.variable('nonceStore', false, 'this is expected: we have no need for a nonce store when LTI is disabled');
-    } else {
-      print.variable('nonceStore', false, 'we will use a memory nonce store');
-    }
+    print.variable('nonceStore', false, 'we will use a memory nonce store');
   }
 
   // disableAuthorizeOnLaunch
@@ -330,12 +314,10 @@ module.exports = (oldConfig) => {
     } else {
       print.boolean('disableAuthorizeOnLaunch', false, 'this will be ignored: we cannot authorize on launch if LTI or authorization are disabled');
     }
+  } else if (!config.disableLTI && !config.disableAuthorization) {
+    print.boolean('disableAuthorizeOnLaunch', true, `users will not be automatically authorized on launch. Do manually authorize a user, direct them to the authorize path: '${config.authorizePath}'`);
   } else {
-    if (!config.disableLTI && !config.disableAuthorization) {
-      print.boolean('disableAuthorizeOnLaunch', true, `users will not be automatically authorized on launch. Do manually authorize a user, direct them to the authorize path: '${config.authorizePath}'`);
-    } else {
-      print.boolean('disableAuthorizeOnLaunch', true, 'this is expected: we cannot authorize on launch if LTI or authorization are disabled');
-    }
+    print.boolean('disableAuthorizeOnLaunch', true, 'this is expected: we cannot authorize on launch if LTI or authorization are disabled');
   }
 
   /*------------------------------------------------------------------------*/
@@ -356,13 +338,11 @@ module.exports = (oldConfig) => {
     } else {
       print.boolean('disableAuthorization', false, 'this is the recommended value: the api is enabled and authorization is enabled so users can be authorized for api access');
     }
+  // The API is disabled. We have no need for authorization
+  } else if (config.disableAuthorization) {
+    print.boolean('disableAuthorization', true, 'this is the recommended value: the api is disabled so we don\'t need authorization enabled unless you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
   } else {
-    // The API is disabled. We have no need for authorization
-    if (config.disableAuthorization) {
-      print.boolean('disableAuthorization', true, 'this is the recommended value: the api is disabled so we don\'t need authorization enabled unless you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
-    } else {
-      print.boolean('disableAuthorization', false, 'though the api is disabled, authorization is still enabled. This is only useful if you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
-    }
+    print.boolean('disableAuthorization', false, 'though the api is disabled, authorization is still enabled. This is only useful if you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
   }
 
   // defaultAuthorizedRedirect
@@ -375,16 +355,14 @@ module.exports = (oldConfig) => {
       // Authorization enabled
       print.boolean('defaultAuthorizedRedirect', true, 'we will use your redirect path');
     }
+  // Redirect not included (use default)
+  } else if (config.disableAuthorization) {
+    // Authorization disabled
+    print.boolean('defaultAuthorizedRedirect', false, 'this is expected: authorization is disabled so we don\'t need a "defaultAuthorizedRedirect"');
   } else {
-    // Redirect not included (use default)
-    if (config.disableAuthorization) {
-      // Authorization disabled
-      print.boolean('defaultAuthorizedRedirect', false, 'this is expected: authorization is disabled so we don\'t need a "defaultAuthorizedRedirect"');
-    } else {
-      // Authorization enabled
-      config.defaultAuthorizedRedirect = '/';
-      print.boolean('defaultAuthorizedRedirect', false, `we will use '${config.defaultAuthorizedRedirect}' as your "defaultAuthorizedRedirect"`);
-    }
+    // Authorization enabled
+    config.defaultAuthorizedRedirect = '/';
+    print.boolean('defaultAuthorizedRedirect', false, `we will use '${config.defaultAuthorizedRedirect}' as your "defaultAuthorizedRedirect"`);
   }
 
   // simulateLaunchOnAuthorize
@@ -402,19 +380,17 @@ module.exports = (oldConfig) => {
       // Authorization enabled
       print.boolean('simulateLaunchOnAuthorize', true, `when a user visits '${config.launchPath}', they will be authorized as usual, but we will also simulate an LTI launch if they haven't already launched via LTI`);
     }
+  // Redirect not included (use default)
+  } else if (
+    config.disableAuthorization
+    || config.disableServerSideAPI
+    || config.disableLTI
+  ) {
+    // Authorization disabled
+    print.boolean('simulateLaunchOnAuthorize', false, 'this is expected: authorization, server-side api, or lti is disabled so we can\'t simulate a launch upon authorization');
   } else {
-    // Redirect not included (use default)
-    if (
-      config.disableAuthorization
-      || config.disableServerSideAPI
-      || config.disableLTI
-    ) {
-      // Authorization disabled
-      print.boolean('simulateLaunchOnAuthorize', false, 'this is expected: authorization, server-side api, or lti is disabled so we can\'t simulate a launch upon authorization');
-    } else {
-      // Authorization enabled
-      print.boolean('simulateLaunchOnAuthorize', false, `we will not simulate launches upon authorization. Thus, if a user visits'${config.launchPath}' and the haven't already launched, they will receive an error.`);
-    }
+    // Authorization enabled
+    print.boolean('simulateLaunchOnAuthorize', false, `we will not simulate launches upon authorization. Thus, if a user visits'${config.launchPath}' and the haven't already launched, they will receive an error.`);
   }
 
   // tokenStore
@@ -432,37 +408,27 @@ module.exports = (oldConfig) => {
     } else {
       print.variable('tokenStore', false, 'we will not store refresh tokens for future sessions, we will only store tokens in the current session. Thus, the user will need to re-authorize every time they launch your app');
     }
+  // Using a memory store
+  } else if (config.disableAuthorization) {
+    print.variable('tokenStore', false, 'this is expected: authorization is disabled so we have no need for a token store');
   } else {
-    // Using a memory store
-    if (config.disableAuthorization) {
-      print.variable('tokenStore', false, 'this is expected: authorization is disabled so we have no need for a token store');
-    } else {
-      print.variable('tokenStore', false, 'we will use a memory store for refresh tokens');
-    }
+    print.variable('tokenStore', false, 'we will use a memory store for refresh tokens');
   }
 
   // Developer credentials
   const needDevCredentials = (apiEnabled && !config.disableAuthorization);
   if (needDevCredentials) {
     if (config.developerCredentials) {
-      if (config.verbose) {
-        print.variable('developerCredentials', true, 'we\'ll use these credentials in our authorization process');
-      }
+      print.variable('developerCredentials', true, 'we\'ll use these credentials in our authorization process');
     } else {
       // Need developerCredentials but don't have them
       throw new Error('"developerCredentials" required. API is enabled (either disableClientSideAPI or disableServerSideAPI is falsy) and authorization is on (disableAuthorization is falsy). Thus, we need to be able to authorize. This is only possible with "developerCredentials".');
     }
+  } else if (config.developerCredentials) {
+    // Don't need credentials but they were included
+    print.variable('developerCredentials', false, 'this will be ignored: either authorization or api is off, so we don\'t need credentials');
   } else {
-    if (config.developerCredentials) {
-      // Don't need credentials but they were included
-      if (config.verbose) {
-        print.variable('developerCredentials', false, 'this will be ignored: either authorization or api is off, so we don\'t need credentials');
-      }
-    } else {
-      if (config.verbose) {
-        print.variable('developerCredentials', false, 'this is fine because we don\'t need credentials: either authorization or api is off, so we don\'t need credentials');
-      }
-    }
+    print.variable('developerCredentials', false, 'this is fine because we don\'t need credentials: either authorization or api is off, so we don\'t need credentials');
   }
 
   return config;

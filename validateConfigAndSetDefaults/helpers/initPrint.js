@@ -101,7 +101,6 @@ Object.keys(print).forEach((key) => {
 module.exports = (verbose) => {
   if (verbose) {
     return print;
-  } else {
-    return printNonVerbose;
   }
+  return printNonVerbose;
 };
