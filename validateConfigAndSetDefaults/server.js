@@ -129,10 +129,27 @@ module.exports = (oldConfig) => {
     // API not enabled
     if (config.accessToken) {
       print.variable('accessToken', true, 'this will be ignored: the api is disabled (both disableServerSideAPI and disableClientSideAPI are truthy)');
+    } else {
+      print.variable('accessToken', false, 'when the user is not authenticated (we have no access token for the current user), we will not add an access token to the request (unauthenticated)');
     }
     if (config.canvasHost) {
       print.variable('canvasHost', true, 'this will be ignored: the api is disabled (both disableServerSideAPI and disableClientSideAPI are truthy)');
+    } else {
+      print.variable('canvasHost', false, 'this is expected: the api is disabled so we have no need for a canvasHost');
     }
+  }
+
+  // dontUseLaunchCanvasHost
+  if (apiEnabled && !config.disableLTI) {
+    if (config.dontUseLaunchCanvasHost) {
+      print.boolean('dontUseLaunchCanvasHost', true, `we won't use the launch host. instead, we'll always use the default canvasHost: "${config.canvasHost}"`);
+    } else {
+      print.boolean('dontUseLaunchCanvasHost', true, `we'll use the user's launch Canvas host (the Canvas instance they launched from) if possible, otherwise, we'll use "${config.canvasHost}"`);
+    }
+  } else if (config.dontUseLaunchCanvasHost) {
+    print.boolean('dontUseLaunchCanvasHost', true, 'this will be ignored: the api is disabled or lti is disabled');
+  } else {
+    print.boolean('dontUseLaunchCanvasHost', true, 'this is expected: the api is disabled or lti is disabled');
   }
 
   // routesWithAPI

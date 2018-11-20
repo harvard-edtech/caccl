@@ -42,6 +42,9 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ser
  *   requests
  * @param {string} [canvasHost=canvas.instructure.com] - a default canvas host
  *   to use for all requests
+ * @param {boolean} [dontUseLaunchCanvasHost] - if truthy, requests are sent to
+ *   the Canvas host that the current user launched from (if available via
+ *   the session)
  * @param {string} [cacheType=none] - If 'memory', cache is stored in
  *   memory. If 'session', cache is stored in express the session. To include a
  *   custom cache, include it as cache
@@ -115,7 +118,11 @@ module.exports = (oldConfig = {}) => {
    */
   const addAPIToReq = (req) => {
     // Use current user's values or defaults
-    const canvasHost = (req.session.canvasHost || config.canvasHost);
+    const canvasHost = (
+      config.dontUseLaunchCanvasHost
+        ? config.canvasHost
+        : req.session.canvasHost || config.canvasHost
+    );
     const accessToken = (req.session.accessToken || config.accessToken);
 
     // Add api
