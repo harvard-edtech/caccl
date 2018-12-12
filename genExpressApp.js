@@ -10,6 +10,7 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint.js')
 /**
  * Creates a new express app with memory-based session, listening on env PORT or
  *   8080, and with randomized session secret and cookie name.
+ * @author Gabriel Abrams
  * @param {number} [port=config.port || env.PORT || 8080] - the port to listen
  *   to
  * @param {string} [sessionSecret=randomly generated string] - the session
@@ -19,7 +20,6 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint.js')
  * @param {number} [sessionMins=360 (6 hours)] - number of minutes the session
  *   should last for
  * @param {boolean} [verbose] - if truthy, prints information as it works
- * @author Gabriel Abrams
  * @return {object} express app
  */
 module.exports = (config = {}) => {
