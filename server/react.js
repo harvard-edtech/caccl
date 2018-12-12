@@ -22,8 +22,8 @@ module.exports = (config = {}) => {
     thisIsDevEnvironment = true;
     /* eslint no-console: "off" */
     console.log('\nRunning as a development server:');
-    console.log('- All API requests will be authenticated using the access token in devAccessToken.txt');
-    console.log('- Any react server running on localhost:3000 will be allowed to connect to this server\n');
+    console.log('- API requests will be authenticated with the access token in devAccessToken.txt');
+    console.log('- React servers on localhost:3000 will be allowed to connect to this server\n');
 
     // Set up CORS for the react client
     clientOrigin = 'http://localhost:3000';
