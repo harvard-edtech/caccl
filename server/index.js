@@ -27,10 +27,11 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/se
  *   excluded
  * @param {string} [sslKey] - ssl key to use to secure the connection. Only
  *   valid if both sslKey and sslCertificate are included. Only valid if app is
- *   excluded
+ *   excluded. If value is a filename, that file is read and parsed.
  * @param {string} [sslCertificate] - ssl certificate  to use to secure the
  *   connection. Only valid if both sslKey and sslCertificate are included. Only
- *   valid if app is excluded
+ *   valid if app is excluded. If value is a filename, that file is read and
+ *   parsed
  * @param {string} [clientOrigin] - the origin of the client (to allow CORS),
  *   not required if the client is served on the same origin
  * @param {string|array.<string>} [sslCA] - certificate chain linking a

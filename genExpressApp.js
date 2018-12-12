@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -19,6 +20,12 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
  *   - the cookie name to send to client's browser
  * @param {number} [sessionMins=360 (6 hours)] - number of minutes the session
  *   should last for
+ * @param {string} [sslKey] - ssl key to use to secure the connection. Only
+ *   valid if both sslKey and sslCertificate are included. If value is a
+ *   filename, that file is read and parsed
+ * @param {string} [sslCertificate] - ssl certificate  to use to secure the
+ *   connection. Only valid if both sslKey and sslCertificate are included. If
+ *   value is a filename, that file is read and parsed
  * @param {boolean} [verbose] - if truthy, prints information as it works
  * @return {object} express app
  */
@@ -79,9 +86,20 @@ module.exports = (config = {}) => {
   if (useSSL) {
     // Use HTTPS
 
-    // Prep certificates
-    const key = config.sslKey;
-    const cert = config.sslCertificate;
+    // Read in files if they're not already read in
+    let key;
+    try {
+      key = fs.readFileSync(config.sslKey, 'utf-8');
+    } catch (err) {
+      key = config.sslKey;
+    }
+    let cert;
+    try {
+      cert = fs.readFileSync(config.sslCertificate, 'utf-8');
+    } catch (err) {
+      cert = config.sslCertificate;
+    }
+
     // Parse CA certificates
     let ca = config.sslCA || [];
     // If file isn't split already, split it
