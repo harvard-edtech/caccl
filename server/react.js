@@ -9,9 +9,11 @@ const initCACCL = require('.');
 
 module.exports = (config = {}) => {
   const newConfig = config;
+  newConfig.port = newConfig.port || 443;
 
   // Detect development environment
   let thisIsDevEnvironment;
+  let usingSelfSignedCert;
   // > Attempt to read development/test accessToken
   const initialWorkingDirectory = process.env.INIT_CWD;
   let devAccessToken;
@@ -58,16 +60,18 @@ module.exports = (config = {}) => {
     newConfig.clientOrigin = 'http://localhost:3000';
 
     // Use self-signed certificates by default
-    if (!newConfig.sslKey) {
+    if (!newConfig.sslKey && !newConfig.sslCertificate) {
       newConfig.sslKey = path.join(__dirname, 'self-signed-certs/key.pem');
-    }
-    if (!newConfig.sslCertificate) {
       newConfig.sslCertificate = path.join(__dirname, 'self-signed-certs/cert.pem');
+
+      usingSelfSignedCert = true;
+
+      console.log('\nNote: we\'re using a self-signed certificate!');
+      console.log(`- Please visit https://localhost:${newConfig.port}/verify to make sure the certificate is accepted by your browser`);
     }
   }
 
   // Initialize CACCL
-  newConfig.port = newConfig.port || 443;
   const app = initCACCL(newConfig);
 
   // If production, serve built client app
@@ -78,6 +82,13 @@ module.exports = (config = {}) => {
     // Send frontend
     app.get('/', (req, res) => {
       res.sendFile(path.join(initialWorkingDirectory, 'client', 'build', 'index.html'));
+    });
+  }
+
+  // Add route for verifying self-signed certificate
+  if (usingSelfSignedCert) {
+    app.get('/verify', (req, res) => {
+      return res.send('Certificate accepted!');
     });
   }
 };
