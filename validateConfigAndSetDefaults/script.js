@@ -1,4 +1,4 @@
-const initPrint = require('./helpers/initPrint.js');
+const initPrint = require('./helpers/initPrint');
 
 module.exports = (oldConfig) => {
   const config = oldConfig;

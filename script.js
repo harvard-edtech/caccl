@@ -1,5 +1,6 @@
 const API = require('caccl-api');
-const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/script.js');
+
+const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/script');
 
 module.exports = (oldConfig) => {
   // Validate config

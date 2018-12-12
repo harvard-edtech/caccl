@@ -5,7 +5,7 @@ const http = require('http');
 const https = require('https');
 const randomstring = require('randomstring');
 
-const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint.js');
+const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
 
 /**
  * Creates a new express app with memory-based session, listening on env PORT or

@@ -3,7 +3,7 @@ const initAuthorizer = require('caccl-authorizer');
 const initLTIManager = require('caccl-lti');
 const initAPIForwarding = require('caccl-api-forwarder');
 
-const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/server.js');
+const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/server');
 
 /**
  * Initializes the CACCL library

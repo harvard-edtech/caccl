@@ -1,6 +1,6 @@
-const initPrint = require('./helpers/initPrint.js');
+const initPrint = require('./helpers/initPrint');
 
-const genExpressApp = require('../genExpressApp.js');
+const genExpressApp = require('../genExpressApp');
 
 module.exports = (oldConfig) => {
   const config = oldConfig;

@@ -1,5 +1,6 @@
-const API = require('caccl-api'); // TODO: use real module
-const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/client.js');
+const API = require('caccl-api');
+
+const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/client');
 
 /**
  * Initializes the CACCL library
