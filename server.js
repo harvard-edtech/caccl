@@ -1,7 +1,7 @@
-const API = require('../caccl-api'); // TODO: use real module
-const initAuthorizer = require('../caccl-authorizer'); // TODO: use real module
-const initLTIManager = require('../caccl-lti'); // TODO: use real module
-const initAPIForwarding = require('../caccl-api-forwarder'); // TODO: use real module
+const API = require('caccl-api');
+const initAuthorizer = require('caccl-authorizer');
+const initLTIManager = require('caccl-lti');
+const initAPIForwarding = require('caccl-api-forwarder');
 
 const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/server.js');
 
@@ -31,6 +31,8 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ser
  * @param {string} [sslCertificate] - ssl certificate  to use to secure the
  *   connection. Only valid if both sslKey and sslCertificate are included. Only
  *   valid if app is excluded
+ * @param {string} [clientOrigin] - the origin of the client (to allow CORS),
+ *   not required if the client is served on the same origin
  * @param {string|array.<string>} [sslCA] - certificate chain linking a
  *   certificate authority to our ssl certificate. If string, certificates will
  *   be automatically split. Only valid if app is excluded
@@ -108,6 +110,19 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/ser
 module.exports = (oldConfig = {}) => {
   // Validate config
   const config = validateConfigAndSetDefaults(oldConfig);
+
+  // Set up CORS
+  if (config.clientOrigin) {
+    config.app.use((req, res, next) => {
+      res.header('Access-Control-Allow-Origin', config.clientOrigin);
+      res.setHeader('Access-Control-Allow-Credentials', true);
+      res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+      );
+      next();
+    });
+  }
 
   /**
    * Adds the api to a request object, using the canvasHost and accessToken

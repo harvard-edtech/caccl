@@ -1,4 +1,4 @@
-const API = require('../caccl-api'); // TODO: use real module
+const API = require('caccl-api');
 const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/script.js');
 
 module.exports = (oldConfig) => {
