@@ -38,6 +38,7 @@ module.exports = (config = {}) => {
     newConfig.clientOrigin = clientOrigin;
     newConfig.accessToken = devAccessToken;
   }
+  newConfig.port = newConfig.port || 443;
   const app = initCACCL(newConfig);
 
   // If production, serve built client app
