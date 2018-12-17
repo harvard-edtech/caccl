@@ -29,7 +29,7 @@
   "homepage": "https://github.com/harvard-edtech/caccl#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "caccl-api": "^1.0.4",
+    "caccl-api": "^1.0.5",
     "caccl-api-forwarder": "^1.0.1",
     "caccl-authorizer": "^1.0.1",
     "caccl-lti": "^1.0.0",
