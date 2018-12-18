@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -82,22 +83,45 @@ module.exports = (config = {}) => {
   }));
 
   // Start Server
-  const useSSL = (config.sslKey && config.sslCertificate);
+  const needSSL = (config.port && config.port === 443);
+  const useSSL = (
+    needSSL
+    || (config.sslKey && config.sslCertificate)
+  );
   if (useSSL) {
     // Use HTTPS
+
+    // Use self-signed certificates if needed
+    let {
+      sslKey,
+      sslCertificate,
+    } = config;
+    if (!sslKey || !sslCertificate) {
+      // Use self-signed certificates
+      sslKey = path.join(__dirname, 'server/self-signed-certs/key.pem');
+      sslCertificate = path.join(__dirname, 'server/self-signed-certs/cert.pem');
+
+      console.log('\nNote: we\'re using a self-signed certificate!');
+      console.log(`- Please visit https://localhost:${config.port}/verifycert to make sure the certificate is accepted by your browser\n`);
+
+      // Add route for verifying self-signed certificate
+      app.get('/verifycert', (req, res) => {
+        return res.send('Certificate accepted!');
+      });
+    }
 
     // Read in files if they're not already read in
     let key;
     try {
-      key = fs.readFileSync(config.sslKey, 'utf-8');
+      key = fs.readFileSync(sslKey, 'utf-8');
     } catch (err) {
-      key = config.sslKey;
+      key = sslKey;
     }
     let cert;
     try {
-      cert = fs.readFileSync(config.sslCertificate, 'utf-8');
+      cert = fs.readFileSync(sslCertificate, 'utf-8');
     } catch (err) {
-      cert = config.sslCertificate;
+      cert = sslCertificate;
     }
 
     // Parse CA certificates

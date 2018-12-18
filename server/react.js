@@ -13,19 +13,21 @@ module.exports = (config = {}) => {
 
   // Detect development environment
   let thisIsDevEnvironment;
-  let usingSelfSignedCert;
+  const forceProd = process.env.PROD;
   // > Attempt to read development/test accessToken
   const initialWorkingDirectory = process.env.INIT_CWD;
   let devAccessToken;
-  try {
-    const tokenPath = path.join(initialWorkingDirectory, 'devAccessToken.txt');
-    devAccessToken = fs.readFileSync(tokenPath, 'utf-8');
+  if (!forceProd) {
+    try {
+      const tokenPath = path.join(initialWorkingDirectory, 'devAccessToken.txt');
+      devAccessToken = fs.readFileSync(tokenPath, 'utf-8');
 
-    // Access token was read! Yes, this is the development environment.
-    thisIsDevEnvironment = true;
-  } catch (err) {
-    // This is not the development environment
-    thisIsDevEnvironment = false;
+      // Access token was read! Yes, this is the development environment.
+      thisIsDevEnvironment = true;
+    } catch (err) {
+      // This is not the development environment
+      thisIsDevEnvironment = false;
+    }
   }
 
   // Change config for dev environment
@@ -33,7 +35,7 @@ module.exports = (config = {}) => {
     /* eslint no-console: "off" */
     console.log('\nRunning as a development server:');
     console.log('- API requests will be authenticated with the access token in devAccessToken.txt');
-    console.log('- React servers on localhost:3000 will be allowed to connect to this server\n');
+    console.log('- React servers on localhost:3000 will be allowed to connect to this server');
 
     // Use access token as default
     if (!newConfig.accessToken) {
@@ -58,17 +60,6 @@ module.exports = (config = {}) => {
 
     // Set up CORS for the react client
     newConfig.clientOrigin = 'http://localhost:3000';
-
-    // Use self-signed certificates by default
-    if (!newConfig.sslKey && !newConfig.sslCertificate) {
-      newConfig.sslKey = path.join(__dirname, 'self-signed-certs/key.pem');
-      newConfig.sslCertificate = path.join(__dirname, 'self-signed-certs/cert.pem');
-
-      usingSelfSignedCert = true;
-
-      console.log('\nNote: we\'re using a self-signed certificate!');
-      console.log(`- Please visit https://localhost:${newConfig.port}/verify to make sure the certificate is accepted by your browser`);
-    }
   }
 
   // Initialize CACCL
@@ -82,13 +73,6 @@ module.exports = (config = {}) => {
     // Send frontend
     app.get('/', (req, res) => {
       res.sendFile(path.join(initialWorkingDirectory, 'client', 'build', 'index.html'));
-    });
-  }
-
-  // Add route for verifying self-signed certificate
-  if (usingSelfSignedCert) {
-    app.get('/verify', (req, res) => {
-      return res.send('Certificate accepted!');
     });
   }
 };

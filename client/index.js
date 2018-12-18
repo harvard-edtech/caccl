@@ -30,10 +30,14 @@ module.exports = (oldConfig = {}) => {
   const config = validateConfigAndSetDefaults(oldConfig);
 
   // Set up dev environment (if applicable)
+  const thisIsDevEnvironment = (
+    !process.env.PROD
+    && process.env.NODE_ENV === 'development'
+  );
   const devServerHost = (
-    process.env.NODE_ENV === 'development'
+    thisIsDevEnvironment
       ? 'localhost'
-      : undefined
+      : null
   );
 
 
