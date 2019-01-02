@@ -183,7 +183,7 @@ module.exports = (oldConfig = {}) => {
       redirectToAfterLaunch: config.redirectToAfterLaunch,
       nonceStore: config.nonceStore,
       authorizePath: config.authorizePath,
-      authorizeOnLaunch: config.authorizeOnLaunch,
+      disableAuthorizeOnLaunch: config.disableAuthorizeOnLaunch,
     });
   }
 
