@@ -3,10 +3,10 @@ The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL): an all-i
 
 ## Guides:
 
-If you're building a [React](https://reactjs.org) app, see the [using CACCL with React](https://github.com/harvard-edtech/caccl-api/blob/master/docs/react.md) guide.
+If you're building a [React](https://reactjs.org) app, see the [using CACCL with React](https://github.com/harvard-edtech/caccl/blob/master/docs/react.md) guide.
 
 Otherwise, CACCL easily supports three types of programs:
 
-- [Node.js Script](https://github.com/harvard-edtech/caccl-api/blob/master/docs/script.md)
-- [Express Server](https://github.com/harvard-edtech/caccl-api/blob/master/docs/server.md)
-- [Client](https://github.com/harvard-edtech/caccl-api/blob/master/docs/client.md)
+- [Node.js Script](https://github.com/harvard-edtech/caccl/blob/master/docs/script.md)
+- [Express Server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md)
+- [Client](https://github.com/harvard-edtech/caccl/blob/master/docs/client.md)
