@@ -39,13 +39,13 @@ cd client
 npm i --save caccl
 ```
 
-Follow [instructions for using CACCL on the server](https://github.com/harvard-edtech/caccl-api/blob/master/docs/server.md), but use the following import instead:
+Follow [instructions for using CACCL on the server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md), but use the following import instead:
 
 ```js
 const initCACCL = require('caccl/server/react');
 ```
 
-Follow [instructions for using CACCL on the client](https://github.com/harvard-edtech/caccl-api/blob/master/docs/client.md).
+Follow [instructions for using CACCL on the client](https://github.com/harvard-edtech/caccl/blob/master/docs/client.md).
 
 ## Step 4: Add shortcuts to package.json
 
