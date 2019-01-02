@@ -39,8 +39,11 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/se
  *   be automatically split. Only valid if app is excluded
  *
  * API:
- * @param {boolean} [disableServerSideAPI] - if falsy, automatically adds
+ * @param {boolean} [disableServerSideAPI] - if false, automatically adds
  *   req.api to routes encapsulated by routesWithAPI
+ * @param {array.<string>} [routesWithAPI=['*']] - the list of routes where the
+ *   api should be added to as req.api. Only valid if disableServerSideAPI is
+ *   false
  * @param {string} [accessToken] - a default access token to apply to all
  *   requests
  * @param {string} [canvasHost=canvas.instructure.com] - a default canvas host
@@ -66,9 +69,6 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/se
  *   authorization when the user visits authorizePath
  * @param {object} [developerCredentials] - canvas app developer credentials in
  *   the form { client_id, client_secret }. Required if authorization is enabled
- * @param {array.<string>} [routesWithAPI=['*']] - the list of routes where the
- *   api should be added to as req.api. Only valid if enableServerSideAPI is
- *   truthy
  * @param {string} [defaultAuthorizedRedirect='/'] - the
  *   default route to visit after authorization is complete (you can override
  *   this value for a specific authorization call by including query.next or
