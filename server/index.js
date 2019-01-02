@@ -96,7 +96,7 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/se
  *   at launchPath
  * @param {object} [installationCredentials] - installation consumer credentials
  *   to use to verify LTI launch requests in the form
- *   { consumer_key, consumer_secret}. Required if type is 'server'
+ *   { consumer_key, consumer_secret}
  * @param {string} [launchPath=/launch] - the path to accept POST launch
  *   requests from Canvas
  * @param {string} [redirectToAfterLaunch=/] - the path to
@@ -182,7 +182,7 @@ module.exports = (oldConfig = {}) => {
       launchPath: config.launchPath,
       redirectToAfterLaunch: config.redirectToAfterLaunch,
       nonceStore: config.nonceStore,
-      authorizePath: config.authorizePath,
+      authorizePath: config.launchPath,
       disableAuthorizeOnLaunch: config.disableAuthorizeOnLaunch,
     });
   }
