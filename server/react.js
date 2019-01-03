@@ -75,4 +75,6 @@ module.exports = (config = {}) => {
       res.sendFile(path.join(initialWorkingDirectory, 'client', 'build', 'index.html'));
     });
   }
+
+  return app;
 };
