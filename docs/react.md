@@ -51,15 +51,12 @@ Follow [instructions for using CACCL on the client](https://github.com/harvard-e
 
 ```json
 {
-    ...
     "scripts": {
         "prod": "export PROD=true;npm start",
         "dev:server": "npm start",
-        "dev:client": "cd client; npm start"
+        "dev:client": "cd client; npm start",
         "build": "cd client;npm run build"
-        ...
     }
-    ...
 }
 ```
 
