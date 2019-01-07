@@ -22,7 +22,7 @@ module.exports = (config = {}) => {
       devAccessToken = fs.readFileSync(tokenPath, 'utf-8');
     } catch (err) {
       // Could not read the access token!
-      console.lot(`Could not find a dev access token at ${tokenPath}`);
+      console.log(`Note: could not find a dev access token at ${tokenPath}`);
     }
   }
 

@@ -52,7 +52,7 @@ Follow [instructions for using CACCL on the client](https://github.com/harvard-e
 ```json
 {
     "scripts": {
-      "start": "node server.js",
+      "start": "node index.js",
       "build": "cd ./client;npm run build",
       "dev:server": "export DEV=true;npm start",
       "dev:client": "export DEV=true;cd client;npm start"

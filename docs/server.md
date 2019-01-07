@@ -20,8 +20,8 @@ When initializing CACCL, you can pass in many different configuration options to
 
 ### Express Configuration
 
-Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :---
+| Config Option | Type | Description | Default |
+| :--- | :--- | :--- | :--- | :--- |
 sessionSecret | string | the session secret to use when encrypting sessions | random string
 cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
 sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
@@ -38,7 +38,7 @@ Config Option | Type | Description | Default
 :--- | :--- | :--- | :--- | :--- | :---
 app | express server app | the express app to add routes to | optional | new express app
 
-**Note:** If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session. 
+**Note:** If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
 
 ### API Configuration
 
@@ -109,7 +109,7 @@ defaultAuthorizedRedirect | string | the default route to redirect the user to a
 tokenStore | object | null to turn off storage of refresh tokens or custom token store of form `{ get(key), set(key, val) }` where both get and set functions return promises | memory token store
 simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET) | `false`
 
-**Note:** `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. 
+**Note:** `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false.
 
 ### LTI Configuration
 
