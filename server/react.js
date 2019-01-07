@@ -12,21 +12,17 @@ module.exports = (config = {}) => {
   newConfig.port = newConfig.port || 443;
 
   // Detect development environment
-  let thisIsDevEnvironment;
-  const forceProd = process.env.PROD;
+  const thisIsDevEnvironment = process.env.DEV;
   // > Attempt to read development/test accessToken
   const initialWorkingDirectory = process.env.INIT_CWD;
   let devAccessToken;
-  if (!forceProd) {
+  if (thisIsDevEnvironment) {
+    const tokenPath = path.join(initialWorkingDirectory, 'devAccessToken.txt');
     try {
-      const tokenPath = path.join(initialWorkingDirectory, 'devAccessToken.txt');
       devAccessToken = fs.readFileSync(tokenPath, 'utf-8');
-
-      // Access token was read! Yes, this is the development environment.
-      thisIsDevEnvironment = true;
     } catch (err) {
-      // This is not the development environment
-      thisIsDevEnvironment = false;
+      // Could not read the access token!
+      console.lot(`Could not find a dev access token at ${tokenPath}`);
     }
   }
 
@@ -34,27 +30,29 @@ module.exports = (config = {}) => {
   if (thisIsDevEnvironment) {
     /* eslint no-console: "off" */
     console.log('\nRunning as a development server:');
-    console.log('- API requests will be authenticated with the access token in devAccessToken.txt');
+    if (devAccessToken) {
+      console.log('- API requests will be authenticated with the access token in devAccessToken.txt');
+      // Use access token as default
+      newConfig.accessToken = devAccessToken;
+    } else {
+      console.log('- API requests will not be authenticated (no dev access token found)');
+    }
     console.log('- React servers on localhost:3000 will be allowed to connect to this server');
 
-    // Use access token as default
-    if (!newConfig.accessToken) {
-      newConfig.accessToken = devAccessToken;
-    }
+    // Add fake developer credentials (so authentication is possible via
+    //   canvas-partial-simulator)
+    console.log('- Developer credentials will be set to: client_id=client_id and client_secret=client_secret');
+    newConfig.developerCredentials = {
+      client_id: 'client_id',
+      client_secret: 'client_secret',
+    };
 
-    // Add fake developer credentials (authentication won't happen)
-    if (!newConfig.developerCredentials) {
-      newConfig.developerCredentials = {
-        client_id: 'no_id',
-        client_secret: 'no_secret',
-      };
-    }
-
-    // Add fake installation credentials (lti launches won't happen)
+    // Add fake installation credentials (so launches are possible via
+    //   canvs-partial-simulator)
     if (!newConfig.installationCredentials) {
       newConfig.installationCredentials = {
-        consumer_key: 'no_consumer_key',
-        consumer_secret: 'no_consumer_secret',
+        consumer_key: 'consumr_key',
+        consumer_secret: 'consumer_secret',
       };
     }
 
@@ -65,8 +63,15 @@ module.exports = (config = {}) => {
   // Initialize CACCL
   const app = initCACCL(newConfig);
 
-  // If production, serve built client app
-  if (!thisIsDevEnvironment) {
+  // Serve the front-end
+  if (thisIsDevEnvironment) {
+    // This is development! Redirect to front-end hosted at localhost:3000
+    app.get('/', (req, res) => {
+      return res.redirect('http://localhost:3000');
+    });
+  } else {
+    // This is production! Serve the build directory
+
     // Serve styles, etc
     app.use(express.static(path.join(initialWorkingDirectory, 'client', 'build')));
 

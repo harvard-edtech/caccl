@@ -52,23 +52,23 @@ Follow [instructions for using CACCL on the client](https://github.com/harvard-e
 ```json
 {
     "scripts": {
-        "prod": "export PROD=true;npm start",
-        "dev:server": "npm start",
-        "dev:client": "cd client; npm start",
-        "build": "cd client;npm run build"
+      "start": "node server.js",
+      "build": "cd ./client;npm run build",
+      "dev:server": "export DEV=true;npm start",
+      "dev:client": "export DEV=true;cd client;npm start"
     }
 }
 ```
 
 #### Production:
 
-Use `npm run prod` to start the production server (remember to build first!).
+Use `npm start` to start the production server (remember to build first!).
 
 #### Development:
 
-For API access, create a `devAccessToken.txt` file in the root directory of your project, store a Canvas access token as its contents, and add it to `.gitignore`.
+If your app requires API access, create a `devAccessToken.txt` file in the root directory of your project, store a Canvas access token as its contents, and add it to `.gitignore`.
 
-Open two terminal windows and start the server in one and the client in the other:
+To start the app, open two terminal windows and start the server in one and the client in the other:
 
 ```bash
 npm run dev:server
