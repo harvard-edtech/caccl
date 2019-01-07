@@ -20,8 +20,8 @@ When initializing CACCL, you can pass in many different configuration options to
 
 ### Express Configuration
 
-| Config Option | Type | Description | Default |
-| :--- | :--- | :--- | :--- | :--- |
+Config Option | Type | Description | Default  
+:--- | :--- | :--- | :--- | :---
 sessionSecret | string | the session secret to use when encrypting sessions | random string
 cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
 sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
