@@ -33,7 +33,7 @@
     "caccl-api": "^1.0.5",
     "caccl-api-forwarder": "^1.0.1",
     "caccl-authorizer": "^1.0.1",
-    "caccl-canvas-partial-simulator": "^1.0.2",
+    "caccl-canvas-partial-simulator": "^1.0.3",
     "caccl-lti": "^1.0.0",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
