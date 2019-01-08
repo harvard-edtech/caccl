@@ -112,6 +112,12 @@ module.exports = (oldConfig = {}) => {
   // Validate config
   const config = validateConfigAndSetDefaults(oldConfig);
 
+  // If this is a development environment, send Canvas requests through the
+  // partially simulated Canvas environment
+  if (process.env.DEV) {
+    config.canvasHost = 'localhost:8088';
+  }
+
   // Set up CORS
   if (config.clientOrigin) {
     config.app.use((req, res, next) => {
