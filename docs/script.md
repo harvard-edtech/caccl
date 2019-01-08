@@ -28,7 +28,7 @@ When initializing CACCL, you can pass in many different configuration options to
 **Note:** configuration options are _optional_ unless otherwise stated
 
 Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :--- | :---
+:--- | :--- | :--- | :---
 canvasHost | string | a default Canvas host to use for requests | canvas.instructure.com
 accessToken | string | a default access token to apply to all requests | none
 sendRequest | function | a function that sends a request to the Canvas API | axios-based request sender

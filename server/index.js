@@ -221,5 +221,15 @@ module.exports = (oldConfig = {}) => {
     });
   }
 
+  // Add launch info support
+  config.app.get(config.apiForwardPathPrefix + '/launchinfo', (req, res) => {
+    const launchInfo = (
+      (req.session && req.session.launchInfo)
+        ? req.session.launchInfo
+        : {}
+    );
+    return res.json(launchInfo);
+  });
+
   return config.app;
 };

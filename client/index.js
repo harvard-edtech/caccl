@@ -1,4 +1,5 @@
 const API = require('caccl-api');
+const axios = require('axios');
 
 const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/client');
 
@@ -24,6 +25,9 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/cl
  * @param {string} [serverHost] - Host name of the server to send forwarded
  *   api requests to. Defaults to no host (send requests to the same host that
  *   is serving the client)
+ * @return {object} { api, getLaunchInfo } where api is a caccl-api instance and
+ *   getLaunchInfo is a function that returns a promise that resolves with a
+ *   json object containing launch info
  */
 module.exports = (oldConfig = {}) => {
   // Validate config
@@ -39,14 +43,15 @@ module.exports = (oldConfig = {}) => {
       ? 'localhost'
       : null
   );
+  const canvasHost = (
+    config.serverHost
+      ? config.serverHost
+      : devServerHost
+  );
 
-
-  return new API({
-    canvasHost: (
-      config.serverHost
-        ? config.serverHost
-        : devServerHost
-    ),
+  // Initialize the API
+  const api = new API({
+    canvasHost,
     cacheType: (
       config.cacheType === undefined
         ? 'memory'
@@ -57,4 +62,25 @@ module.exports = (oldConfig = {}) => {
     defaultItemsPerPage: config.defaultItemsPerPage,
     apiPathPrefix: config.apiForwardPathPrefix,
   });
+
+  // Create a function that fetches launch info from the server
+  let launchInfo;
+  const getLaunchInfo = () => {
+    if (launchInfo) {
+      // Use cached version if possible
+      return launchInfo;
+    }
+    const url = `${canvasHost ? 'https://' : ''}${canvasHost}/${config.apiForwardPathPrefix}launchinfo`;
+    return axios.get(url)
+      .then((response) => {
+        // Cache the launch info
+        launchInfo = response.data;
+        return response.data;
+      });
+  };
+
+  return {
+    api,
+    getLaunchInfo,
+  };
 };

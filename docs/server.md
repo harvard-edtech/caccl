@@ -35,7 +35,7 @@ clientOrigin | string | the origin host of the client (to allow CORS), if differ
 If for any reason you want to create the express server yourself, just pass it in:
 
 Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :---
+:--- | :--- | :--- | :---
 app | express server app | the express app to add routes to | optional | new express app
 
 **Note:** If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
@@ -65,7 +65,7 @@ Either way, see the [caccl-api](https://github.com/harvard-edtech/caccl-api) pro
 #### General API configuration:
 
 Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :---
+:--- | :--- | :--- | :---
 canvasHost | string | a default Canvas host to use for requests | canvas.instructure.com
 dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
 accessToken | string | a default access token to apply to all requests | none
@@ -78,7 +78,7 @@ defaultItemsPerPage | number | the number of items to request on a get request |
 Server-side logic can access the Canvas API easily: when handling a request to one of the routes covered by `routesWithAPI`, use `req.api` to access API functionality (see [caccl-api](https://github.com/harvard-edtech/caccl-api) for guides). If the server doesn't need access to the API, set `disableServerSideAPI = true`.
 
 Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :---
+:--- | :--- | :--- | :---
 disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
 routesWithAPI | string[] | list of routes to add api support to, `*` wildcard supported | all routes
 cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
@@ -89,7 +89,7 @@ cache | object | a custom cache instance (Not required if using 'memory' or 'ses
 Client-side logic must access the Canvas API by forwarding requests through the server. You can customize that process below, or turn it off if the client does not need access to the API: `disableClientSideAPI = true`.
 
 Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :---
+:--- | :--- | :--- | :---
 disableClientSideAPI | boolean | if false, server forwards Canvas API requests | `false`
 apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded api requests. This is the prefix we use to listen for forwarded requests (ex: GET /api/v1/courses is forwarded through the server's /canvas/api/v1/courses route if this is set to "/canvas") | "/canvas"
 
@@ -102,7 +102,7 @@ To access the Canvas API, we need an access token. The best way to acquire one i
 **Requirement:** `developerCredentials` is _required_ unless `disableAuthorization` is true.
 
 Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :---
+:--- | :--- | :--- | :---
 disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
 developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }` | none
 defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
@@ -118,7 +118,7 @@ CACCL automatically accepts LTI launch requests and parses the launch request bo
 **Requirement:** `installationCredentials` is _required_ unless `disableLTI` is true.
 
 Config Option | Type | Description | Default
-:--- | :--- | :--- | :--- | :---
+:--- | :--- | :--- | :---
 disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
 installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`
 redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"

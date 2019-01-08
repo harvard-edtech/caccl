@@ -1,12 +1,13 @@
-# Quickstart: React with Express Backend
+# Quickstart: React + Express
 
 It just takes a few steps to get your React app connected with Canvas using CACCL.
-
-## Step 1: Create a project
 
 > Prerequisites:  
 > • npm (see [this page](https://www.npmjs.com/get-npm) for help)  
 > • git (see [this page](https://gist.github.com/derhuerst/1b15ff4652a867391f03) for help)  
+
+
+## Step 1: Create a project
 
 After creating a new repo for your project, clone it to your machine:
 
@@ -21,33 +22,34 @@ Initialize the npm project and follow instructions:
 npm init
 ```
 
-## Step 2: Create the React client
+Add a `.gitignore` file:
 
 ```bash
-# From the root directory of your project:
+echo "# Ignore node modules"
+echo "node_modules/" >> .gitignore
+echo "# Ignore secret configuration files"
+echo "config/" >> .gitignore
+```
+
+## Step 2: Initialize React
+
+Run in the root directory of your project:
+
+```bash
 npx create-react-app client
 ```
 
 ## Step 3: Install CACCL
 
-Add CACCL to both the server and client:
+Run in the root directory of your project:
 
 ```bash
-# From the root directory of your project:
-npm i --save caccl
+npm install --save caccl
 cd client
-npm i --save caccl
+npm install --save caccl
 ```
 
-Follow [instructions for using CACCL on the server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md), but use the following import instead:
-
-```js
-const initCACCL = require('caccl/server/react');
-```
-
-Follow [instructions for using CACCL on the client](https://github.com/harvard-edtech/caccl/blob/master/docs/client.md).
-
-## Step 4: Add shortcuts to package.json
+## Step 4: Add scripts to package.json
 
 ```json
 {
@@ -60,17 +62,86 @@ Follow [instructions for using CACCL on the client](https://github.com/harvard-e
 }
 ```
 
+## Step 5: Create config files
+
+In the root directory of your project:
+
+```bash
+mkdir config
+echo "module.exports = {" >> config/developerCredentials.js
+echo "  client_id: 'client_id'," >> config/developerCredentials.js
+echo "  client_secret: 'client_secret'," >> config/developerCredentials.js
+echo "};" >> config/developerCredentials.js
+echo "module.exports = {" >> config/installationCredentials.js
+echo "  consumer_key: 'consumer_key'," >> config/installationCredentials.js
+echo "  consumer_secret: 'consumer_secret'," >> config/installationCredentials.js
+echo "};" >> config/installationCredentials.js
+```
+
+On the production server, you'll want to add the actual developer and installation credentials to these configuaration files.
+
+## Step 5: Set up the server
+
+Create an `index.js` file in the root directory of your project:
+
+```bash
+touch index.js
+```
+
+Set its contents to the following:
+
+```js
+const initCACCL = require('caccl/server/react');
+
+const developerCredentials = require('./config/developerCredentials');
+const installationCredentials = require('./config/installationCredentials');
+
+const app = initCACCL({
+  canvasHost: 'canvas.harvard.edu',
+  developerCredentials,
+  installationCredentials,
+});
+```
+
+**More:** for more info on setting up the server, see [instructions for using CACCL on the server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md).
+
+## Step 6: Set up the client
+
+In any React component that needs to access Canvas, add the following:
+
+```js
+import initCACCL from 'caccl/client/cached';
+
+const api = initCACCL();
+```
+
+# Starting the Environment:
+
+
 #### Production:
 
-Use `npm start` to start the production server (remember to build first!).
+1. Build using `npm build`
+2. Start the app using `npm start`
 
 #### Development:
 
-If your app requires API access, create a `devAccessToken.txt` file in the root directory of your project, store a Canvas access token as its contents, and add it to `.gitignore`.
+Add simulated Canvas environment info:
 
-To start the app, open two terminal windows and start the server in one and the client in the other:
+1. Create a `config/devEnvironment.js` file
+2. Store the following contents:
 
-```bash
-npm run dev:server
-npm run dev:client
+```js
+module.exports = {
+  canvasHost: /* an actual Canvas instance */,
+  courseId: /* an actual test course in that instance */,
+  accessToken: /* token for a user that has access to that course */,
+};
 ```
+
+To start the development environment, from the root directory of your project, run each of the following commands in three different terminal windows:
+
+- `npm run dev:canvas` _starts a simulated Canvas instance_
+- `npm run dev:server` _starts the server_
+- `npm run dev:client` _starts the React development environment_
+
+To launch your app, see the first terminal window (canvas) for instructions.
