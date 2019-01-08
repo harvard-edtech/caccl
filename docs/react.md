@@ -56,6 +56,7 @@ npm install --save caccl
     "scripts": {
       "start": "node index.js",
       "build": "cd ./client;npm run build",
+      "dev:canvas": "node ./node_modules/caccl/canvas/startPartialSimulation",
       "dev:server": "export DEV=true;npm start",
       "dev:client": "export DEV=true;cd client;npm start"
     }

@@ -40,8 +40,6 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",
-    "opn": "^5.4.0",
-    "prompt-sync": "^4.1.6",
     "qs": "^6.6.0",
     "randomstring": "^1.1.5"
   },
