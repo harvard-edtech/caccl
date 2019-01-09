@@ -1,5 +1,5 @@
 const API = require('caccl-api');
-const axios = require('axios');
+const sendRequest = require('caccl-send-request');
 
 const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/client');
 
@@ -70,12 +70,14 @@ module.exports = (oldConfig = {}) => {
       // Use cached version if possible
       return launchInfo;
     }
-    const url = `${canvasHost ? 'https://' : ''}${canvasHost}/${config.apiForwardPathPrefix}launchinfo`;
-    return axios.get(url)
-      .then((response) => {
-        // Cache the launch info
-        launchInfo = response.data;
-        return response.data;
+    return sendRequest({
+      host: canvasHost,
+      path: `/${config.apiForwardPathPrefix}launchinfo`,
+      method: 'GET',
+    })
+      .then((data) => {
+        launchInfo = data;
+        return data;
       });
   };
 
