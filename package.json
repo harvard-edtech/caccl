@@ -30,13 +30,13 @@
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "caccl-api": "^1.0.5",
-    "caccl-api-forwarder": "^1.0.4",
-    "caccl-authorizer": "^1.0.3",
-    "caccl-canvas-partial-simulator": "^1.0.3",
+    "caccl-api": "^1.0.7",
+    "caccl-api-forwarder": "^1.0.5",
+    "caccl-authorizer": "^1.0.4",
+    "caccl-canvas-partial-simulator": "^1.0.4",
     "caccl-error": "^1.0.0",
     "caccl-lti": "^1.0.0",
-    "caccl-send-request": "^1.0.5",
+    "caccl-send-request": "^1.0.7",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "fs": "0.0.1-security",
@@ -46,11 +46,11 @@
     "randomstring": "^1.1.5"
   },
   "devDependencies": {
-    "eslint": "^5.10.0",
+    "eslint": "^5.12.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react": "^7.12.3",
     "mocha": "^5.2.0"
   }
 }
