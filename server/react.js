@@ -12,7 +12,10 @@ module.exports = (config = {}) => {
   newConfig.port = newConfig.port || 443;
 
   // Detect development environment
-  const thisIsDevEnvironment = process.env.DEV;
+  const thisIsDevEnvironment = (
+    process.env.DEV
+    || process.env.NODE_ENV === 'development'
+  );
   // > Attempt to read development/test accessToken
   const initialWorkingDirectory = process.env.INIT_CWD;
 

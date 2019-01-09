@@ -114,7 +114,7 @@ module.exports = (oldConfig = {}) => {
 
   // If this is a development environment, send Canvas requests through the
   // partially simulated Canvas environment
-  if (process.env.DEV) {
+  if (process.env.DEV || process.env.NODE_ENV === 'development') {
     config.canvasHost = 'localhost:8088';
   }
 
