@@ -38,10 +38,6 @@ module.exports = (oldConfig = {}) => {
     process.env.NODE_ENV === 'development'
     || process.env.DEV
   );
-  // Set process environment variables
-  if (thisIsDevEnvironment) {
-    process.env.DEV = true;
-  }
   const devServerHost = (
     thisIsDevEnvironment
       ? 'localhost'
