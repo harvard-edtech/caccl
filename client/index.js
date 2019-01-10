@@ -72,7 +72,7 @@ module.exports = (oldConfig = {}) => {
     }
     return sendRequest({
       host: canvasHost,
-      path: `/${config.apiForwardPathPrefix}launchinfo`,
+      path: `${config.apiForwardPathPrefix}/launchinfo`,
       method: 'GET',
     })
       .then((data) => {
