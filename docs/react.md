@@ -156,7 +156,18 @@ const api = initCACCL();
 
 # Starting the Environment:
 
+#### Production:
+
+Run from the root directory of the project:
+
+1. Build using `npm run build`
+2. Start the app using `npm start`
+
+If you see an `EACCES` error, you probably need to run `sudo npm start` instead.
+
 #### Development:
+
+##### Set up the development environment:
 
 Add simulated Canvas environment info:
 
@@ -171,6 +182,39 @@ module.exports = {
 };
 ```
 
+##### Don't have an access token or test course?
+
+1. Get a test course
+
+  - If your school has a Canvas instance (canvas.harvard.edu, for example), use that as your Canvas host. You'll also need your own sandbox course. Contact your school's Canvas admin department or IT. Use `canvas.harvard.edu` as your `canvasHost` during set up (above) in `config/devEnvironment.js`.
+
+  - If you don't have a Canvas instance, visit [canvas.instructure.com](canvas.instructure.com), create an instructor account and create your own test course. Use `canvas.instructure.com` as your `canvasHost` during set up (above) in `config/devEnvironment.js`.
+
+  To find your test course's courseId, visit it in your browser and extract the numerical id directly from the url:  
+  http://canvas.harvard.edu/courses/**courseId**
+
+2. Get an access token
+
+  **Note:** We recommend that you create a "fake" user, add them to your test course, and perform the following steps as that fake user. Your personal access token might have higher privileges than a typical user in the course, so using your personal access token allows your app to accidentally do more damage. Using a "fake" user limits this potential damage.
+
+  a. Visit your Canvas instance and log in.
+
+  b. Click the user picture (top left of the screen).
+
+  c. Click "Settings"
+
+  d. Scroll down and click "+ New Access Token"
+
+  e. Set the purpose to: "Dev Environment for <App Name>"
+
+  f. Leave the expiry blank (or set an expiry but remember to go through this process again once the token expires)
+
+  g. Click "Generate Token"
+
+  h. Save the new token in a secure location. Use this token during set up (above) in `config/devEnvironment.js`.
+
+##### Starting the development environment:
+
 To start the development environment, from the root directory of your project, run each of the following commands in three different terminal windows:
 
 - `npm run dev:canvas` _starts a simulated Canvas instance_
@@ -178,12 +222,3 @@ To start the development environment, from the root directory of your project, r
 - `npm run dev:client` _starts the React development environment_
 
 To launch your app, see the first terminal window (canvas) for instructions.
-
-#### Production:
-
-Run from the root directory of the project:
-
-1. Build using `npm run build`
-2. Start the app using `npm start`
-
-If you see an `EACCES` error, you probably need to run `sudo npm start` instead.
