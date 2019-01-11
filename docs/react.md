@@ -35,10 +35,18 @@ _Note:_ If not familiar with the `npm init` command, here are our recommended va
 Add a `.gitignore` file:
 
 ```bash
-echo "# Ignore node modules >> .gitignore"
-echo "node_modules/" >> .gitignore
-echo "# Ignore secret configuration files >> .gitignore"
-echo "config/" >> .gitignore
+touch .gitignore
+```
+
+...with the following contents:
+
+
+```bash
+# Ignore node modules
+node_modules/
+
+# Ignore configuration files
+config/
 ```
 
 ## Step 2: Initialize React
