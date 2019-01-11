@@ -83,7 +83,7 @@ Create a new `config/` folder:
 mkdir config
 ```
 
-Create two new config files:
+Create three new config files:
 
 ```js
 // config/developerCredentials.js
@@ -101,9 +101,16 @@ module.exports = {
 };
 ```
 
+```js
+// config/canvasDefaults.js
+module.exports = {
+  canvasHost: /* your Canvas host (e.g., canvas.harvard.edu) */,
+};
+```
+
 On the production server, you'll want to add the actual developer and installation credentials to these configuaration files.
 
-## Step 5: Set up the server
+## Step 6: Set up the server
 
 Create an `index.js` file in the root directory of your project:
 
@@ -118,11 +125,12 @@ const initCACCL = require('caccl/server/react');
 
 const developerCredentials = require('./config/developerCredentials');
 const installationCredentials = require('./config/installationCredentials');
+const canvasDefaults = require('./config/canvasDefaults');
 
 const app = initCACCL({
-  canvasHost: 'canvas.harvard.edu',
   developerCredentials,
   installationCredentials,
+  canvasHost: canvasDefaults.canvasHost,
 });
 ```
 
