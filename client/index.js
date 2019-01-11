@@ -76,8 +76,8 @@ module.exports = (oldConfig = {}) => {
       method: 'GET',
     })
       .then((data) => {
-        launchInfo = data;
-        return data;
+        launchInfo = data.body;
+        return launchInfo;
       });
   };
 

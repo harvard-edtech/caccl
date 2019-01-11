@@ -22,12 +22,22 @@ Initialize the npm project and follow instructions:
 npm init
 ```
 
+_Note:_ If not familiar with the `npm init` command, here are our recommended values:
+
+> **package name:** _(leave as is: just press enter)_  
+> **version:** _(leave as is: just press enter)_  
+> **description:** _one sentence describing your project_  
+> **git repository:** _(leave as is: just press enter)_  
+> **keywords:** _comma, separated, keywords, describing, your, project_  
+> **author:** _Your Name_  
+> **license:** _MIT_
+
 Add a `.gitignore` file:
 
 ```bash
-echo "# Ignore node modules"
+echo "# Ignore node modules >> .gitignore"
 echo "node_modules/" >> .gitignore
-echo "# Ignore secret configuration files"
+echo "# Ignore secret configuration files >> .gitignore"
 echo "config/" >> .gitignore
 ```
 
@@ -49,7 +59,9 @@ cd client
 npm install --save caccl
 ```
 
-## Step 4: Add scripts to package.json
+## Step 4: Add more scripts to your root package.json
+
+In the root directory of your project (`package.json`, not `client/package.json`):
 
 ```json
 {
@@ -65,18 +77,28 @@ npm install --save caccl
 
 ## Step 5: Create config files
 
-In the root directory of your project:
+Create a new `config/` folder:
 
 ```bash
 mkdir config
-echo "module.exports = {" >> config/developerCredentials.js
-echo "  client_id: 'client_id'," >> config/developerCredentials.js
-echo "  client_secret: 'client_secret'," >> config/developerCredentials.js
-echo "};" >> config/developerCredentials.js
-echo "module.exports = {" >> config/installationCredentials.js
-echo "  consumer_key: 'consumer_key'," >> config/installationCredentials.js
-echo "  consumer_secret: 'consumer_secret'," >> config/installationCredentials.js
-echo "};" >> config/installationCredentials.js
+```
+
+Create two new config files:
+
+```js
+// config/developerCredentials.js
+module.exports = {
+  client_id: 'client_id',
+  client_secret: 'client_secret',
+};
+```
+
+```js
+// config/installationCredentials.js
+module.exports = {
+  client_id: 'client_id',
+  client_secret: 'client_secret',
+};
 ```
 
 On the production server, you'll want to add the actual developer and installation credentials to these configuaration files.
@@ -106,7 +128,7 @@ const app = initCACCL({
 
 **More:** for more info on setting up the server, see [instructions for using CACCL on the server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md).
 
-## Step 6: Set up the client
+# Connecting a React Component to Canvas
 
 In any React component that needs to access Canvas, add the following:
 
@@ -117,12 +139,6 @@ const api = initCACCL();
 ```
 
 # Starting the Environment:
-
-
-#### Production:
-
-1. Build using `npm build`
-2. Start the app using `npm start`
 
 #### Development:
 
@@ -146,3 +162,12 @@ To start the development environment, from the root directory of your project, r
 - `npm run dev:client` _starts the React development environment_
 
 To launch your app, see the first terminal window (canvas) for instructions.
+
+#### Production:
+
+Run from the root directory of the project:
+
+1. Build using `npm run build`
+2. Start the app using `npm start`
+
+If you see an `EACCES` error, you probably need to run `sudo npm start` instead.

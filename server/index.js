@@ -131,6 +131,16 @@ module.exports = (oldConfig = {}) => {
     });
   }
 
+  // Add launch info support
+  config.app.get(config.apiForwardPathPrefix + '/launchinfo', (req, res) => {
+    const launchInfo = (
+      (req.session && req.session.launchInfo)
+        ? req.session.launchInfo
+        : {}
+    );
+    return res.json(launchInfo);
+  });
+
   /**
    * Adds the api to a request object, using the canvasHost and accessToken
    *   stored in the session (if possible), falling back on defaults set in
@@ -226,16 +236,6 @@ module.exports = (oldConfig = {}) => {
       numRetries: config.defaultNumRetries,
     });
   }
-
-  // Add launch info support
-  config.app.get(config.apiForwardPathPrefix + '/launchinfo', (req, res) => {
-    const launchInfo = (
-      (req.session && req.session.launchInfo)
-        ? req.session.launchInfo
-        : {}
-    );
-    return res.json(launchInfo);
-  });
 
   return config.app;
 };
