@@ -96,8 +96,8 @@ module.exports = {
 ```js
 // config/installationCredentials.js
 module.exports = {
-  client_id: 'client_id',
-  client_secret: 'client_secret',
+  consumer_key: 'consumer_key',
+  consumer_secret: 'consumer_secret',
 };
 ```
 
