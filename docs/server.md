@@ -69,7 +69,7 @@ Config Option | Type | Description | Default
 canvasHost | string | a default Canvas host to use for requests | canvas.instructure.com
 dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
 accessToken | string | a default access token to apply to all requests | none
-sendRequest | function | a function that sends a request to the Canvas API | axios-based request sender
+sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
 defaultNumRetries | number | the number of times to retry failed requests | 3
 defaultItemsPerPage | number | the number of items to request on a get request | 100
 
@@ -82,7 +82,7 @@ Config Option | Type | Description | Default
 disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
 routesWithAPI | string[] | list of routes to add api support to, `*` wildcard supported | all routes
 cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
-cache | [Cache](https://github.com/harvard-edtech/caccl/blob/master/docs/types/cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
+cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
 
 #### Client-side API forwarding configuration:
 

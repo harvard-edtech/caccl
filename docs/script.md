@@ -31,8 +31,8 @@ Config Option | Type | Description | Default
 :--- | :--- | :--- | :---
 canvasHost | string | a default Canvas host to use for requests | canvas.instructure.com
 accessToken | string | a default access token to apply to all requests | none
-sendRequest | function | a function that sends a request to the Canvas API | axios-based request sender
+sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
 defaultNumRetries | number | the number of times to retry failed requests | 3
 defaultItemsPerPage | number | the number of items to request on a get request | 100
 cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
-cache | object | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
+cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType: those caches are built-in) | none
