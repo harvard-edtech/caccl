@@ -82,7 +82,7 @@ Config Option | Type | Description | Default
 disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
 routesWithAPI | string[] | list of routes to add api support to, `*` wildcard supported | all routes
 cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
-cache | object | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
+cache | [Cache](https://github.com/harvard-edtech/caccl/blob/master/docs/types/cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
 
 #### Client-side API forwarding configuration:
 
