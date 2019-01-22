@@ -221,7 +221,7 @@ module.exports = (oldConfig = {}) => {
       defaultAuthorizedRedirect: config.defaultAuthorizedRedirect,
       autoRefreshRoutes: config.routesWithAPI,
       tokenStore: config.tokenStore,
-      onManualLogin: addAPIToReq,
+      onLogin: addAPIToReq,
       simulateLaunchOnAuthorize: config.simulateLaunchOnAuthorize,
     });
   }
