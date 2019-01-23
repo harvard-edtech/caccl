@@ -225,7 +225,11 @@ module.exports = (oldConfig = {}) => {
     );
     return res.json({
       launchInfo,
-      launched: !!(req.session || req.session.launchInfo),
+      launched: !!(
+        req.session
+        && req.session.launchInfo
+        && Object.keys(req.session.launchInfo).length
+      ),
       authorized: !!req.api,
     });
   });
