@@ -131,20 +131,6 @@ module.exports = (oldConfig = {}) => {
     });
   }
 
-  // Add launch info support
-  config.app.get(config.apiForwardPathPrefix + '/status', (req, res) => {
-    const launchInfo = (
-      (req.session && req.session.launchInfo)
-        ? req.session.launchInfo
-        : {}
-    );
-    return res.json({
-      launchInfo,
-      launched: !!(req.session || req.session.launchInfo),
-      authorized: !!req.api,
-    });
-  });
-
   /**
    * Adds the api to a request object, using the canvasHost and accessToken
    *   stored in the session (if possible), falling back on defaults set in
@@ -229,6 +215,20 @@ module.exports = (oldConfig = {}) => {
       simulateLaunchOnAuthorize: config.simulateLaunchOnAuthorize,
     });
   }
+
+  // Add launch status support
+  config.app.get(config.apiForwardPathPrefix + '/status', (req, res) => {
+    const launchInfo = (
+      (req.session && req.session.launchInfo)
+        ? req.session.launchInfo
+        : {}
+    );
+    return res.json({
+      launchInfo,
+      launched: !!(req.session || req.session.launchInfo),
+      authorized: !!req.api,
+    });
+  });
 
   // Add client-side api support (api forwarding)
   if (!config.disableClientSideAPI) {
