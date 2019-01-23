@@ -64,25 +64,20 @@ module.exports = (oldConfig = {}) => {
   });
 
   // Create a function that fetches launch info from the server
-  let launchInfo;
-  const getLaunchInfo = () => {
-    if (launchInfo) {
-      // Use cached version if possible
-      return launchInfo;
-    }
+  // Resolves with: { launched, authorized, launchInfo }
+  const getStatus = () => {
     return sendRequest({
       host: canvasHost,
-      path: `${config.apiForwardPathPrefix}/launchinfo`,
+      path: `${config.apiForwardPathPrefix}/status`,
       method: 'GET',
     })
       .then((data) => {
-        launchInfo = data.body;
-        return launchInfo;
+        return data.body;
       });
   };
 
   return {
     api,
-    getLaunchInfo,
+    getStatus,
   };
 };
