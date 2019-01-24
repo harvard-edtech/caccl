@@ -3,6 +3,27 @@ const path = require('path');
 
 /* eslint-disable no-console */
 
+// Printing helpers
+const W = process.stdout.columns;
+// Calculates the number of spaces on the left of a centered line
+const leftBuffer = (message) => {
+  return (Math.floor(W / 2) - 1 - Math.ceil(message.length / 2));
+};
+// Calculates the number of spaces on the right of a centered line
+const rightBuffer = (message) => {
+  return (Math.ceil(W / 2) - 1 - Math.floor(message.length / 2));
+};
+// Centers and surrounds text with a border (on left and right)
+const printMiddleLine = (str) => {
+  console.log(
+    '\u2551'
+    + ' '.repeat(leftBuffer(str))
+    + str
+    + ' '.repeat(rightBuffer(str))
+    + '\u2551'
+  );
+};
+
 // Attempt to get the environment config
 const launchDirectory = process.env.INIT_CWD;
 const devEnvPath = path.join(launchDirectory, 'config/devEnvironment.js');
@@ -56,8 +77,19 @@ initPartialSimulation({
   launchURL,
   onSuccess: (port) => {
     // Simulation started
-    console.log('\n\nPartially-simulated Canvas environment running!');
-    console.log('To launch your app, visit:');
-    console.log(`https://localhost:${port}/courses/:courseid`);
+    console.log('\n\n');
+    // Print top line
+    console.log('\u2554' + '\u2550'.repeat(W - 2) + '\u2557');
+
+    // Print middle lines
+    printMiddleLine('Partially-simulated Canvas environment running!');
+    printMiddleLine('To launch your app, visit:');
+    printMiddleLine(`https://localhost:${port}/courses/${courseId}`);
+
+    // Print bottom line
+    console.log('\u255A' + '\u2550'.repeat(W - 2) + '\u255D');
+
+    console.log('\nTo launch from other courses, visit:');
+    console.log(`https://localhost:${port}/courses/<courseid>`);
   },
 });
