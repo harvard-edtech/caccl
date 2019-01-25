@@ -9,10 +9,13 @@ Starting a new project with caccl is easy:
 
 You'll be prompted to choose one of the following project types:
 
-Project Type | Description
-:--- | :---
-React + Express | React front-end with a simple Express back-end
-Node.js Script | A simple Node.js script that runs in terminal
+Project Type | Client | Description
+:--- | :--- | :---
+React + Express | React (clientside) | React front-end with a simple Express back-end
+Node.js Script | Terminal |  A simple Node.js script that runs in terminal
+EJS + Express server-side app | EJS (server rendered) | A server-side app with an Express server and UI templating with EJS
+
+Choose a type and follow instructions.
 
 ## Manual Set Up:
 
