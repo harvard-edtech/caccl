@@ -76,8 +76,20 @@ module.exports = (oldConfig = {}) => {
       });
   };
 
+  // Give client a function for calling the server
+  // Client should use this to call the server so that the client contacts the
+  // correct server while using the development environment
+  const clientSendRequest = (opts = {}) => {
+    const newOpts = opts;
+    if (!opts.host) {
+      newOpts.host = canvasHost;
+    }
+    return sendRequest(newOpts);
+  };
+
   return {
     api,
     getStatus,
+    sendRequest: clientSendRequest,
   };
 };
