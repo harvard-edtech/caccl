@@ -62,7 +62,7 @@ module.exports = (config = {}) => {
     print.subsubtitle(`Using session secret: ${sessionSecret}`);
   }
   // > Create cookie name
-  const cookieName = config.cookieName || `CACCL-based-app-session-${new Date().getTime()}-${randomstring.generate(10)}`;
+  const cookieName = config.cookieName || `CACCL-based-app-session-${Date.now()}-${randomstring.generate(10)}`;
   if (config.verbose) {
     print.subsubtitle(`Using cookie name: ${cookieName}`);
   }
