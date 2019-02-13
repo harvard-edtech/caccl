@@ -28,7 +28,7 @@ Config Option | Type | Description | Default
 :--- | :--- | :--- | :---
 serverHost | string | the hostname of the server | same as client
 defaultNumRetries | number | Number of times to retry a request | 3
-defaultItemsPerPage | number | Number of items to request on a get request | 100
+itemsPerPage | number | Number of items to request on a get request | 100
 cacheType | string | If 'memory', cache is stored in memory. If 'session', cache is stored in express the session | "memory"
 cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/docs/Cache.md) | Custom cache manager instance. Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
 sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)

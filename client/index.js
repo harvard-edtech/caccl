@@ -16,7 +16,7 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/cl
  *   the Canvas API. Defaults to axios-based request sender (which we recommend)
  * @param {number} [defaultNumRetries] - Number of times to retry a
  *   request
- * @param {number} [defaultItemsPerPage] - Number of items to request
+ * @param {number} [itemsPerPage] - Number of items to request
  *   on a get request
  * @param {string} [apiForwardPathPrefix=/canvas] - API forwarding path prefix
  *   to add to all forwarded api requests. This is the prefix we
@@ -59,7 +59,7 @@ module.exports = (oldConfig = {}) => {
     ),
     sendRequest: config.sendRequest,
     defaultNumRetries: config.defaultNumRetries,
-    defaultItemsPerPage: config.defaultItemsPerPage,
+    itemsPerPage: config.itemsPerPage,
     apiPathPrefix: config.apiForwardPathPrefix,
   });
 

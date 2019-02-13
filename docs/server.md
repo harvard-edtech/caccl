@@ -71,7 +71,7 @@ dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via L
 accessToken | string | a default access token to apply to all requests | none
 sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
 defaultNumRetries | number | the number of times to retry failed requests | 3
-defaultItemsPerPage | number | the number of items to request on a get request | 100
+itemsPerPage | number | the number of items to request on a get request | 100
 
 #### Server-side API configuration:
 

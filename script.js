@@ -13,7 +13,7 @@ module.exports = (oldConfig) => {
     cacheType: config.cacheType,
     cache: config.cache,
     sendRequest: config.sendRequest,
-    defaultNumRetries: config.defaultNumRetries,
-    defaultItemsPerPage: config.defaultItemsPerPage,
+    numRetries: config.numRetries,
+    itemsPerPage: config.itemsPerPage,
   });
 };

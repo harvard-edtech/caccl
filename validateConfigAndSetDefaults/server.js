@@ -219,19 +219,19 @@ module.exports = (oldConfig) => {
     print.variable('defaultNumRetries', false, `we'll retry failed requests ${config.defaultNumRetries} time(s)`);
   }
 
-  // API defaultItemsPerPage
-  if (config.defaultItemsPerPage) {
+  // API itemsPerPage
+  if (config.itemsPerPage) {
     if (config.disableServerSideAPI) {
-      print.variable('defaultItemsPerPage', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
+      print.variable('itemsPerPage', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
     } else {
-      print.variable('defaultItemsPerPage', true, 'we\'ll include this many items per page in GET requests');
+      print.variable('itemsPerPage', true, 'we\'ll include this many items per page in GET requests');
     }
   } else if (config.disableServerSideAPI) {
-    print.variable('defaultItemsPerPage', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
+    print.variable('itemsPerPage', true, 'this will be ignored: the server-side api is disabled. If you\'re trying to configure this for the client-side api, you should include this option when configuring the client-side instance of CACCL');
   } else {
-    // Set defaultItemsPerPage to 100
-    config.defaultItemsPerPage = 100;
-    print.variable('defaultItemsPerPage', false, `we'll include ${config.defaultItemsPerPage} item(s) per page in GET requests`);
+    // Set itemsPerPage to 100
+    config.itemsPerPage = 100;
+    print.variable('itemsPerPage', false, `we'll include ${config.itemsPerPage} item(s) per page in GET requests`);
   }
 
   /*------------------------------------------------------------------------*/

@@ -64,7 +64,7 @@ const initCACCL = require('.');
  *   the Canvas API. Defaults to axios-based request sender (which we recommend)
  * @param {number} [defaultNumRetries] - Number of times to retry a
  *   request
- * @param {number} [defaultItemsPerPage] - Number of items to request
+ * @param {number} [itemsPerPage] - Number of items to request
  *   on a get request
  *
  * AUTHORIZATION:
