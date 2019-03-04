@@ -32,8 +32,7 @@ try {
   devEnvironment = require(devEnvPath); // eslint-disable-line global-require, import/no-dynamic-require, max-len
 } catch (err) {
   // Could not read the access token!
-  console.log('We could not start a simulated Canvas environment:');
-  console.log(`We couldn't read the development environment config which should be at: ${devEnvPath}`);
+  devEnvironment = null;
 }
 
 // Verify the contents of the devEnvirnoment
@@ -45,13 +44,13 @@ if (
 ) {
   // Invalid environment
   console.log('\nYour dev environment needs to be set up.');
-  console.log('\nSet the contents of /config/devEnvironment.js to:');
+  console.log('Set the contents of /config/devEnvironment.js to:');
   console.log('');
   console.log('module.exports = {');
-  console.log('  courseId: 43819,                   // Sandbox course id');
+  console.log('  courseId: 43819,                 // Sandbox course id');
   console.log('  canvasHost: \'canvas.school.edu\', // Canvas instance host');
   console.log('  accessToken: \'1949~fdjis...\',    // Canvas access token');
-  console.log('};');
+  console.log('};\n');
   process.exit(0);
 }
 
