@@ -44,10 +44,14 @@ if (
   || !devEnvironment.accessToken
 ) {
   // Invalid environment
-  console.log('We could not start a simulated Canvas environment:');
-  console.log(`We read the config file at: ${devEnvPath}`);
-  console.log('...but we didn\'t find all the required parameters:');
-  console.log('- courseId\n- canvasHost\n- accessToken');
+  console.log('\nYour dev environment needs to be set up.');
+  console.log('\nSet the contents of /config/devEnvironment.js to:');
+  console.log('');
+  console.log('module.exports = {');
+  console.log('  courseId: 43819,                   // Sandbox course id');
+  console.log('  canvasHost: \'canvas.school.edu\', // Canvas instance host');
+  console.log('  accessToken: \'1949~fdjis...\',    // Canvas access token');
+  console.log('};');
   process.exit(0);
 }
 
