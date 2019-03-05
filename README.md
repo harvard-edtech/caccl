@@ -5,7 +5,9 @@ The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL): an all-i
 
 ## Initialize your Project
 
-Starting a new project with caccl is easy. In an empty directory or npm project directory, run:
+#### 1. Create a new project:
+
+In an empty directory or npm project directory, run:
 
 `npm init caccl`
 
@@ -17,13 +19,19 @@ React + Express App | React | React front-end with a simple Express back-end
 Node.js Script | Terminal |  A simple Node.js script that runs in terminal
 EJS + Express Server-side App | EJS Templates | A server-side app with an Express server and UI templating with EJS
 
+Choose a type and follow instructions.
+
+_Custom project type:_ if your type of project isn't covered above, see [Manual Set Up](#manual-set-up) below.
+
+#### 2. Read the docs for your project type:
+
 Once you've chosen from the list, follow instructions and jump to the corresponding docs:
 
 - [React + Express App Docs](#if-you-chose-react--express-app)
 - [Node.js Script](#if-you-chose-nodejs-script)
 - [EJS + Express Server-side App](#if-you-chose-ejs--express-server-side-app)
 
-If your type of project isn't covered above, see [Manual Set Up](#manual-set-up) below.
+
 
 ## If you chose _React + Express App_...
 
@@ -43,6 +51,8 @@ To **start your app in production mode**, run the following commands in order:
 
 - `npm run build` – create the production build of the app
 - `npm start` – to start the production app
+
+Remember to make sure to properly define the installationCredentials in `/config/installationCredentials.js` and the developerCredentials in `/config/developerCredentials.js` on the production machine.
 
 #### Back-end
 
@@ -158,6 +168,121 @@ _Sending requests to the server:_
 
 > _Why use `sendRequest` instead of other request senders? Our `sendRequest` function works cross-domain with our development environment (dev server runs on one port, dev client runs on another)_
 
+#### Configuring CACCL on the Server
+
+To change the default canvasHost, edit the value in `/config/canvasDefaults.js`.
+
+To customize other aspects of how CACCl functions on the server, edit the configuration options being passed into `initCACCL(...)` in `index.js`:
+
+_Configuration for Express server:_
+
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> sessionSecret | string | the session secret to use when encrypting sessions | random string
+> cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
+> sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
+> onListenSuccess | function | function to call when server starts listening | `console.log`
+> onListenFail | function | function to call if server can't start listening | `console.log`
+> sslKey | string | ssl key or filename where key is stored | self-signed certificate key
+> sslCertificate | string | ssl certificate or filename where certificate is stored | self-signed certificate
+> sslCA | string[] or string | certificate chain linking a certificate authority to our ssl certificate. If type is string, certificates will automatically be split | none
+> clientOrigin | string | the origin host of the client (to allow CORS), if different from server host | none
+> 
+> If for any reason you want to **create the express server yourself**, just pass it in (see below). Note: If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> app | express server app | the express app to add routes to | optional | new express app
+
+_Configuration for server API access:_
+
+> If your app server doesn't need to access the Canvas API, set `disableServerSideAPI: true`.
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
+> routesWithAPI | string[] | list of routes to add api support to, `*` wildcard supported | all routes
+> cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
+> cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
+> dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
+> sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
+> 
+> The following config options apply only to API requests made from the server via `req.api`:
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> accessToken | string | a default access token to apply to all requests, overridden by user's access token | none
+> defaultNumRetries | number | the number of times to retry failed requests | 3
+> itemsPerPage | number | the number of items to request on a get request | 100
+
+_Configuration for client-side API forwarding:_
+
+> Your React client sends Canvas API requests to the Express server, which forwards them to Canvas. If your React client doesn't need to access the Canvas API, set `disableClientSideAPI: true`.
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> disableClientSideAPI | boolean | if false, server forwards Canvas API requests | `false`
+> apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded api requests. This is the prefix we use to listen for forwarded requests (ex: GET /api/v1/courses is forwarded through the server's /canvas/api/v1/courses route if this is set to "/canvas") | "/canvas"
+> 
+> Note: if you change `apiForwardPathPrefix` on the server, you need to change it on the client as well! We recommend not changing this.
+
+_Configuration for Canvas authorization:_
+
+> To access the Canvas API, we need an access token. CACCL gets the user's access token through Canvas' OAuth 2 authorization process. All you need to do is redirect the user to the launchPath and CACCL will perform the authorization process. If `disableAuthorizeOnLaunch` is false (see config for LTI launch), we authorize the user on launch.
+>
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
+> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }. _Required_ unless disableAuthorization is true | none
+> defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
+> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | null to turn off storage of refresh tokens or custom token store of form `{ get(key), set(key, val) }` where both get and set functions return promises | memory token store
+> simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
+
+_Configuration for LTI launches:_
+
+> CACCL automatically accepts LTI launch requests and parses the launch request body. If your app is not launched via LTI, you can turn off this feature using `disableLTI: true`.
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
+> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. _Required:_ `installationCredentials` is _required_ unless `disableLTI` is true.
+> redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
+> nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
+> disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
+
+#### Configuring CACCL on the Client:
+
+When initializing CACCl within a React component, you can pass in configuration options to customize CACCL's behavior. Example:
+
+```js
+// Import CACCL
+import initCACCL from 'caccl/client/cached';
+
+// Initialize CACCL
+const {
+  api,
+  getStatus,
+  sendRequest,
+} = initCACCL({
+  defaultNumRetries: 5,
+  itemsPerPage: 200,
+});
+```
+
+All configuration options are optional:
+
+Config Option | Type | Description | Default
+:--- | :--- | :--- | :---
+serverHost | string | the hostname of the server if not the same as the client | same as client
+defaultNumRetries | number | Number of times to retry a request | 3
+itemsPerPage | number | Number of items to request on a get request | 100
+cacheType | string | If 'memory', cache is stored in memory. If 'session', cache is stored in express the session | "memory"
+cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/docs/Cache.md) | Custom cache manager instance. Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
+sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
+apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded api requests. This is the prefix we prepend to all requests when sending them to the server for forwarding to Canvas. This config option _must be the same on the server and client_ | /canvas
+
+<hr>
+
 ## If you chose _Node.js Script_...
 
 #### Run your script:
@@ -201,7 +326,7 @@ _Canvas API:_
 
 Before your script in `script.js` runs, we initialize CACCL in `index.js`. To customize CACCL's behavior or turn on/off certain functionality, edit the configuration options passed into `initCACCL(...)`:
 
-**Note:** configuration options are _optional_ unless otherwise stated
+**Note:** configuration options are _optional_ unless otherwise stated. These configuration options only affect API requests made on the client, not those made via `req.api` on the server.
 
 Config Option | Type | Description | Default
 :--- | :--- | :--- | :---
@@ -210,6 +335,7 @@ itemsPerPage | number | the number of items to request on a get request | 100
 cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
 cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType: those caches are built-in) | none
 
+<hr>
 
 ## If you chose _EJS + Express Server-side App_...
 
@@ -318,19 +444,75 @@ _Adding views:_
 > });
 > ```
 
+#### Configuring CACCL on the Server
+
+To change the default canvasHost, edit the value in `/config/canvasDefaults.js`.
+
+To customize other aspects of how CACCl functions on the server, edit the configuration options being passed into `initCACCL(...)` in `index.js`:
+
+_Configuration for Express server:_
+
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> sessionSecret | string | the session secret to use when encrypting sessions | random string
+> cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
+> sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
+> onListenSuccess | function | function to call when server starts listening | `console.log`
+> onListenFail | function | function to call if server can't start listening | `console.log`
+> sslKey | string | ssl key or filename where key is stored | self-signed certificate key
+> sslCertificate | string | ssl certificate or filename where certificate is stored | self-signed certificate
+> sslCA | string[] or string | certificate chain linking a certificate authority to our ssl certificate. If type is string, certificates will automatically be split | none
+> clientOrigin | string | the origin host of the client (to allow CORS), if different from server host | none
+> 
+> If for any reason you want to **create the express server yourself**, just pass it in (see below). Note: If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> app | express server app | the express app to add routes to | optional | new express app
+
+_Configuration for API access:_
+
+> If your app doesn't need to access the Canvas API, set `disableServerSideAPI: true`.
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
+> routesWithAPI | string[] | list of routes to add api support to, `*` wildcard supported | all routes
+> cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
+> cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
+> dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
+> sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
+> accessToken | string | a default access token to apply to all requests, overridden by user's access token | none
+> defaultNumRetries | number | the number of times to retry failed requests | 3
+> itemsPerPage | number | the number of items to request on a get request | 100
+
+_Configuration for Canvas authorization:_
+
+> To access the Canvas API, we need an access token. CACCL gets the user's access token through Canvas' OAuth 2 authorization process. All you need to do is redirect the user to the launchPath and CACCL will perform the authorization process. If `disableAuthorizeOnLaunch` is false (see config for LTI launch), we authorize the user on launch.
+>
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
+> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }. _Required_ unless disableAuthorization is true | none
+> defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
+> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | null to turn off storage of refresh tokens or custom token store of form `{ get(key), set(key, val) }` where both get and set functions return promises | memory token store
+> simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
+
+_Configuration for LTI launches:_
+
+> CACCL automatically accepts LTI launch requests and parses the launch request body. If your app is not launched via LTI, you can turn off this feature using `disableLTI: true`.
+> 
+> Config Option | Type | Description | Default
+> :--- | :--- | :--- | :---
+> disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
+> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. _Required:_ `installationCredentials` is _required_ unless `disableLTI` is true.
+> redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
+> nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
+> disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
+
 ## Manual Set Up:
 
-### Script
-
-Visit our [using CACCL with a Node.js Script](https://github.com/harvard-edtech/caccl/blob/master/docs/script.md) guide.
-
-### React + Express App:
-
-Visit our [using CACCL with React](https://github.com/harvard-edtech/caccl/blob/master/docs/react.md) guide for step-by-step instructions.
-
-### Other Express-based App:
-
-See the following guides:
+You'll need CACCL set up on your server and client. See the following guides:
 
 - [Using CACCL on an Express Server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md)
 - [Using CACCL on a Client](https://github.com/harvard-edtech/caccl/blob/master/docs/client.md)
