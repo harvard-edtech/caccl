@@ -19,7 +19,7 @@ EJS + Express Server-side App | EJS Templates | A server-side app with an Expres
 
 Once you've chosen from the list, follow instructions and jump to the corresponding docs:
 
-- [React + Express App Docs](##if-you-chose-react--express-app)
+- [React + Express App Docs](#if-you-chose-react--express-app)
 - [Node.js Script](#if-you-chose-nodejs-script)
 - [EJS + Express Server-side App](#if-you-chose-ejs--express-server-side-app)
 
