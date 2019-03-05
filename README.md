@@ -35,6 +35,15 @@ Once you've chosen from the list, follow instructions and jump to the correspond
 
 ## If you chose _React + Express App_...
 
+#### Table of Contents
+
+- [Developer Mode](#developer-mode)
+- [Production Mode](#production-mode)
+- [Back-end](#back-end)
+- [Front-end](#front-end)
+- [Configuring CACCL on the Server](#configuring-caccl-on-the-server)
+- [Configuring CACCL on the Client](#configuring-caccl-on-the-client)
+
 #### Developer Mode
 
 To **start your app in developer mode**, open three terminal windows in the project root directory. Run each of the following commands, one in each window:
@@ -285,6 +294,12 @@ apiForwardPathPrefix | string | API forwarding path prefix to add to all forward
 
 ## If you chose _Node.js Script_...
 
+#### Table of Contents
+
+- [Run your script](#run-your-script)
+- [Edit your script](#edit-your-script)
+- [Configuring CACCL](#configuring-caccl)
+
 #### Run your script:
 
 To **run** your script, use `npm start` in the project root directory
@@ -339,6 +354,13 @@ cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contribu
 
 ## If you chose _EJS + Express Server-side App_...
 
+#### Table of Contents
+
+- [Developer Mode](#developer-mode-1)
+- [Production Mode](#production-mode-1)
+- [Editing your app](#editing-your-app)
+- [Configuring CACCL](#configuring-caccl-1)
+
 #### Developer Mode
 
 To **start your app in developer mode**, open two terminal windows in the project root directory. Run each of the following commands, one in each window:
@@ -351,6 +373,8 @@ To **start your app in developer mode**, open two terminal windows in the projec
 #### Production Mode
 
 To **start your app in production mode**, run `npm start` from the root directory of your project.
+
+Remember to make sure to properly define the installationCredentials in `/config/installationCredentials.js` and the developerCredentials in `/config/developerCredentials.js` on the production machine.
 
 #### Editing your app
 
@@ -444,7 +468,7 @@ _Adding views:_
 > });
 > ```
 
-#### Configuring CACCL on the Server
+#### Configuring CACCL
 
 To change the default canvasHost, edit the value in `/config/canvasDefaults.js`.
 
