@@ -35,4 +35,4 @@ sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request
 defaultNumRetries | number | the number of times to retry failed requests | 3
 itemsPerPage | number | the number of items to request on a get request | 100
 cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
-cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType: those caches are built-in) | none
+cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType: those caches are built-in) | none
