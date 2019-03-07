@@ -1,5 +1,6 @@
 # CACCL
-The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL): an all-in-one library for connecting your script or app to Canvas. By handling LTI, authorization, and api for you, CACCL makes building Canvas tools quick and easy.
+
+The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all-in-one library for building Canvas-integrated apps. By handling LTI, authorization, and api for you, CACCL makes building Canvas-integrated tools quick and easy.
 
 # Quickstart
 
@@ -11,7 +12,7 @@ In an empty directory or npm project directory, run:
 
 `npm init caccl`
 
-You'll be prompted to choose one of the following project types:
+You'll be prompted with a list of project types. Choose a type and follow instructions.
 
 Project Type | Client | Description
 :--- | :--- | :---
@@ -19,9 +20,7 @@ React + Express App | React | React front-end with a simple Express back-end
 Node.js Script | Terminal |  A simple Node.js script that runs in terminal
 EJS + Express Server-side App | EJS Templates | A server-side app with an Express server and UI templating with EJS
 
-Choose a type and follow instructions.
-
-_Custom project type:_ if your type of project isn't covered above, see [Manual Set Up](#manual-set-up) below.
+**Project type not listed?** If your type of project isn't listed above or you are creating a tool that only needs access to the Canvas API, see the [Manual Set Up](#manual-set-up) section.
 
 #### 2. Read the docs for your project type:
 
@@ -536,7 +535,15 @@ _Configuration for LTI launches:_
 
 ## Manual Set Up:
 
-You'll need CACCL set up on your server and client. See the following guides:
+### I'm Creating a Tool that Only Needs Access to the Canvas API...
+
+This section is only relevant if your tool already has a Canvas access token. In other words, your tool either doesn't need to handle LTI launches or Canvas authorization to get users' access tokens, or your tool handles LTI and Canvas authorization on its own.
+
+Your tool only needs to import [caccl-api](https://harvard-edtech.github.io/caccl-api/#use-caccl-api-manually-), one sub-component of CACCL. View [the caccl-api docs](https://harvard-edtech.github.io/caccl-api/#use-caccl-api-manually-) and scroll down to the "[Use CACCL API Manually](https://harvard-edtech.github.io/caccl-api/#use-caccl-api-manually-)" section.
+
+### I'm Setting up a Custom Project...
+
+You'll need CACCL set up on your server and client (if you have a client). See the following guides:
 
 - [Using CACCL on an Express Server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md)
 - [Using CACCL on a Client](https://github.com/harvard-edtech/caccl/blob/master/docs/client.md)
