@@ -39,4 +39,5 @@ describeS('Server > Default Configuration', function () {
   });
 });
 
-// TODO: keep writing tests, one for each configuration. Add more tests to /testConfiguration
+// TODO: keep writing tests, one for each configuration.
+// Add more tests to /testConfiguration
