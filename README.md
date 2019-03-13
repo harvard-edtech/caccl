@@ -546,5 +546,11 @@ Your tool only needs to import [caccl-api](https://harvard-edtech.github.io/cacc
 
 You'll need CACCL set up on your server and client (if you have a client). See the following guides:
 
+Building your custom app:
+
 - [Using CACCL on an Express Server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md)
 - [Using CACCL on a Client](https://github.com/harvard-edtech/caccl/blob/master/docs/client.md)
+
+Testing your custom app:
+
+- [Easier testing with a partially simulated Canvas environment](https://github.com/harvard-edtech/caccl/blob/master/docs/testing_custom_project.md)
