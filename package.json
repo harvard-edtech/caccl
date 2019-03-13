@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --exit --recursive --reporter spec --timeout 5000",
-    "selenium": "node ./node_modules/dce-selenium/run"
+    "selenium": "node ./node_modules/dce-selenium/run",
+    "accept": "node test/accept"
   },
   "repository": {
     "type": "git",

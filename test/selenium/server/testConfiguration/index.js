@@ -1,4 +1,3 @@
-const path = require('path');
 const sendRequest = require('caccl-send-request');
 
 // Import caccl libraries
@@ -13,11 +12,15 @@ const testLaunch = require('./testLaunch');
 
 // Tests a configuration of caccl
 module.exports = async (driver, config = {}) => {
+  driver.log('Starting test environment');
+
   // Create a new server
   let app;
   let appErr;
   try {
-    app = initCACCL(config);
+    const newConfig = config;
+    newConfig.canvasHost = 'localhost:8088';
+    app = initCACCL(newConfig);
   } catch (err) {
     appErr = err;
   }
@@ -26,7 +29,7 @@ module.exports = async (driver, config = {}) => {
   // and LTI is enabled
   if (!config.disableLTI && !config.installationCredentials) {
     // An error should've occurred
-    if (appErr && appErr.message.includes('"installationCredentials" are required when LTI is enabled: we need the')) {
+    if (appErr && appErr.message.includes('"installationCredentials" are required when LTI is enabled')) {
       // Correct error!
       return true;
     }
@@ -51,18 +54,21 @@ module.exports = async (driver, config = {}) => {
   }
 
   // Ensure that the app exists
-  if (!app) {
+  if (!app || appErr) {
     throw new Error(`App failed to initialize. An error did ${appErr ? '' : 'not '}occur. ${appErr ? appErr.message : ''}`);
   }
 
+  // Add homepage of app
+  app.get('/', (req, res) => {
+    res.send('homepage');
+  });
+
   const stopAppServer = async () => {
     return new Promise((resolve) => {
-      console.log('hi');
       // Create a route to hit
-      app.get('/kill-server-now', (req) => {
-        console.log('here');
+      app.get('/kill-server-now', (req, res) => {
+        res.send('closed');
         req.connection.server.close((err) => {
-          console.log('closed');
           return resolve(!err);
         });
       });
@@ -71,6 +77,9 @@ module.exports = async (driver, config = {}) => {
       sendRequest({
         host: 'localhost',
         path: '/kill-server-now',
+        ignoreSSLIssues: true,
+      }).catch(() => {
+        return resolve(false);
       });
     });
   };
@@ -79,7 +88,7 @@ module.exports = async (driver, config = {}) => {
   const canvasServer = initCanvasSimulation({
     accessToken,
     canvasHost,
-    launchURL: path.join('https://localhost', config.launchPath || '/launch'),
+    dontPrint: true,
   }).server;
   const stopCanvasServer = async () => {
     return new Promise((resolve) => {
@@ -91,13 +100,14 @@ module.exports = async (driver, config = {}) => {
 
   // Wait .5s for the services to start
   await new Promise((r) => {
-    setTimeout(r, 500);
+    setTimeout(r, 1000);
   });
 
   // Run tests
-  await testLaunch();
+  await testLaunch(driver);
 
   // Clean up
+  driver.log('Killing test environment');
   const appStopped = await stopAppServer();
   const canvasStopped = await stopCanvasServer();
   if (!appStopped || !canvasStopped) {
