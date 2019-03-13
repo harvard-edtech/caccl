@@ -320,8 +320,11 @@ module.exports = (oldConfig) => {
   if (!config.disableAuthorizeOnLaunch) {
     if (!config.disableLTI && !config.disableAuthorization) {
       print.boolean('disableAuthorizeOnLaunch', false, 'we will automatically authorize the user upon an LTI launch');
+    } else if (!config.disableLTI && config.disableAuthorization) {
+      config.disableAuthorizeOnLaunch = true;
+      print.boolean('disableAuthorizeOnLaunch', false, 'this will actually be set to "true" because authorization is turned off');
     } else {
-      print.boolean('disableAuthorizeOnLaunch', false, 'this will be ignored: we cannot authorize on launch if LTI or authorization are disabled');
+      print.boolean('disableAuthorizeOnLaunch', false, 'this will be ignored: we cannot authorize on launch if LTI is disabled');
     }
   } else if (!config.disableLTI && !config.disableAuthorization) {
     print.boolean('disableAuthorizeOnLaunch', true, `users will not be automatically authorized on launch. Do manually authorize a user, direct them to the authorize path: '${config.authorizePath}'`);

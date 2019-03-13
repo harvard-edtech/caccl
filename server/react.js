@@ -16,6 +16,8 @@ const initCACCL = require('.');
  *   add middleware to. If excluded, we generate a new express app (see
  *   sessionSecret, cookieName, sessionMins, onListenSuccess, onListenFail,
  *   sslKey, sslCertificate, sslCA)
+ * @param {number} [port=proces.env.PORT || 443] - the port to listen on.
+ *   Only valid if app is excluded
  * @param {string} [sessionSecret=randomly generated string] - the session
  *   secret to use when encrypting sessions. Only valid if app is excluded
  * @param {string} [cookieName=CACCL-based-app-session-<timestamp>-<random str>]
@@ -113,7 +115,11 @@ const initCACCL = require('.');
  */
 module.exports = (config = {}) => {
   const newConfig = config;
-  newConfig.port = newConfig.port || 443;
+  newConfig.port = (
+    newConfig.port
+    || process.env.PORT
+    || 443
+  );
 
   // Detect development environment
   const thisIsDevEnvironment = (

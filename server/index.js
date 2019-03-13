@@ -14,6 +14,8 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/se
  *   If excluded, we generate a new express app (see
  *   sessionSecret, cookieName, sessionMins, onListenSuccess, onListenFail,
  *   sslKey, sslCertificate, sslCA)
+ * @param {number} [port=proces.env.PORT || 443] - the port to listen on.
+ *   Only valid if app is express app
  * @param {string} [sessionSecret=randomly generated string] - the session
  *   secret to use when encrypting sessions. Only valid if app is excluded
  * @param {string} [cookieName=CACCL-based-app-session-<timestamp>-<random str>]
