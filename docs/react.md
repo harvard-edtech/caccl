@@ -197,7 +197,7 @@ module.exports = {
 
   **Note:** We recommend that you create a "fake" user, add them to your test course, and perform the following steps as that fake user. Your personal access token might have higher privileges than a typical user in the course, so using your personal access token allows your app to accidentally do more damage. Using a "fake" user limits this potential damage.
 
-  a. Visit your Canvas instance and log in. 
+  a. Visit your Canvas instance and log in.
 
   b. Click the user picture (top left of the screen).
 

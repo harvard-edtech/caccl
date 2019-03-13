@@ -64,7 +64,7 @@ Remember to make sure to properly define the installationCredentials in `/config
 
 #### Back-end
 
-To **edit the back-end**, edit `server.js`. The server is an express app. Visit the [expressjs.com app docs](https://expressjs.com/en/4x/api.html#app) for instructions on how to add routes, etc. 
+To **edit the back-end**, edit `server.js`. The server is an express app. Visit the [expressjs.com app docs](https://expressjs.com/en/4x/api.html#app) for instructions on how to add routes, etc.
 
 _Canvas API:_
 
@@ -115,12 +115,12 @@ _Canvas API:_
 >
 > ```js
 > const { api } = initCACCL();
-> 
+>
 > const students = await api.course.listStudents({ courseId: 532894 });
 > ```
-> 
+>
 > We recommend handling errors with try-catch:
-> 
+>
 > ```js
 > try {
 >   const students = await api.course.listStudents({ courseId: 532894 });
@@ -163,7 +163,7 @@ _Sending requests to the server:_
 >
 > ```js
 > const { sendRequest } = initCACCL();
-> 
+>
 > const { body, status, headers } = await sendRequest({
 >   path: '/add-user',
 >   method: 'POST',
@@ -195,9 +195,9 @@ _Configuration for Express server:_
 > sslCertificate | string | ssl certificate or filename where certificate is stored | self-signed certificate
 > sslCA | string[] or string | certificate chain linking a certificate authority to our ssl certificate. If type is string, certificates will automatically be split | none
 > clientOrigin | string | the origin host of the client (to allow CORS), if different from server host | none
-> 
+>
 > If for any reason you want to **create the express server yourself**, just pass it in (see below). Note: If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > app | express server app | the express app to add routes to | optional | new express app
@@ -205,7 +205,7 @@ _Configuration for Express server:_
 _Configuration for server API access:_
 
 > If your app server doesn't need to access the Canvas API, set `disableServerSideAPI: true`.
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
@@ -214,9 +214,9 @@ _Configuration for server API access:_
 > cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
 > dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
 > sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
-> 
+>
 > The following config options apply only to API requests made from the server via `req.api`:
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > accessToken | string | a default access token to apply to all requests, overridden by user's access token | none
@@ -226,12 +226,12 @@ _Configuration for server API access:_
 _Configuration for client-side API forwarding:_
 
 > Your React client sends Canvas API requests to the Express server, which forwards them to Canvas. If your React client doesn't need to access the Canvas API, set `disableClientSideAPI: true`.
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableClientSideAPI | boolean | if false, server forwards Canvas API requests | `false`
 > apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded api requests. This is the prefix we use to listen for forwarded requests (ex: GET /api/v1/courses is forwarded through the server's /canvas/api/v1/courses route if this is set to "/canvas") | "/canvas"
-> 
+>
 > Note: if you change `apiForwardPathPrefix` on the server, you need to change it on the client as well! We recommend not changing this.
 
 _Configuration for Canvas authorization:_
@@ -249,7 +249,7 @@ _Configuration for Canvas authorization:_
 _Configuration for LTI launches:_
 
 > CACCL automatically accepts LTI launch requests and parses the launch request body. If your app is not launched via LTI, you can turn off this feature using `disableLTI: true`.
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
@@ -310,23 +310,23 @@ To **edit** your script, edit `script.js`. The script's only argument, `api`, is
 _Canvas API:_
 
 > Use `api`, the only argument of the function in `script.js`.
-> 
+>
 > Example:
-> 
+>
 > ```js
 > module.exports = async (api) => {
 >   // Get profile via Canvas API
 >   const profile = await api.user.self.getProfile();
-> 
+>
 >   // Say "hello"
 >   console.log(`Hi ${profile.name}, it's great to meet you!`);
 > };
 > ```
-> 
+>
 > See the full list of supported API functions at the [caccl-api-docs](https://harvard-edtech.github.io/caccl-api/).
-> 
+>
 > We recommend handling errors using try-catch:
-> 
+>
 > ```js
 > try {
 >   const profile = await api.user.self.getProfile();
@@ -382,7 +382,7 @@ To add routes to your Express server, edit `routes.js`.
 _Checking if we have authorization to use API:_
 
 > Within a route, to check if we have authorization to use the API, simply check if `req.api` is defined:
-> 
+>
 > ```js
 > app.get('/student-names', async (req, res) => {
 >   if (!req.api) {
@@ -405,15 +405,15 @@ _Canvas API:_
 >   }
 >   
 >   const students = await req.api.course.listStudents({ courseId: 58320 });
-> 
+>
 >   const names = students.map(x => x.name).join(', ');
-> 
+>
 >   return res.send(`Here are all your student's names: ${names}`);
 > });
 > ```
-> 
+>
 > We recommend handling errors with a try-catch statement:
-> 
+>
 > ```js
 > app.get('/student-names', async (req, res) => {
 >   ...
@@ -429,16 +429,16 @@ _Canvas API:_
 _Adding views:_
 
 > Add EJS templates to the `/views` folder. See [EJS docs](https://ejs.co) for full documentation. Here's a brief overview:
-> 
+>
 > **Writing an EJS template:** In an `.ejs` template file, use `<%= ... %>` to add placeholder text, use `<%- ... %>` to add placeholder html, and use `<% ... %>` to run javascript. See examples:
-> 
+>
 > ```html
 > <div>
 >   <!-- Show app title (plain text) -->
 >   <h1>
 >     <%= title %>
 >   </h1>
-> 
+>
 >   <!-- Show app description (html) -->
 >   <p>
 >     Description:&nbsp;
@@ -452,9 +452,9 @@ _Adding views:_
 >   </h2>
 > </div>
 > ```
-> 
+>
 > **Rendering an EJS template:** Within an express route, use `res.render` to render an EJS template. In this example, we have a `/views/home.ejs` file
-> 
+>
 > ```js
 > const path = require('path');
 > ...
@@ -477,6 +477,7 @@ _Configuration for Express server:_
 
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
+> port | number | the port to listen to | process.env.PORT or 443
 > sessionSecret | string | the session secret to use when encrypting sessions | random string
 > cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
 > sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
@@ -486,9 +487,9 @@ _Configuration for Express server:_
 > sslCertificate | string | ssl certificate or filename where certificate is stored | self-signed certificate
 > sslCA | string[] or string | certificate chain linking a certificate authority to our ssl certificate. If type is string, certificates will automatically be split | none
 > clientOrigin | string | the origin host of the client (to allow CORS), if different from server host | none
-> 
+>
 > If for any reason you want to **create the express server yourself**, just pass it in (see below). Note: If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > app | express server app | the express app to add routes to | optional | new express app
@@ -496,7 +497,7 @@ _Configuration for Express server:_
 _Configuration for API access:_
 
 > If your app doesn't need to access the Canvas API, set `disableServerSideAPI: true`.
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
@@ -524,7 +525,7 @@ _Configuration for Canvas authorization:_
 _Configuration for LTI launches:_
 
 > CACCL automatically accepts LTI launch requests and parses the launch request body. If your app is not launched via LTI, you can turn off this feature using `disableLTI: true`.
-> 
+>
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false

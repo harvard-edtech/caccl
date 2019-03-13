@@ -15,8 +15,11 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
  * Creates a new express app with memory-based session, listening on env PORT or
  *   8080, and with randomized session secret and cookie name.
  * @author Gabriel Abrams
- * @param {number} [port=config.port || env.PORT || 8080] - the port to listen
+ * @param {number} [port=process.env.PORT || 443] - the port to listen
  *   to
+ * @param {boolean} [forceSSL=port is 443 or sslKey and sslCertificate included]
+ *   - if true, SSL is turned on (self signed certificates used if none
+ *   included)
  * @param {string} [sessionSecret=randomly generated string] - the session
  *   secret to use when encrypting sessions
  * @param {string} [cookieName=CACCL-based-app-session-<timestamp>-<random str>]
@@ -38,7 +41,7 @@ module.exports = (config = {}) => {
   const port = (
     config.port
     || process.env.PORT
-    || 8080
+    || 443
   );
 
   if (config.verbose) {
@@ -85,11 +88,13 @@ module.exports = (config = {}) => {
   }));
 
   // Start Server
-  const needSSL = (config.port && config.port === 443);
+  const needSSL = (port === 443);
   const useSSL = (
     needSSL
     || (config.sslKey && config.sslCertificate)
+    || config.forceSSL
   );
+
   if (useSSL) {
     // Use HTTPS
 
@@ -104,7 +109,7 @@ module.exports = (config = {}) => {
       sslCertificate = path.join(__dirname, 'server/self-signed-certs/cert.pem');
 
       console.log('\nNote: we\'re using a self-signed certificate!');
-      console.log(`- Please visit https://localhost:${config.port}/verifycert to make sure the certificate is accepted by your browser\n`);
+      console.log(`- Please visit https://localhost:${port}/verifycert to make sure the certificate is accepted by your browser\n`);
 
       // Add route for verifying self-signed certificate
       app.get('/verifycert', (req, res) => {
