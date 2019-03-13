@@ -1,0 +1,107 @@
+const path = require('path');
+const sendRequest = require('caccl-send-request');
+
+// Import caccl libraries
+const initCanvasSimulation = require('caccl-canvas-partial-simulator');
+const initCACCL = require('../../../../server');
+
+// Import environment
+const { accessToken, canvasHost } = require('../../../environment');
+
+// Import tests
+const testLaunch = require('./testLaunch');
+
+// Tests a configuration of caccl
+module.exports = async (driver, config = {}) => {
+  // Create a new server
+  let app;
+  let appErr;
+  try {
+    app = initCACCL(config);
+  } catch (err) {
+    appErr = err;
+  }
+
+  // Ensure that app failed to initialize if no installation credentials
+  // and LTI is enabled
+  if (!config.disableLTI && !config.installationCredentials) {
+    // An error should've occurred
+    if (appErr && appErr.message.includes('"installationCredentials" are required when LTI is enabled: we need the')) {
+      // Correct error!
+      return true;
+    }
+    if (appErr) {
+      throw new Error(`LTI was enabled but installationCredentials werent included. An error occurred but not the correct one. Expected an "installationCredentials are required" error but got instead: ${appErr.message}`);
+    }
+    throw new Error('LTI was enabled but installationCredentials werent included. An error should\'ve occurred.');
+  }
+
+  // Ensure that app failed to initialize if no developer credentials
+  // and auth is enabled
+  if (!config.disableAuthorization && !config.developerCredentials) {
+    // An error should've occurred
+    if (appErr && appErr.message.includes('"developerCredentials" required')) {
+      // Correct error
+      return true;
+    }
+    if (appErr) {
+      throw new Error(`Auth was enabled but developerCredentials werent included. An error occurred but not the correct one. Expected an "developerCredentials required" error but got instead: ${appErr.message}`);
+    }
+    throw new Error('Auth was enabled but developerCredentials werent included. An error should\'ve occurred.');
+  }
+
+  // Ensure that the app exists
+  if (!app) {
+    throw new Error(`App failed to initialize. An error did ${appErr ? '' : 'not '}occur. ${appErr ? appErr.message : ''}`);
+  }
+
+  const stopAppServer = async () => {
+    return new Promise((resolve) => {
+      console.log('hi');
+      // Create a route to hit
+      app.get('/kill-server-now', (req) => {
+        console.log('here');
+        req.connection.server.close((err) => {
+          console.log('closed');
+          return resolve(!err);
+        });
+      });
+
+      // Hit the route
+      sendRequest({
+        host: 'localhost',
+        path: '/kill-server-now',
+      });
+    });
+  };
+
+  // Create a new Canvas simulator
+  const canvasServer = initCanvasSimulation({
+    accessToken,
+    canvasHost,
+    launchURL: path.join('https://localhost', config.launchPath || '/launch'),
+  }).server;
+  const stopCanvasServer = async () => {
+    return new Promise((resolve) => {
+      canvasServer.close((err) => {
+        return resolve(!err);
+      });
+    });
+  };
+
+  // Wait .5s for the services to start
+  await new Promise((r) => {
+    setTimeout(r, 500);
+  });
+
+  // Run tests
+  await testLaunch();
+
+  // Clean up
+  const appStopped = await stopAppServer();
+  const canvasStopped = await stopCanvasServer();
+  if (!appStopped || !canvasStopped) {
+    driver.log('Either the app or canvas simulator could not be stopped. Now exiting tests.');
+    process.exit(1);
+  }
+};

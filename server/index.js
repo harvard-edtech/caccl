@@ -10,7 +10,8 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/se
  * @author Gabriel Abrams
  * APP:
  * @param {object} [app=generate new express app] - the express app to use and
- *   add middleware to. If excluded, we generate a new express app (see
+ *   add middleware to. App must support POST body parsing and express-session.
+ *   If excluded, we generate a new express app (see
  *   sessionSecret, cookieName, sessionMins, onListenSuccess, onListenFail,
  *   sslKey, sslCertificate, sslCA)
  * @param {string} [sessionSecret=randomly generated string] - the session

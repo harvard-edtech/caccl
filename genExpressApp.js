@@ -9,6 +9,8 @@ const randomstring = require('randomstring');
 
 const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
 
+/* eslint-disable no-console */
+
 /**
  * Creates a new express app with memory-based session, listening on env PORT or
  *   8080, and with randomized session secret and cookie name.

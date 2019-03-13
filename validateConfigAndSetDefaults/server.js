@@ -12,6 +12,7 @@ module.exports = (oldConfig) => {
   /*------------------------------------------------------------------------*/
 
   // "app" + "sessionSecret" + "cookieName" + "sessionMins"
+  let genApp;
   if (config.app) {
     print.variable('app', true, 'we will add any middleware and/or routes to your app');
     if (config.sessionSecret) {
@@ -84,17 +85,8 @@ module.exports = (oldConfig) => {
       print.variable('onListenFail', false, 'we will print a message and the error to the console log when the server fails to start up successfully');
     }
 
-    // Initialize app
-    config.app = genExpressApp({
-      sessionSecret: config.sessionSecret,
-      cookieName: config.cookieName,
-      sessionMins: config.sessionMins,
-      sslKey: config.sslKey,
-      sslCertificate: config.sslCertificate,
-      sslCA: config.sslCA,
-      verbose: config.verbose,
-      port: config.port,
-    });
+    // Initialize app after verifying all parameters
+    genApp = true;
   }
 
   /*------------------------------------------------------------------------*/
@@ -446,6 +438,21 @@ module.exports = (oldConfig) => {
     print.variable('developerCredentials', false, 'this will be ignored: either authorization or api is off, so we don\'t need credentials');
   } else {
     print.variable('developerCredentials', false, 'this is fine because we don\'t need credentials: either authorization or api is off, so we don\'t need credentials');
+  }
+
+  // If we need to generate a new express app, do it now that we know the
+  // configuration is valid
+  if (genApp) {
+    config.app = genExpressApp({
+      sessionSecret: config.sessionSecret,
+      cookieName: config.cookieName,
+      sessionMins: config.sessionMins,
+      sslKey: config.sslKey,
+      sslCertificate: config.sslCertificate,
+      sslCA: config.sslCA,
+      verbose: config.verbose,
+      port: config.port,
+    });
   }
 
   return config;
