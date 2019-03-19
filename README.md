@@ -81,11 +81,26 @@ _Canvas API:_
 > });
 > ```
 
-_LTI Launch Info:_
+_Info on Status, Auth, and LTI Launch:_
 
-> If the user successfully launched via LTI, `req.session.launchInfo` will be defined and contain properties. This object contains lots of information about the user, the context, and anything else we were able to parse from the LTI launch.
+> CACCL stores status, auth, and LTI launch info in the user's session. See the following properties of `req.session`:
 >
-> See [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties.
+> Property | Type | Description
+> :--- | :--- | :---
+> launched | boolean | if true, the user successfully launched the app via LTI
+> authorized | boolean | if true, we have authorization to access the Canvas API
+> authFailed | boolean | true if authorization failed
+> authFailureReason | string | the reason authorization failed if `authFailed` is true (see reasons list below)
+> launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
+>
+> **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
+> 
+> Possible values of `authFailureReason`:
+>
+> - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
+> - "internal_error" - an internal error occurred on the server while attempting to process authorization
+> - "denied" - the user denied the app access to Canvas when they were prompted
+> - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
 
 #### Front-end
 
@@ -135,7 +150,7 @@ _Canvas API:_
 > }
 > ```
 
-_Status and LTI Launch Info:_
+_Info on Status, Auth, and LTI Launch:_
 
 > Calling `getStatus` fetches many useful status variables from the server, as well as gets LTI launch information.
 >
@@ -151,9 +166,18 @@ _Status and LTI Launch Info:_
 > :--- | :--- | :---
 > launched | boolean | if true, the user successfully launched the app via LTI
 > authorized | boolean | if true, we have authorization to access the Canvas API
+> authFailed | boolean | true if authorization failed
+> authFailureReason | string | the reason authorization failed if `authFailed` is true (see reasons list below)
 > launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
 >
 > **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
+> 
+> Possible values of `authFailureReason`:
+>
+> - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
+> - "internal_error" - an internal error occurred on the server while attempting to process authorization
+> - "denied" - the user denied the app access to Canvas when they were prompted
+> - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
 
 _Sending requests to the server:_
 
@@ -425,6 +449,28 @@ _Canvas API:_
 >   ...
 > });
 > ```
+
+_Info on Status, Auth, and LTI Launch:_
+
+> CACCL stores status, auth, and LTI launch info in the user's session. See the following properties of `req.session`:
+>
+> Property | Type | Description
+> :--- | :--- | :---
+> launched | boolean | if true, the user successfully launched the app via LTI
+> authorized | boolean | if true, we have authorization to access the Canvas API
+> authFailed | boolean | true if authorization failed
+> authFailureReason | string | the reason authorization failed if `authFailed` is true (see reasons list below)
+> launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
+>
+> **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
+> 
+> Possible values of `authFailureReason`:
+>
+> - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
+> - "internal_error" - an internal error occurred on the server while attempting to process authorization
+> - "denied" - the user denied the app access to Canvas when they were prompted
+> - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
+
 
 _Adding views:_
 

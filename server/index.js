@@ -221,19 +221,12 @@ module.exports = (oldConfig = {}) => {
 
   // Add launch status support
   config.app.get(config.apiForwardPathPrefix + '/status', (req, res) => {
-    const launchInfo = (
-      (req.session && req.session.launchInfo)
-        ? req.session.launchInfo
-        : {}
-    );
     return res.json({
-      launchInfo,
-      launched: !!(
-        req.session
-        && req.session.launchInfo
-        && Object.keys(req.session.launchInfo).length
-      ),
-      authorized: !!req.api,
+      launchInfo: req.session.launchInfo,
+      launched: req.session.launched,
+      authorized: req.session.authorized,
+      authFailed: req.session.authFailed,
+      authFailureReason: req.session.authFailureReason,
     });
   });
 
