@@ -81,7 +81,7 @@ _Canvas API:_
 > });
 > ```
 
-_Info on Status, Auth, and LTI Launch:_
+_Get Info on Status, Auth, and LTI Launch:_
 
 > CACCL stores status, auth, and LTI launch info in the user's session. See the following properties of `req.session`:
 >
@@ -150,7 +150,7 @@ _Canvas API:_
 > }
 > ```
 
-_Info on Status, Auth, and LTI Launch:_
+_Get Info on Status, Auth, and LTI Launch:_
 
 > Calling `getStatus` fetches many useful status variables from the server, as well as gets LTI launch information.
 >
@@ -450,7 +450,7 @@ _Canvas API:_
 > });
 > ```
 
-_Info on Status, Auth, and LTI Launch:_
+_Get Info on Status, Auth, and LTI Launch:_
 
 > CACCL stores status, auth, and LTI launch info in the user's session. See the following properties of `req.session`:
 >
