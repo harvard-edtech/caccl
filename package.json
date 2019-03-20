@@ -13,15 +13,20 @@
     "url": "git+https://github.com/harvard-edtech/caccl.git"
   },
   "keywords": [
-    "Canvas",
-    "App",
-    "LTI",
-    "CACCL",
-    "access",
-    "token",
+    "canvas",
+    "instructure",
+    "lms",
     "api",
+    "authorization",
+    "lti",
+    "oauth",
+    "oauth2",
+    "app",
+    "access token",
     "education",
-    "edtech"
+    "edtech",
+    "harvard",
+    "dce"
   ],
   "author": "Gabriel Abrams <gabeabrams@gmail.com>",
   "license": "MIT",
