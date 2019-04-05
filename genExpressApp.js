@@ -115,13 +115,17 @@ module.exports = (config = {}) => {
       sslKey,
       sslCertificate,
     } = config;
+    let showSelfSignedMessage = () => {};
     if (!sslKey || !sslCertificate) {
       // Use self-signed certificates
       sslKey = path.join(__dirname, 'server/self-signed-certs/key.pem');
       sslCertificate = path.join(__dirname, 'server/self-signed-certs/cert.pem');
 
-      console.log('\nNote: we\'re using a self-signed certificate!');
-      console.log(`- Please visit https://localhost:${port}/verifycert to make sure the certificate is accepted by your browser\n`);
+      showSelfSignedMessage = () => {
+        console.log('\nNote: we\'re using a self-signed certificate!');
+        console.log(`- Please visit https://localhost:${port}/verifycert to make sure the certificate is accepted by your browser\n`);
+        console.log('- If this is production, consider adding valid certificates');
+      };
 
       // Add route for verifying self-signed certificate
       app.get('/verifycert', (req, res) => {
@@ -202,6 +206,7 @@ module.exports = (config = {}) => {
       } else {
         console.log(`Now listening and using SSL on port ${port}`);
       }
+      showSelfSignedMessage();
     });
   } else {
     // Use HTTP
