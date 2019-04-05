@@ -122,9 +122,9 @@ module.exports = (config = {}) => {
       sslCertificate = path.join(__dirname, 'server/self-signed-certs/cert.pem');
 
       showSelfSignedMessage = () => {
-        console.log('\nNote: we\'re using a self-signed certificate!');
-        console.log(`- Please visit https://localhost:${port}/verifycert to make sure the certificate is accepted by your browser\n`);
-        console.log('- If this is production, consider adding valid certificates');
+        console.log('\nWarning: we\'re using a self-signed certificate!');
+        console.log(`- Visit https://localhost:${port}/verifycert in your browser to accept our cert`);
+        console.log('- If this is production, consider adding valid certificates\n');
       };
 
       // Add route for verifying self-signed certificate
@@ -173,16 +173,27 @@ module.exports = (config = {}) => {
     server.on('error', (err) => {
       // An error occurred while attempting to listen
       if (err.code === 'EACCES') {
-        console.log(`We have insufficient privileges to listen on port ${port}!`);
+        console.log(`\n\nError: We have insufficient privileges to listen on port ${port}!`);
         console.log('Choose another port or elevate this app\'s privileges.');
         console.log('');
         console.log('Choosing another port:');
         console.log('- Set the "PORT" environment variable');
-        console.log('    or');
-        console.log('- Add a "port" configuration param when calling initCACCL');
+        console.log('    OR');
+        console.log('- Add a "port" configuration option when calling initCACCL');
         console.log('');
         console.log('Elevating this app\'s privileges:');
         console.log('- Start this app using "sudo"');
+        process.exit(0);
+      }
+
+      if (err.code === 'EADDRINUSE') {
+        console.log(`\n\nError: Another service is already using port ${port}!`);
+        console.log(`Choose another port or kill the service that's using port ${port}`);
+        console.log('');
+        console.log('Choosing another port:');
+        console.log('- Set the "PORT" environment variable');
+        console.log('    OR');
+        console.log('- Add a "port" configuration option when calling initCACCL');
         process.exit(0);
       }
 
@@ -194,14 +205,8 @@ module.exports = (config = {}) => {
         process.exit(0);
       }
     });
-    server.listen(port, (err) => {
-      if (err) {
-        if (config.onListenFail) {
-          config.onListenFail(err);
-        } else {
-          console.log(`An error occurred while trying to listen and use SSL on port ${port}:`, err);
-        }
-      } else if (config.onListenSuccess) {
+    server.listen(port, () => {
+      if (config.onListenSuccess) {
         config.onListenSuccess();
       } else {
         console.log(`Now listening and using SSL on port ${port}`);
