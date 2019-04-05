@@ -182,7 +182,7 @@ module.exports = (config = {}) => {
         console.log('- Add a "port" configuration option when calling initCACCL');
         console.log('');
         console.log('Elevating this app\'s privileges:');
-        console.log('- Start this app using "sudo"');
+        console.log('- Start this app using "sudo" (be careful, please!)');
         process.exit(0);
       }
 

@@ -63,6 +63,12 @@ To **start your app in production mode**, run the following commands in order:
 
 Remember to make sure to properly define the installationCredentials in `/config/installationCredentials.js` and the developerCredentials in `/config/developerCredentials.js` on the production machine. For more information, see [Adding Your App to Canvas](#adding-your-app-to-canvas).
 
+_FAQ: Which port will my app listen to?_
+
+> By default, we use port 443.
+> 
+> To choose a specific port, either set the "PORT" environment variable or add a `port` configuration option when calling `initCACCL` (see [Configuring CACCL on the Server](#configuring-caccl-on-the-server))
+
 _FAQ: What do I upload to my production server?_
 
 > After running `npm run build`, your project is ready for production. Copy your _entire project_ to your production server.
@@ -219,6 +225,7 @@ _Configuration for Express server:_
 
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
+> port | number | the port to listen to | "PORT" environment var or 443
 > sessionSecret | string | the session secret to use when encrypting sessions | random string
 > cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
 > sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
@@ -512,6 +519,19 @@ To **start your app in production mode**, run `npm start` from the root director
 
 Remember to make sure to properly define the installationCredentials in `/config/installationCredentials.js` and the developerCredentials in `/config/developerCredentials.js` on the production machine.
 
+_FAQ: Which port will my app listen to?_
+
+> By default, we use port 443.
+> 
+> To choose a specific port, either set the "PORT" environment variable or add a `port` configuration option when calling `initCACCL` (see [Configuring CACCL](#configuring-caccl-1))
+
+_FAQ: What do I upload to my production server?_
+
+> Copy your _entire project_ to your production server.
+> 
+> Remember to add both the installationCredentials and developerCredentials (see [Adding Your App to Canvas](#adding-your-app-to-canvas-1)).
+
+
 #### Editing your app
 
 To add routes to your Express server, edit `routes.js`.
@@ -636,7 +656,7 @@ _Configuration for Express server:_
 
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
-> port | number | the port to listen to | process.env.PORT or 443
+> port | number | the port to listen to | "PORT" environment var or 443
 > sessionSecret | string | the session secret to use when encrypting sessions | random string
 > cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
 > sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
