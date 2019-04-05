@@ -38,11 +38,23 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
 module.exports = (config = {}) => {
   const app = express();
   const print = initPrint(config.verbose);
-  const port = (
+
+  // Determine port
+  let port = (
     config.port
     || process.env.PORT
     || 443
   );
+  if (typeof port === 'string') {
+    const isInteger = /^\d+$/.test(port);
+    if (!isInteger) {
+      console.log(`We are trying to listen on port "${port}" (not a number!)`);
+      console.log('Port must be a number!');
+      process.exit(0);
+    }
+    port = parseInt(port);
+  }
+
 
   if (config.verbose) {
     print.subtitle('Creating a new express app:');
