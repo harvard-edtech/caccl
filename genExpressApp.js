@@ -154,6 +154,30 @@ module.exports = (config = {}) => {
       cert,
       ca,
     }, app);
+    server.on('error', (err) => {
+      // An error occurred while attempting to listen
+      if (err.code === 'EACCES') {
+        console.log(`We have insufficient privileges to listen on port ${port}!`);
+        console.log('Choose another port or elevate this app\'s privileges.');
+        console.log('');
+        console.log('Choosing another port:');
+        console.log('- Set the "PORT" environment variable');
+        console.log('    or');
+        console.log('- Add a "port" configuration param when calling initCACCL');
+        console.log('');
+        console.log('Elevating this app\'s privileges:');
+        console.log('- Start this app using "sudo"');
+        process.exit(0);
+      }
+
+      // Unknown error
+      if (config.onListenFail) {
+        config.onListenFail(err);
+      } else {
+        console.log(`An error occurred while trying to listen and use SSL on port ${port}:`, err);
+        process.exit(0);
+      }
+    });
     server.listen(port, (err) => {
       if (err) {
         if (config.onListenFail) {
