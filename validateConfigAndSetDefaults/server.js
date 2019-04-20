@@ -6,6 +6,25 @@ module.exports = (oldConfig) => {
   const config = oldConfig;
   const print = initPrint(config.verbose);
 
+  // Detect and handle Heroku environment
+  if (
+    process.ENV.CLIENT_ID
+    || process.ENV.CLIENT_SECRET
+    || process.ENV.CONSUMER_KEY
+    || process.ENV.CONSUMER_SECRET
+  ) {
+    // Add developer credentials to config
+    config.developerCredentials = {
+      client_id: process.ENV.CLIENT_ID,
+      client_secret: process.ENV.CLIENT_SECRET,
+    };
+
+    // Add installation credentials to config
+    config.installationCredentials = {
+      consumer_key: process.ENV.CONSUMER_KEY,
+      consumer_secret: process.ENV.CONSUMER_SECRET,
+    };
+  }
 
   /*------------------------------------------------------------------------*/
   /*                               Express App                              */
