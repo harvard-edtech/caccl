@@ -8,21 +8,21 @@ module.exports = (oldConfig) => {
 
   // Detect and handle Heroku environment
   if (
-    process.ENV.CLIENT_ID
-    || process.ENV.CLIENT_SECRET
-    || process.ENV.CONSUMER_KEY
-    || process.ENV.CONSUMER_SECRET
+    process.env.CLIENT_ID
+    || process.env.CLIENT_SECRET
+    || process.env.CONSUMER_KEY
+    || process.env.CONSUMER_SECRET
   ) {
     // Add developer credentials to config
     config.developerCredentials = {
-      client_id: process.ENV.CLIENT_ID,
-      client_secret: process.ENV.CLIENT_SECRET,
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
     };
 
     // Add installation credentials to config
     config.installationCredentials = {
-      consumer_key: process.ENV.CONSUMER_KEY,
-      consumer_secret: process.ENV.CONSUMER_SECRET,
+      consumer_key: process.env.CONSUMER_KEY,
+      consumer_secret: process.env.CONSUMER_SECRET,
     };
   }
 
