@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --exit --recursive --reporter spec --timeout 5000",
     "selenium": "node ./node_modules/dce-selenium/run",
-    "accept": "node test/accept"
+    "accept": "node accept"
   },
   "repository": {
     "type": "git",

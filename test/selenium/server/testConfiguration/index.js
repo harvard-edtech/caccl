@@ -78,9 +78,13 @@ module.exports = async (driver, config = {}) => {
         host: 'localhost',
         path: '/kill-server-now',
         ignoreSSLIssues: true,
-      }).catch(() => {
-        return resolve(false);
-      });
+      })
+        .then(() => {
+          return resolve(true);
+        })
+        .catch(() => {
+          return resolve(false);
+        });
     });
   };
 
@@ -90,10 +94,36 @@ module.exports = async (driver, config = {}) => {
     canvasHost,
     dontPrint: true,
   }).server;
+
+  // Keep track of sockets so we can kill them
+  const canvasSockets = {};
+  let socketKey = 1;
+  canvasServer.on('connection', (socket) => {
+    // Save new socket
+    const key = socketKey;
+    socketKey += 1;
+    canvasSockets[key] = socket;
+
+    // Remove socket when it closes
+    socket.on('close', function () {
+      delete canvasSockets[key];
+    });
+
+    // Extend socket lifetime for demo purposes
+    socket.setTimeout(4000);
+  });
+
+  // Function to kill Canvas server and sockets
   const stopCanvasServer = async () => {
     return new Promise((resolve) => {
+      // Kill server
       canvasServer.close((err) => {
         return resolve(!err);
+      });
+
+      // Kill sockets
+      Object.values(canvasSockets).forEach((socket) => {
+        socket.destroy();
       });
     });
   };
