@@ -15,7 +15,6 @@ module.exports = (oldConfig) => {
   const launchDirectory = process.env.INIT_CWD;
   const readConfig = (name) => {
     const configPath = path.join(launchDirectory, `config/${name}.js`);
-    let config;
     try {
       return require(configPath); // eslint-disable-line global-require, import/no-dynamic-require, max-len
     } catch (err) {
