@@ -2,6 +2,10 @@
 
 The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all-in-one library for building Canvas-integrated apps. By handling LTI, authorization, and api for you, CACCL makes building Canvas-integrated tools quick and easy.
 
+## This project is in Beta:
+
+This project is still in Beta. Breaking changes may occur at any time. Please be careful when updating your version of caccl.
+
 # Quickstart
 
 ## Initialize your Project
@@ -57,7 +61,7 @@ To **start your app in developer mode**, open three terminal windows in the proj
 _FAQ: Which port will my app listen to?_
 
 > By default, we use port 443.
-> 
+>
 > To choose a specific port, either set the "PORT" environment variable or add a `port` configuration option when calling `initCACCL` (see [Configuring CACCL on the Server](#configuring-caccl-on-the-server))
 
 #### Back-end
@@ -92,7 +96,7 @@ _Get Info on Status, Auth, and LTI Launch:_
 > launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
 >
 > **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
-> 
+>
 > Possible values of `authFailureReason`:
 >
 > - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
@@ -169,7 +173,7 @@ _Get Info on Status, Auth, and LTI Launch:_
 > launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
 >
 > **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
-> 
+>
 > Possible values of `authFailureReason`:
 >
 > - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
@@ -200,7 +204,7 @@ _Sending requests to the server:_
 
 #### Configuring CACCL on the Server
 
-To change the default canvasHost, edit the value in `/config/canvasDefaults.js`.
+To change the default canvasHost in your dev environment, edit the value in `config/devEnvironment.js`. To change this in your production environment, see the section on [deploying your app](#deploying-your-app).
 
 To customize other aspects of how CACCl functions on the server, edit the configuration options being passed into `initCACCL(...)` in `index.js`:
 
@@ -323,7 +327,7 @@ Just follow these steps:
 _a. Generate your installationCredentials_
 
 > Use a random string generator to create your app's `consumer_key` and `consumer_secret`.
-> 
+>
 > Example:
 
 > `consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja'`
@@ -338,7 +342,7 @@ _b. Save your installationCredentials to your production environment_
 If your app does not access the Canvas API...
 
 > Make sure to set the following additional configuration options when calling `initCACCL` in your top-level `index.js` file:
-> 
+>
 > ```js
 > initCACCL({
 >   ...
@@ -354,11 +358,11 @@ If your app does not access the Canvas API...
 If your app requires access to the Canvas API...
 
 > **a. Generate a developer key for your app**
-> 
-> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`. 
-> 
+>
+> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
+>
 > **b. Keep your developerCredentials safe**
-> 
+>
 > Save your developerCredentials in a secure place. We highly recommend not checking these into git. You'll need both the `client_id` and `client_secret` when deploying your app (see the section on [deploying your app](#deploying-your-app))
 
 ##### 3. Deploy your app
@@ -370,7 +374,7 @@ See the section on [deploying your app](#deploying-your-app).
 _a. Create your app's installation XML_
 
 > We recommend using an online tool for this step. Try googling "LTI XML Generator" or just use the [edu-apps xml generator](https://www.edu-apps.org/build_xml.html).
-> 
+>
 > Tips:
 >  
 > - Set the launch URL to `https://yourhost.com/launch` unless you changed the `launchPath` config parameter
@@ -388,7 +392,7 @@ _b. Install your app into Canvas_
 > h. Paste the xml (generated in part a above) into the "XML Configuration" box  
 > h. Click "Submit"  
 > i. Refresh the page
-> 
+>
 > Now, when visiting the course (or a course in the account) you just added your app to, you'll find that the app is installed. Note: if your XML wasn't configured to enable your app by default, you may need to go into Settings > Navigation and drag your app up so it's visible.
 
 ##### 5. Launch your app via Canvas
@@ -415,18 +419,19 @@ Now, your project is ready for production. Copy your _entire project_ to your pr
   > a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
   > b. Choose GitHub as your deployment method on Heroku  
   > c. Select the `most-recent-build` branch as your automatic deploys branch  
-  > 
+  >
   > To deploy a new version of your app, build and commit to `most-recent-build`.
 
 3. In your Heroku app, visit the "Settings" tab
-4. Find the "Config Vars" section and add your installationCredentials and developerCredentials:
+4. Find the "Config Vars" section and add the following key/value pairs:
 
   > KEY | VALUE
   > :--- | :---
   > CLIENT_ID | the client_id from your developerCredentials
   > CLIENT_SECRET | the client_secret from your developerCredentials
   > CONSUMER_KEY | the consumer_key from your installationCredentials
-  > CONSUMER_SECRET | the consumer_secret from your installationCredentials 
+  > CONSUMER_SECRET | the consumer_secret from your installationCredentials
+  > CANVAS_HOST | the default canvasHost to use
 
 If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
 
@@ -449,13 +454,13 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
   >   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
   > };
   > ```
-  
+
 3. Add your developerCredentials:
 
   > Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
   >
   > Example `developerCredentials.js` file:
-  
+
   > ```js
   > module.exports = {
   >   client_id: '10810000000003',
@@ -463,7 +468,19 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
   > };
   > ```
 
-4. Start your app:
+4. Add your canvasDefaults:
+
+  > Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
+  >
+  > Example `canvasDefaults.js` file:
+  >
+  > ```js
+  > module.exports = {
+  >   canvasHost: 'canvas.harvard.edu',
+  > };
+  > ```
+
+5. Start your app:
 
   > Run `npm start` on the server
   >
@@ -614,7 +631,7 @@ _Get Info on Status, Auth, and LTI Launch:_
 > launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
 >
 > **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
-> 
+>
 > Possible values of `authFailureReason`:
 >
 > - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
@@ -666,7 +683,7 @@ _Adding views:_
 
 #### Configuring CACCL
 
-To change the default canvasHost, edit the value in `/config/canvasDefaults.js`.
+To change the default canvasHost in your dev environment, edit the value in `config/devEnvironment.js`. To change this in your production environment, see the section on [deploying your app](#deploying-your-app-1).
 
 To customize other aspects of how CACCl functions on the server, edit the configuration options being passed into `initCACCL(...)` in `index.js`:
 
@@ -742,7 +759,7 @@ Just follow these steps:
 _a. Generate your installationCredentials_
 
 > Use a random string generator to create your app's `consumer_key` and `consumer_secret`.
-> 
+>
 > Example:
 
 > `consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja'`
@@ -753,14 +770,14 @@ _b. Save your installationCredentials to your production environment_
 > Save the `consumer_key` and `consumer_secret_ to `config/installationCredentials.js` **only in your production environment**
 >
 > Example:
-> 
+>
 > ```js
 > module.exports = {
 >   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
 >   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
 > };
 > ```
-> 
+>
 > Do not edit this file in your development environment! In your development environment, your `installationCredentials.js` file should have `consumer_key: 'consumer_key'` and `consumer_secret: 'consumer_secret'` (our dummy developer environment values)
 
 ##### 2. Set up your developerCredentials
@@ -768,7 +785,7 @@ _b. Save your installationCredentials to your production environment_
 If your app does not access the Canvas API...
 
 > Make sure to set the following additional configuration options when calling `initCACCL` in your top-level `index.js` file:
-> 
+>
 > ```js
 > initCACCL({
 >   ...
@@ -784,22 +801,22 @@ If your app does not access the Canvas API...
 If your app requires access to the Canvas API...
 
 > **a. Generate a developer key for your app**
-> 
-> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`. 
-> 
+>
+> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
+>
 > **b. Save your developerCredentials to your production environment**
-> 
+>
 > In your production environment only, edit your `config/developerCredentials.js` file and add your `client_id` and `client_secret`.
-> 
+>
 > Example:
-> 
+>
 > ```js
 > module.exports = {
 >   client_id: '10810000000003',
 >   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
 > };
 > ```
-> 
+>
 > Do not edit this file in your developer environment! In your development environment, your `developerCredentials.js` file should have `client_id: 'client_id'` and `client_secret: 'client_secret'` (our dummy developer environment values)
 
 ##### 3. Install your app into a Canvas course or account
@@ -807,7 +824,7 @@ If your app requires access to the Canvas API...
 _a. Create your app's installation XML_
 
 > We recommend using an online tool for this step. Try googling "LTI XML Generator" or just use the [edu-apps xml generator](https://www.edu-apps.org/build_xml.html).
-> 
+>
 > Tips:
 >  
 > - Set the launch URL to `https://yourhost.com/launch` unless you changed the `launchPath` config parameter
@@ -825,7 +842,7 @@ _b. Install your app into Canvas_
 > h. Paste the xml (generated in part a above) into the "XML Configuration" box  
 > h. Click "Submit"  
 > i. Refresh the page
-> 
+>
 > Now, when visiting the course (or a course in the account) you just added your app to, you'll find that the app is installed. Note: if your XML wasn't configured to enable your app by default, you may need to go into Settings > Navigation and drag your app up so it's visible.
 
 ##### 4. Deploy your app
@@ -856,18 +873,19 @@ Now, your project is ready for production. Copy your _entire project_ to your pr
   > a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
   > b. Choose GitHub as your deployment method on Heroku  
   > c. Select the `most-recent-build` branch as your automatic deploys branch  
-  > 
+  >
   > To deploy a new version of your app, build and commit to `most-recent-build`.
 
 3. In your Heroku app, visit the "Settings" tab
-4. Find the "Config Vars" section and add your installationCredentials and developerCredentials:
+4. Find the "Config Vars" section and add the following key/value pairs:
 
   > KEY | VALUE
   > :--- | :---
   > CLIENT_ID | the client_id from your developerCredentials
   > CLIENT_SECRET | the client_secret from your developerCredentials
   > CONSUMER_KEY | the consumer_key from your installationCredentials
-  > CONSUMER_SECRET | the consumer_secret from your installationCredentials 
+  > CONSUMER_SECRET | the consumer_secret from your installationCredentials
+  > CANVAS_HOST | the default canvasHost to use
 
 If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
 
@@ -890,13 +908,13 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
   >   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
   > };
   > ```
-  
+
 3. Add your developerCredentials:
 
   > Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
   >
   > Example `developerCredentials.js` file:
-  
+  >
   > ```js
   > module.exports = {
   >   client_id: '10810000000003',
@@ -904,7 +922,19 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
   > };
   > ```
 
-4. Start your app:
+4. Add your canvasDefaults:
+
+  > Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
+  >
+  > Example `canvasDefaults.js` file:
+  >
+  > ```js
+  > module.exports = {
+  >   canvasHost: 'canvas.harvard.edu',
+  > };
+  > ```
+
+5. Start your app:
 
   > Run `npm start` on the server
   >

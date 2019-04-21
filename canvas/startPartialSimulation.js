@@ -31,7 +31,7 @@ let devEnvironment;
 try {
   devEnvironment = require(devEnvPath); // eslint-disable-line global-require, import/no-dynamic-require, max-len
 } catch (err) {
-  // Could not read the access token!
+  // Could not read the dev environment!
   devEnvironment = null;
 }
 

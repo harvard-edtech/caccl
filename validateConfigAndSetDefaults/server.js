@@ -1,29 +1,103 @@
-const initPrint = require('./helpers/initPrint');
+const path = require('path');
 
+const initPrint = require('./helpers/initPrint');
 const genExpressApp = require('../genExpressApp');
 
 module.exports = (oldConfig) => {
   const config = oldConfig;
   const print = initPrint(config.verbose);
 
-  // Detect and handle Heroku environment
-  if (
+  /*------------------------------------------------------------------------*/
+  /*                            File-based Config                           */
+  /*------------------------------------------------------------------------*/
+
+  // Function that imports a config file
+  const launchDirectory = process.env.INIT_CWD;
+  const readConfig = (name) => {
+    const configPath = path.join(launchDirectory, `config/${name}.js`);
+    let config;
+    try {
+      return require(configPath); // eslint-disable-line global-require, import/no-dynamic-require, max-len
+    } catch (err) {
+      // Could not read the config file. Return null to indicate this
+      return null;
+    }
+  };
+
+  // Import config files
+  const canvasDefaults = readConfig('canvasDefaults');
+  const developerCredentials = readConfig('developerCredentials');
+  const installationCredentials = readConfig('installationCredentials');
+  const devEnvironment = readConfig('devEnvironment');
+
+  // Add to config object if values aren't already there
+  if (canvasDefaults) {
+    config.canvasHost = canvasDefaults.canvasHost;
+  }
+  if (developerCredentials) {
+    config.developerCredentials = developerCredentials;
+  }
+  if (installationCredentials) {
+    config.installationCredentials = installationCredentials;
+  }
+  if (devEnvironment) {
+    // Overwrite canvasDefaults with devEnvironment value
+    config.canvasHost = devEnvironment.canvasHost;
+  }
+
+  /*------------------------------------------------------------------------*/
+  /*                        Environment-based Config                        */
+  /*------------------------------------------------------------------------*/
+
+  // Add developer credentials to config
+  const envClientId = (
     process.env.CLIENT_ID
-    || process.env.CLIENT_SECRET
-    || process.env.CONSUMER_KEY
-    || process.env.CONSUMER_SECRET
-  ) {
-    // Add developer credentials to config
+    || process.env.client_id
+  );
+  const envClientSecret = (
+    process.env.CLIENT_SECRET
+    || process.env.client_secret
+  );
+  if (envClientId && envClientSecret) {
     config.developerCredentials = {
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
     };
+  }
 
-    // Add installation credentials to config
+  // Add installation credentials to config
+  const envConsumerKey = (
+    process.env.CONSUMER_KEY
+    || process.env.consumer_key
+  );
+  const envConsumerSecret = (
+    process.env.CONSUMER_SECRET
+    || process.env.consumer_secret
+  );
+  if (envConsumerKey && envConsumerSecret) {
     config.installationCredentials = {
       consumer_key: process.env.CONSUMER_KEY,
       consumer_secret: process.env.CONSUMER_SECRET,
     };
+  }
+
+  // Add Canvas host
+  const envCanvasHost = (
+    process.env.CANVAS_HOST
+    || process.env.canvas_host
+    || process.env.canvasHost
+  );
+  if (envCanvasHost) {
+    config.canvasHost = envCanvasHost;
+  }
+
+  // Add port
+  const envPort = (
+    process.env.PORT
+    || process.env.port
+  );
+  if (envPort) {
+    config.port = envPort;
   }
 
   /*------------------------------------------------------------------------*/
