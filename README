@@ -2,6 +2,10 @@
 
 The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all-in-one library for building Canvas-integrated apps. By handling LTI, authorization, and api for you, CACCL makes building Canvas-integrated tools quick and easy.
 
+## This project is in Beta:
+
+This project is still in Beta. Breaking changes may occur at any time. Please be careful when updating your version of caccl.
+
 ## Documentation
 
 ### View the [full documentation here](https://harvard-edtech.github.io/caccl/)

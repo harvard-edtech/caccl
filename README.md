@@ -268,7 +268,7 @@ _Configuration for Canvas authorization:_
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
-> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }. _Required_ unless disableAuthorization is true | none
+> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ client_id: 'client_id', client_secret: 'client_secret' }` (our dummy vals for dev environment)
 > defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
 > tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | null to turn off storage of refresh tokens or custom token store of form `{ get(key), set(key, val) }` where both get and set functions return promises | memory token store
 > simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
@@ -280,7 +280,7 @@ _Configuration for LTI launches:_
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
-> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. _Required:_ `installationCredentials` is _required_ unless `disableLTI` is true.
+> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ consumer_key: 'consumer_key', consumer_secret: 'consumer_secret' }` (our dummy vals for dev environment)
 > redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
 > nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
 > disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
@@ -731,7 +731,7 @@ _Configuration for Canvas authorization:_
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
-> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }. _Required_ unless disableAuthorization is true | none
+> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ client_id: 'client_id', client_secret: 'client_secret' }` (our dummy vals for dev environment)
 > defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
 > tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | null to turn off storage of refresh tokens or custom token store of form `{ get(key), set(key, val) }` where both get and set functions return promises | memory token store
 > simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
@@ -743,7 +743,7 @@ _Configuration for LTI launches:_
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
-> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. _Required:_ `installationCredentials` is _required_ unless `disableLTI` is true.
+> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ consumer_key: 'consumer_key', consumer_secret: 'consumer_secret' }` (our dummy vals for dev environment)
 > redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
 > nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
 > disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`

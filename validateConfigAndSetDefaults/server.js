@@ -354,17 +354,12 @@ module.exports = (oldConfig) => {
     print.variable('disableLTI', false, 'LTI features will be enabled: we will accept and parse LTI launches');
   }
 
-  // installationCredentials
-  if (config.installationCredentials) {
-    if (config.disableLTI) {
-      print.variable('installationCredentials', true, 'this will be ignored: we have no need for "installationCredentials" when LTI is disabled');
-    } else {
-      print.variable('installationCredentials', true, 'we will use your "installationCredentials" to verify the authenticity of LTI launch requests');
-    }
-  } else if (config.disableLTI) {
-    print.variable('installationCredentials', false, 'this is expected: we have no need for "installationCredentials" when LTI is disabled');
-  } else {
-    throw new Error('"installationCredentials" are required when LTI is enabled: we need the installationCredentials to be able to verify the authenticity of LTI launch requests');
+  // installationCredentials (add default values)
+  if (!config.installationCredentials) {
+    config.installationCredentials = {
+      consumer_key: 'consumer_key',
+      consumer_secret: 'consumer_secret',
+    };
   }
 
   // launchPath
@@ -519,20 +514,12 @@ module.exports = (oldConfig) => {
     print.variable('tokenStore', false, 'we will use a memory store for refresh tokens');
   }
 
-  // Developer credentials
-  const needDevCredentials = (apiEnabled && !config.disableAuthorization);
-  if (needDevCredentials) {
-    if (config.developerCredentials) {
-      print.variable('developerCredentials', true, 'we\'ll use these credentials in our authorization process');
-    } else {
-      // Need developerCredentials but don't have them
-      throw new Error('"developerCredentials" required. API is enabled (either disableClientSideAPI or disableServerSideAPI is falsy) and authorization is on (disableAuthorization is falsy). Thus, we need to be able to authorize. This is only possible with "developerCredentials".');
-    }
-  } else if (config.developerCredentials) {
-    // Don't need credentials but they were included
-    print.variable('developerCredentials', false, 'this will be ignored: either authorization or api is off, so we don\'t need credentials');
-  } else {
-    print.variable('developerCredentials', false, 'this is fine because we don\'t need credentials: either authorization or api is off, so we don\'t need credentials');
+  // Developer credentials (add defaults)
+  if (!config.developerCredentials) {
+    config.developerCredentials = {
+      client_id: 'client_id',
+      client_secret: 'client_secret',
+    };
   }
 
   // If we need to generate a new express app, do it now that we know the
