@@ -25,34 +25,6 @@ module.exports = async (driver, config = {}) => {
     appErr = err;
   }
 
-  // Ensure that app failed to initialize if no installation credentials
-  // and LTI is enabled
-  if (!config.disableLTI && !config.installationCredentials) {
-    // An error should've occurred
-    if (appErr && appErr.message.includes('"installationCredentials" are required when LTI is enabled')) {
-      // Correct error!
-      return true;
-    }
-    if (appErr) {
-      throw new Error(`LTI was enabled but installationCredentials werent included. An error occurred but not the correct one. Expected an "installationCredentials are required" error but got instead: ${appErr.message}`);
-    }
-    throw new Error('LTI was enabled but installationCredentials werent included. An error should\'ve occurred.');
-  }
-
-  // Ensure that app failed to initialize if no developer credentials
-  // and auth is enabled
-  if (!config.disableAuthorization && !config.developerCredentials) {
-    // An error should've occurred
-    if (appErr && appErr.message.includes('"developerCredentials" required')) {
-      // Correct error
-      return true;
-    }
-    if (appErr) {
-      throw new Error(`Auth was enabled but developerCredentials werent included. An error occurred but not the correct one. Expected an "developerCredentials required" error but got instead: ${appErr.message}`);
-    }
-    throw new Error('Auth was enabled but developerCredentials werent included. An error should\'ve occurred.');
-  }
-
   // Ensure that the app exists
   if (!app || appErr) {
     throw new Error(`App failed to initialize. An error did ${appErr ? '' : 'not '}occur. ${appErr ? appErr.message : ''}`);
@@ -128,7 +100,7 @@ module.exports = async (driver, config = {}) => {
     });
   };
 
-  // Wait .5s for the services to start
+  // Wait 1s for the services to start
   await new Promise((r) => {
     setTimeout(r, 1000);
   });
@@ -144,4 +116,9 @@ module.exports = async (driver, config = {}) => {
     driver.log('Either the app or canvas simulator could not be stopped. Now exiting tests.');
     process.exit(1);
   }
+
+  // Wait 1s for the services to stop
+  await new Promise((r) => {
+    setTimeout(r, 1000);
+  });
 };
