@@ -413,78 +413,71 @@ Now, your project is ready for production. Copy your _entire project_ to your pr
 
 1. Create a new app on Heroku
 2. Configure your Heroku app
-
-  > This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
-  >
-  > a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
-  > b. Choose GitHub as your deployment method on Heroku  
-  > c. Select the `most-recent-build` branch as your automatic deploys branch  
-  >
-  > To deploy a new version of your app, build and commit to `most-recent-build`.
+> This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
+>
+> a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
+> b. Choose GitHub as your deployment method on Heroku  
+> c. Select the `most-recent-build` branch as your automatic deploys branch  
+>
+> To deploy a new version of your app, build and commit to `most-recent-build`.
 
 3. In your Heroku app, visit the "Settings" tab
 4. Find the "Config Vars" section and add the following key/value pairs:
-
-  > KEY | VALUE
-  > :--- | :---
-  > CLIENT_ID | the client_id from your developerCredentials
-  > CLIENT_SECRET | the client_secret from your developerCredentials
-  > CONSUMER_KEY | the consumer_key from your installationCredentials
-  > CONSUMER_SECRET | the consumer_secret from your installationCredentials
-  > CANVAS_HOST | the default canvasHost to use
+> KEY | VALUE
+> :--- | :---
+> CLIENT_ID | the client_id from your developerCredentials
+> CLIENT_SECRET | the client_secret from your developerCredentials
+> CONSUMER_KEY | the consumer_key from your installationCredentials
+> CONSUMER_SECRET | the consumer_secret from your installationCredentials
+> CANVAS_HOST | the default canvasHost to use
 
 If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
 
 ##### Deploying on a server (e.g. Amazon EC2)
 
 1. Set up your server:
-  > We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Client](#configuring-caccl-on-the-client) for info on adding SSL certificates.
-  >
-  > A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
+> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Client](#configuring-caccl-on-the-client) for info on adding SSL certificates.
+>
+> A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
 
 2. Add your installationCredentials:
-
-  > Save the `consumer_key` and `consumer_secret` to `config/installationCredentials.js`. **Do not add this file in your developer environment**.
-  >
-  > Example `installationCredentials.js` file:
-  >
-  > ```js
-  > module.exports = {
-  >   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
-  >   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
-  > };
-  > ```
+> Save the `consumer_key` and `consumer_secret` to `config/installationCredentials.js`. **Do not add this file in your developer environment**.
+>
+> Example `installationCredentials.js` file:
+>
+> ```js
+> module.exports = {
+>   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
+>   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
+> };
+> ```
 
 3. Add your developerCredentials:
-
-  > Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
-  >
-  > Example `developerCredentials.js` file:
-
-  > ```js
-  > module.exports = {
-  >   client_id: '10810000000003',
-  >   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
-  > };
-  > ```
+> Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
+>
+> Example `developerCredentials.js` file:
+>
+> ```js
+> module.exports = {
+>   client_id: '10810000000003',
+>   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
+> };
+> ```
 
 4. Add your canvasDefaults:
-
-  > Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
-  >
-  > Example `canvasDefaults.js` file:
-  >
-  > ```js
-  > module.exports = {
-  >   canvasHost: 'canvas.harvard.edu',
-  > };
-  > ```
-
+> Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
+>
+> Example `canvasDefaults.js` file:
+>
+> ```js
+> module.exports = {
+>   canvasHost: 'canvas.harvard.edu',
+> };
+> ```
 5. Start your app:
-
-  > Run `npm start` on the server
-  >
-  > You may need to grant your app higher privileges by running `sudo npm start` instead.
+> Run `npm start` on the server
+>
+> You may need to grant your app higher privileges by running `sudo npm start` instead.
 
 <hr>
 
@@ -867,78 +860,72 @@ Now, your project is ready for production. Copy your _entire project_ to your pr
 
 1. Create a new app on Heroku
 2. Configure your Heroku app
-
-  > This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
-  >
-  > a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
-  > b. Choose GitHub as your deployment method on Heroku  
-  > c. Select the `most-recent-build` branch as your automatic deploys branch  
-  >
-  > To deploy a new version of your app, build and commit to `most-recent-build`.
+> This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
+>
+> a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
+> b. Choose GitHub as your deployment method on Heroku  
+> c. Select the `most-recent-build` branch as your automatic deploys branch  
+>
+> To deploy a new version of your app, build and commit to `most-recent-build`.
 
 3. In your Heroku app, visit the "Settings" tab
 4. Find the "Config Vars" section and add the following key/value pairs:
-
-  > KEY | VALUE
-  > :--- | :---
-  > CLIENT_ID | the client_id from your developerCredentials
-  > CLIENT_SECRET | the client_secret from your developerCredentials
-  > CONSUMER_KEY | the consumer_key from your installationCredentials
-  > CONSUMER_SECRET | the consumer_secret from your installationCredentials
-  > CANVAS_HOST | the default canvasHost to use
+> KEY | VALUE
+> :--- | :---
+> CLIENT_ID | the client_id from your developerCredentials
+> CLIENT_SECRET | the client_secret from your developerCredentials
+> CONSUMER_KEY | the consumer_key from your installationCredentials
+> CONSUMER_SECRET | the consumer_secret from your installationCredentials
+> CANVAS_HOST | the default canvasHost to use
 
 If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
 
 ##### Deploying on a server (e.g. Amazon EC2)
 
 1. Set up your server:
-  > We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Client](#configuring-caccl-on-the-client) for info on adding SSL certificates.
-  >
-  > A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
+> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Client](#configuring-caccl-on-the-client) for info on adding SSL certificates.
+>
+> A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
 
 2. Add your installationCredentials:
-
-  > Save the `consumer_key` and `consumer_secret` to `config/installationCredentials.js`. **Do not add this file in your developer environment**.
-  >
-  > Example `installationCredentials.js` file:
-  >
-  > ```js
-  > module.exports = {
-  >   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
-  >   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
-  > };
-  > ```
+> Save the `consumer_key` and `consumer_secret` to `config/installationCredentials.js`. **Do not add this file in your developer environment**.
+>
+> Example `installationCredentials.js` file:
+>
+> ```js
+> module.exports = {
+>   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
+>   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
+> };
+> ```
 
 3. Add your developerCredentials:
-
-  > Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
-  >
-  > Example `developerCredentials.js` file:
-  >
-  > ```js
-  > module.exports = {
-  >   client_id: '10810000000003',
-  >   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
-  > };
-  > ```
+> Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
+>
+> Example `developerCredentials.js` file:
+>
+> ```js
+> module.exports = {
+>   client_id: '10810000000003',
+>   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
+> };
+> ```
 
 4. Add your canvasDefaults:
-
-  > Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
-  >
-  > Example `canvasDefaults.js` file:
-  >
-  > ```js
-  > module.exports = {
-  >   canvasHost: 'canvas.harvard.edu',
-  > };
-  > ```
+> Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
+>
+> Example `canvasDefaults.js` file:
+>
+> ```js
+> module.exports = {
+>   canvasHost: 'canvas.harvard.edu',
+> };
+> ```
 
 5. Start your app:
-
-  > Run `npm start` on the server
-  >
-  > You may need to grant your app higher privileges by running `sudo npm start` instead.
+> Run `npm start` on the server
+>
+> You may need to grant your app higher privileges by running `sudo npm start` instead.
 
 ## Manual Set Up:
 
