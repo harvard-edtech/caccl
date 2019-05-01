@@ -403,33 +403,33 @@ If you set up your installation XML to include a navigation item _and_ your app 
 
 ### Deploying your app:
 
-No matter where you deploy your app, you need to **build your app:**
-
-1. Run `npm run build`
-
-Now, your project is ready for production. Copy your _entire project_ to your production server. To save space, leave out everything in the `/client` folder _except_ the `/client/build` folder.
-
 ##### Deploying on Heroku
 
 1. Create a new app on Heroku
-2. Configure your Heroku app
+2. Set up your _Deployment method_:
 > This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
 >
-> a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
-> b. Choose GitHub as your deployment method on Heroku  
-> c. Select the `most-recent-build` branch as your automatic deploys branch  
->
-> To deploy a new version of your app, build and commit to `most-recent-build`.
+> a. Under the "Deploy" tab, choose GitHub as your "Deployment method"  
+> b. Follow instructions to search for your app's repository and connect to it  
 
-3. In your Heroku app, visit the "Settings" tab
-4. Find the "Config Vars" section and add the following key/value pairs:
+3. Set up your _Config Vars_:
+> a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
+> b. Add the following vars:   
+> 
+> KEY | VALUE
+> :--- | :---
+> CONSUMER_KEY | the consumer_key from your installationCredentials
+> CONSUMER_SECRET | the consumer_secret from your installationCredentials
+> CANVAS_HOST | the default canvasHost to use
+> 
+> c. If you created developerCredentials while following the steps in [Adding Your App to Canvas](#adding-your-app-to-canvas), add these vars as well:
+> 
 > KEY | VALUE
 > :--- | :---
 > CLIENT_ID | the client_id from your developerCredentials
 > CLIENT_SECRET | the client_secret from your developerCredentials
-> CONSUMER_KEY | the consumer_key from your installationCredentials
-> CONSUMER_SECRET | the consumer_secret from your installationCredentials
-> CANVAS_HOST | the default canvasHost to use
+
+4. You're done! To deploy a new version of your app, just push to the _master_ branch.
 
 If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
 
@@ -474,7 +474,16 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 >   canvasHost: 'canvas.harvard.edu',
 > };
 > ```
-5. Start your app:
+
+5. Install your app's dependencies
+> Run `npm install` on the server
+
+6. Build your app:
+> Run `npm run build` on the server
+> 
+> Alternatively, you can build your app before uploading it to the server. All up to you.
+
+7. Start your app:
 > Run `npm start` on the server
 >
 > You may need to grant your app higher privileges by running `sudo npm start` instead.
@@ -850,33 +859,33 @@ If you set up your installation XML to include a navigation item _and_ your app 
 
 ### Deploying your app:
 
-No matter where you deploy your app, you need to **build your app:**
-
-1. Run `npm run build`
-
-Now, your project is ready for production. Copy your _entire project_ to your production server.
-
 ##### Deploying on Heroku
 
 1. Create a new app on Heroku
-2. Configure your Heroku app
+2. Set up your _Deployment method_:
 > This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
 >
-> a. Add your fully built app to a separate branch on GitHub (let's call it `most-recent-build` for our purposes)  
-> b. Choose GitHub as your deployment method on Heroku  
-> c. Select the `most-recent-build` branch as your automatic deploys branch  
->
-> To deploy a new version of your app, build and commit to `most-recent-build`.
+> a. Under the "Deploy" tab, choose GitHub as your "Deployment method"  
+> b. Follow instructions to search for your app's repository and connect to it  
 
-3. In your Heroku app, visit the "Settings" tab
-4. Find the "Config Vars" section and add the following key/value pairs:
+3. Set up your _Config Vars_:
+> a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
+> b. Add the following vars:   
+> 
+> KEY | VALUE
+> :--- | :---
+> CONSUMER_KEY | the consumer_key from your installationCredentials
+> CONSUMER_SECRET | the consumer_secret from your installationCredentials
+> CANVAS_HOST | the default canvasHost to use
+> 
+> c. If you created developerCredentials while following the steps in [Adding Your App to Canvas](#adding-your-app-to-canvas-1), add these vars as well:
+> 
 > KEY | VALUE
 > :--- | :---
 > CLIENT_ID | the client_id from your developerCredentials
 > CLIENT_SECRET | the client_secret from your developerCredentials
-> CONSUMER_KEY | the consumer_key from your installationCredentials
-> CONSUMER_SECRET | the consumer_secret from your installationCredentials
-> CANVAS_HOST | the default canvasHost to use
+
+4. You're done! To deploy a new version of your app, just push to the _master_ branch.
 
 If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
 
@@ -922,7 +931,15 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 > };
 > ```
 
-5. Start your app:
+5. Install your app's dependencies
+> Run `npm install` on the server
+
+6. Build your app:
+> Run `npm run build` on the server
+> 
+> Alternatively, you can build your app before uploading it to the server. All up to you.
+
+7. Start your app:
 > Run `npm start` on the server
 >
 > You may need to grant your app higher privileges by running `sudo npm start` instead.
