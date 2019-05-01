@@ -436,7 +436,7 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 ##### Deploying on a server (e.g. Amazon EC2)
 
 1. Set up your server:
-> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Client](#configuring-caccl-on-the-client) for info on adding SSL certificates.
+> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Server](#configuring-caccl-on-the-server) for info on adding SSL certificates.
 >
 > A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
 
@@ -892,7 +892,7 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 ##### Deploying on a server (e.g. Amazon EC2)
 
 1. Set up your server:
-> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Client](#configuring-caccl-on-the-client) for info on adding SSL certificates.
+> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL](#configuring-caccl-1) for info on adding SSL certificates.
 >
 > A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
 
