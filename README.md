@@ -412,6 +412,7 @@ If you set up your installation XML to include a navigation item _and_ your app 
 >
 > a. Under the "Deploy" tab, choose GitHub as your "Deployment method"  
 > b. Follow instructions to search for your app's repository and connect to it  
+> c. We also recommend clicking "Enable Automatic Deploys" so your app re-deploys any time you push to _master_.
 
 3. Set up your _Config Vars_:
 > a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
@@ -870,6 +871,7 @@ If you set up your installation XML to include a navigation item _and_ your app 
 >
 > a. Under the "Deploy" tab, choose GitHub as your "Deployment method"  
 > b. Follow instructions to search for your app's repository and connect to it  
+> c. We also recommend clicking "Enable Automatic Deploys" so your app re-deploys any time you push to _master_.
 
 3. Set up your _Config Vars_:
 > a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
