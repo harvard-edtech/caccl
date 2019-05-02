@@ -358,8 +358,9 @@ If your app does not access the Canvas API...
 If your app requires access to the Canvas API...
 
 > **a. Generate a developer key for your app**
->
-> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
+> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<apphostname>/launch`.
+> 
+> Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
 >
 > **b. Keep your developerCredentials safe**
 >
@@ -804,7 +805,9 @@ If your app requires access to the Canvas API...
 
 > **a. Generate a developer key for your app**
 >
-> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
+> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<apphostname>/launch`.
+> 
+> Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
 >
 > **b. Save your developerCredentials to your production environment**
 >
