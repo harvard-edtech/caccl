@@ -1,10 +1,10 @@
 # CACCL
 
-The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all-in-one library for building Canvas-integrated apps. By handling LTI, authorization, and api for you, CACCL makes building Canvas-integrated tools quick and easy.
+The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all-in-one library for building Canvas-integrated apps. By handling LTI, authorization, and API for you, CACCL makes building Canvas-integrated tools quick and easy.
 
 ## This project is in Beta:
 
-This project is still in Beta. Breaking changes may occur at any time. Please be careful when updating your version of caccl.
+This project is still in Beta. Breaking changes may occur at any time. Please be careful when updating your version of CACCL.
 
 # Quickstart
 
@@ -314,7 +314,7 @@ itemsPerPage | number | Number of items to request on a get request | 100
 cacheType | string | If 'memory', cache is stored in memory. If 'session', cache is stored in express the session | "memory"
 cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/docs/Cache.md) | Custom cache manager instance. Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
 sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
-apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded api requests. This is the prefix we prepend to all requests when sending them to the server for forwarding to Canvas. This config option _must be the same on the server and client_ | /canvas
+apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded API requests. This is the prefix we prepend to all requests when sending them to the server for forwarding to Canvas. This config option _must be the same on the server and client_ | /canvas
 
 #### Adding Your App to Canvas
 
@@ -438,7 +438,7 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 ##### Deploying on a server (e.g. Amazon EC2)
 
 1. Set up your server:
-> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL on the Server](#configuring-caccl-on-the-server) for info on adding SSL certificates.
+> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your CACCL app and just upload your app code. Check out [Configuring CACCL on the Server](#configuring-caccl-on-the-server) for info on adding SSL certificates.
 >
 > A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
 
@@ -719,7 +719,7 @@ _Configuration for API access:_
 > Config Option | Type | Description | Default
 > :--- | :--- | :--- | :---
 > disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
-> routesWithAPI | string[] | list of routes to add api support to, `*` wildcard supported | all routes
+> routesWithAPI | string[] | list of routes to add API support to, `*` wildcard supported | all routes
 > cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
 > cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
 > dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
@@ -897,7 +897,7 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 ##### Deploying on a server (e.g. Amazon EC2)
 
 1. Set up your server:
-> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your caccl app and just upload your app code. Check out [Configuring CACCL](#configuring-caccl-1) for info on adding SSL certificates.
+> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your CACCL app and just upload your app code. Check out [Configuring CACCL](#configuring-caccl-1) for info on adding SSL certificates.
 >
 > A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
 
