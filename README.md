@@ -6,6 +6,10 @@ The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all
 
 This project is still in Beta. Breaking changes may occur at any time. Please be careful when updating your version of CACCL.
 
+## No Windows support:
+
+This project was developed to be run in a Mac or Linux environment. If you must develop in Windows, try [installing bash](https://www.google.com/search?q=install+linux+bash+on+windows), but understand that we do not test CACCL in Windows...so no guarantees this will work.
+
 # Quickstart
 
 ## Initialize your Project
@@ -359,7 +363,7 @@ If your app requires access to the Canvas API...
 
 > **a. Generate a developer key for your app**
 > Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<apphostname>/launch`.
-> 
+>
 > Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
 >
 > **b. Keep your developerCredentials safe**
@@ -417,15 +421,15 @@ If you set up your installation XML to include a navigation item _and_ your app 
 3. Set up your _Config Vars_:
 > a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
 > b. Add the following vars:   
-> 
+>
 > KEY | VALUE
 > :--- | :---
 > CONSUMER_KEY | the consumer_key from your installationCredentials
 > CONSUMER_SECRET | the consumer_secret from your installationCredentials
 > CANVAS_HOST | the default canvasHost to use
-> 
+>
 > c. If you created developerCredentials while following the steps in [Adding Your App to Canvas](#adding-your-app-to-canvas), add these vars as well:
-> 
+>
 > KEY | VALUE
 > :--- | :---
 > CLIENT_ID | the client_id from your developerCredentials
@@ -482,7 +486,7 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 
 6. Build your app:
 > Run `npm run build` on the server
-> 
+>
 > Alternatively, you can build your app before uploading it to the server. All up to you.
 
 7. Start your app:
@@ -807,7 +811,7 @@ If your app requires access to the Canvas API...
 > **a. Generate a developer key for your app**
 >
 > Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<apphostname>/launch`.
-> 
+>
 > Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
 >
 > **b. Save your developerCredentials to your production environment**
@@ -876,15 +880,15 @@ If you set up your installation XML to include a navigation item _and_ your app 
 3. Set up your _Config Vars_:
 > a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
 > b. Add the following vars:   
-> 
+>
 > KEY | VALUE
 > :--- | :---
 > CONSUMER_KEY | the consumer_key from your installationCredentials
 > CONSUMER_SECRET | the consumer_secret from your installationCredentials
 > CANVAS_HOST | the default canvasHost to use
-> 
+>
 > c. If you created developerCredentials while following the steps in [Adding Your App to Canvas](#adding-your-app-to-canvas-1), add these vars as well:
-> 
+>
 > KEY | VALUE
 > :--- | :---
 > CLIENT_ID | the client_id from your developerCredentials
@@ -941,7 +945,7 @@ If you need more info on Heroku, check out [Heroku's deployment guide](https://d
 
 6. Build your app:
 > Run `npm run build` on the server
-> 
+>
 > Alternatively, you can build your app before uploading it to the server. All up to you.
 
 7. Start your app:
