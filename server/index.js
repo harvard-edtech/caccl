@@ -134,6 +134,7 @@ module.exports = (oldConfig = {}) => {
         'Access-Control-Allow-Headers',
         'Origin, X-Requested-With, Content-Type, Accept'
       );
+      res.setHeader('Access-Control-Request-Headers', '*');
       if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
       }
