@@ -108,6 +108,38 @@ _Get Info on Status, Auth, and LTI Launch:_
 > - "denied" - the user denied the app access to Canvas when they were prompted
 > - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
 
+_Grade Passback:_
+
+> CACCL supports LTI-based grade passback when the user was launched through an external assignment. If the user launched this way, you will be able to use the `sendPassback` function on the server to pass grade, timestamp, and/or submission data back to Canvas:
+> 
+> In any server route, use the `req.sendPassback` function with the following parameters:
+> 
+> Property | Type | Description
+> :--- | :--- | :---
+> score | number | the number of points to give the student. Either this or `percent` can be included, but not both
+> percent | number | the percent of the points possible to give the student. Either this or `score` can be included, but not both
+> text | string | the student's text submission. Either this or `url` can be included, but not both
+> url | string | the student's url submission. Either this or `text` can be included, but not both
+> submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
+> 
+> Example 1: on this 20 point assignment, give the student 15 points and send their text submission
+> 
+> ```js
+> await req.sendPassback({
+>   score: 15,
+>   text: 'This is my submission',
+> });
+> ```
+> 
+> Example 2: on this 20 point assignment, give the student 15 points and send their url submission
+> 
+> ```js
+> await req.sendPassback({
+>   percent: 75,
+>   url: 'https://student.sub/is/this/link',
+> });
+> ```
+
 #### Front-end
 
 To **edit the front-end**, edit your React project in the `/client` folder. Start by editing `/client/src/App.js`. To integrate any component with the server or with Canvas, use the following:
@@ -123,10 +155,11 @@ _Adding CACCL to a React Component:_
 >   api,
 >   getStatus,
 >   sendRequest,
+>   sendPassback,
 > } = initCACCL();
 > ```
 >
-> See each section below on how to use `api`, `getStatus`, and `sendRequest`.
+> See each section below on how to use `api`, `getStatus`, `sendRequest`, and `sendPassback`.
 
 _Canvas API:_
 
@@ -205,6 +238,38 @@ _Sending requests to the server:_
 > ```
 
 > _Why use `sendRequest` instead of other request senders? Our `sendRequest` function works cross-domain with our development environment (dev server runs on one port, dev client runs on another)_
+
+_Grade Passback:_
+
+> CACCL supports LTI-based grade passback on the front-end when the user was launched through an external assignment and when the server has `disableClientSidePassback` set to `false` (this is the default). Use the `sendPassback` function provided by `initCACCL` to pass grade, timestamp, and/or submission data back to Canvas:
+> 
+> In any React component, use `sendPassback` with the following parameters:
+> 
+> Property | Type | Description
+> :--- | :--- | :---
+> score | number | the number of points to give the student. Either this or `percent` can be included, but not both
+> percent | number | the percent of the points possible to give the student. Either this or `score` can be included, but not both
+> text | string | the student's text submission. Either this or `url` can be included, but not both
+> url | string | the student's url submission. Either this or `text` can be included, but not both
+> submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
+> 
+> Example 1: on this 20 point assignment, give the student 15 points and send their text submission
+> 
+> ```js
+> await sendPassback({
+>   score: 15,
+>   text: 'This is my submission',
+> });
+> ```
+> 
+> Example 2: on this 20 point assignment, give the student 15 points and send their url submission
+> 
+> ```js
+> await sendPassback({
+>   percent: 75,
+>   url: 'https://student.sub/is/this/link',
+> });
+> ```
 
 #### Configuring CACCL on the Server
 
@@ -288,6 +353,7 @@ _Configuration for LTI launches:_
 > redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
 > nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
 > disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
+> disableClientSidePassback | boolean | if falsy, the client app cannot send grade passback to Canvas. If this is set to true, grade passback requests must be made from the server. Note: leaving this as false is convenient but does make it possible for clever users to spoof a grade passback request | `false`
 
 #### Configuring CACCL on the Client:
 
@@ -647,6 +713,37 @@ _Get Info on Status, Auth, and LTI Launch:_
 > - "denied" - the user denied the app access to Canvas when they were prompted
 > - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
 
+_Grade Passback:_
+
+> CACCL supports LTI-based grade passback when the user was launched through an external assignment. If the user launched this way, you will be able to use the `sendPassback` function on the server to pass grade, timestamp, and/or submission data back to Canvas:
+> 
+> In any server route, use the `req.sendPassback` function with the following parameters:
+> 
+> Property | Type | Description
+> :--- | :--- | :---
+> score | number | the number of points to give the student. Either this or `percent` can be included, but not both
+> percent | number | the percent of the points possible to give the student. Either this or `score` can be included, but not both
+> text | string | the student's text submission. Either this or `url` can be included, but not both
+> url | string | the student's url submission. Either this or `text` can be included, but not both
+> submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
+> 
+> Example 1: on this 20 point assignment, give the student 15 points and send their text submission
+> 
+> ```js
+> await req.sendPassback({
+>   score: 15,
+>   text: 'This is my submission',
+> });
+> ```
+> 
+> Example 2: on this 20 point assignment, give the student 15 points and send their url submission
+> 
+> ```js
+> await req.sendPassback({
+>   percent: 75,
+>   url: 'https://student.sub/is/this/link',
+> });
+> ```
 
 _Adding views:_
 
@@ -755,6 +852,7 @@ _Configuration for LTI launches:_
 > redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
 > nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
 > disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
+> disableClientSidePassback | boolean | if falsy, the client app cannot send grade passback to Canvas. If this is set to true, grade passback requests must be made from the server. Note: leaving this as false is convenient but does make it possible for clever users to spoof a grade passback request | `false`
 
 #### Adding Your App to Canvas
 

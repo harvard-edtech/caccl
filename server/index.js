@@ -4,6 +4,7 @@ const initLTIManager = require('caccl-lti');
 const initAPIForwarding = require('caccl-api-forwarder');
 
 const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/server');
+const initPassback = require('./helpers/initPassback');
 
 /**
  * Initializes the CACCL library
@@ -110,6 +111,11 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/se
  * @param {boolean} [disableAuthorizeOnLaunch=false] - if falsy, user is
  *   automatically authorized upon launch. If truthy, type must be 'server' and
  *   either disableClientSideAPI or disableServerSideAPI must be falsy
+ * @param {boolean} [disableClientSidePassback=false] - if falsy, the client
+ *   app cannot send grade passback to Canvas. If this is set to true, grade
+ *   passback requests must be made from the server. Note: leaving this as
+ *   false is convenient but does make it possible for clever users to spoof
+ *   a grade passback request
  */
 module.exports = (oldConfig = {}) => {
   // Validate config
@@ -224,6 +230,17 @@ module.exports = (oldConfig = {}) => {
       tokenStore: config.tokenStore,
       onLogin: addAPIToReq,
       simulateLaunchOnAuthorize: config.simulateLaunchOnAuthorize,
+    });
+  }
+
+  // Set up Grade Passback
+  if (!config.disableLTI) {
+    // LTI is enabled. Prepare for grade passback
+    initPassback({
+      app: config.app,
+      disableClientSidePassback: config.disableClientSidePassback,
+      apiForwardPathPrefix: config.apiForwardPathPrefix,
+      installationCredentials: config.installationCredentials,
     });
   }
 

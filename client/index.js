@@ -87,9 +87,26 @@ module.exports = (oldConfig = {}) => {
     return sendRequest(newOpts);
   };
 
+  // Give client a function for sending grade passback
+  // This may not function if the server has turned off client-side grade
+  // passback or if the current user didn't launch through an external
+  // assignment
+  const sendPassback = (request) => {
+    return sendRequest({
+      host: canvasHost,
+      path: `${config.apiForwardPathPrefix}/gradepassback`,
+      method: 'POST',
+      params: request,
+    })
+      .then((data) => {
+        return data.body;
+      });
+  };
+
   return {
     api,
     getStatus,
+    sendPassback,
     sendRequest: clientSendRequest,
   };
 };
