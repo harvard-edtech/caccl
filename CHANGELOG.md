@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.106
+
+CACCL Canvas Partial Simulator: Fixed bug where nav launches didn't send proper credentials.
+
 ## 1.0.105
 
 CACCL Canvas Partial Simulator: Added instructor token verification.
