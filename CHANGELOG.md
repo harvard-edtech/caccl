@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.105
+
+CACCL Canvas Partial Simulator: Added instructor token verification.
+
 ## 1.0.104
 
 CACCL Canvas Partial Simulator: Added support for multiple launches (TA, Student, etc.), assignment launches, and simpler simulator start
