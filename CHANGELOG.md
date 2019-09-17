@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.104
+
+CACCL Canvas Partial Simulator: Added support for multiple launches (TA, Student, etc.), assignment launches, and simpler simulator start
+
 ## 1.0.101
 
 Added special encoding of newlines in grade passback so that Canvas recognizes them.
