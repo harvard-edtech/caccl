@@ -37,16 +37,16 @@
   "dependencies": {
     "axios": "^0.19.0",
     "body-parser": "^1.19.0",
-    "caccl-api": "^1.0.42",
+    "caccl-api": "^1.0.43",
     "caccl-api-forwarder": "^1.0.10",
-    "caccl-authorizer": "^1.0.33",
+    "caccl-authorizer": "^1.0.34",
     "caccl-canvas-partial-simulator": "^1.0.34",
     "caccl-error": "^1.0.3",
     "caccl-grade-passback": "^1.0.3",
     "caccl-lti": "^1.0.20",
     "caccl-send-request": "^1.0.13",
     "express": "^4.17.1",
-    "express-session": "^1.16.2",
+    "express-session": "^1.17.0",
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",
@@ -59,7 +59,7 @@
     "eslint-config-airbnb": "^17.1.1",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react": "^7.16.0",
     "mocha": "^5.2.0"
   }
 }
