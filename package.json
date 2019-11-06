@@ -40,7 +40,7 @@
     "caccl-api": "^1.0.45",
     "caccl-api-forwarder": "^1.0.10",
     "caccl-authorizer": "^1.0.34",
-    "caccl-canvas-partial-simulator": "^1.0.34",
+    "caccl-canvas-partial-simulator": "^1.0.35",
     "caccl-error": "^1.0.3",
     "caccl-grade-passback": "^1.0.3",
     "caccl-lti": "^1.0.20",
@@ -54,7 +54,7 @@
     "randomstring": "^1.1.5"
   },
   "devDependencies": {
-    "dce-selenium": "^1.0.43",
+    "dce-selenium": "^1.0.47",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-plugin-import": "^2.18.2",
