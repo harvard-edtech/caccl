@@ -54,7 +54,7 @@
     "randomstring": "^1.1.5"
   },
   "devDependencies": {
-    "dce-selenium": "^1.0.51",
+    "dce-selenium": "^1.0.52",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-plugin-import": "^2.19.1",

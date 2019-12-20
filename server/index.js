@@ -87,6 +87,15 @@ const initPassback = require('./helpers/initPassback');
  *   the tool by visiting launchPath (GET). If falsy, when a user visits
  *   launchPath and has not launched via LTI, they will be given an error. Not
  *   valid if authorization, lti, or server-side API is disabled
+ * @param {object[]} [scopes=scopes exported from /scopes.js or all] - list of
+ *   caccl-api functions
+ *   (e.g. api.course.listStudents), caccl-api endpoint categories
+ *   (e.g. api.course), or scope strings (e.g. url:GET|/api/v1/courses). You
+ *   may mix and match any of the types above. These scopes will be included
+ *   in all authorization requests. If excluded, we first check for a /scopes.js
+ *   file in the root directory of the project that exports this list of scopes.
+ *   If that file does not exist and this parameter is excluded, no scopes are
+ *   included (to Canvas, this means that we are requesting all scopes).
  *
  * API Forwarding:
  * @param {boolean} [disableClientSideAPI] - if falsy, adds add api forwarding
@@ -230,6 +239,7 @@ module.exports = (oldConfig = {}) => {
       tokenStore: config.tokenStore,
       onLogin: addAPIToReq,
       simulateLaunchOnAuthorize: config.simulateLaunchOnAuthorize,
+      scopes: config.scopes,
     });
   }
 

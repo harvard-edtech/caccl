@@ -45,6 +45,22 @@ module.exports = (oldConfig) => {
   }
 
   /*------------------------------------------------------------------------*/
+  /*                                 Scopes                                 */
+  /*------------------------------------------------------------------------*/
+
+  if (!config.scopes) {
+    try {
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      config.scopes = require(path.join(__dirname, 'scopes.js'));
+    } catch (err) {
+      config.scopes = null;
+    }
+  }
+
+  // TODO: scopes read in via require or set to null. ALSO, in server/index, pass into authorizer
+  //
+
+  /*------------------------------------------------------------------------*/
   /*                        Environment-based Config                        */
   /*------------------------------------------------------------------------*/
 
