@@ -51,7 +51,7 @@ module.exports = (oldConfig) => {
   if (!config.scopes) {
     try {
       // eslint-disable-next-line global-require, import/no-dynamic-require
-      config.scopes = require(path.join(__dirname, 'scopes.js'));
+      config.scopes = require(path.join(launchDirectory, 'scopes.js'));
     } catch (err) {
       config.scopes = null;
     }
