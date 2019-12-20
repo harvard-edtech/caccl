@@ -57,9 +57,6 @@ module.exports = (oldConfig) => {
     }
   }
 
-  // TODO: scopes read in via require or set to null. ALSO, in server/index, pass into authorizer
-  //
-
   /*------------------------------------------------------------------------*/
   /*                        Environment-based Config                        */
   /*------------------------------------------------------------------------*/
