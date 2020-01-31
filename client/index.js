@@ -5,7 +5,7 @@ const validateConfigAndSetDefaults = require('../validateConfigAndSetDefaults/cl
 
 /**
  * Initializes the CACCL library
- * @author Gabriel Abrams
+ * @author Gabe Abrams
  * @param {string} [cacheType=memory] - If 'memory', cache is stored in
  *   memory. If 'session', cache is stored in express the session. To include a
  *   custom cache, include it as cache
@@ -63,22 +63,31 @@ module.exports = (oldConfig = {}) => {
     apiPathPrefix: config.apiForwardPathPrefix,
   });
 
-  // Create a function that fetches launch info from the server
-  // Resolves with: { launched, authorized, launchInfo }
-  const getStatus = () => {
-    return sendRequest({
+  /**
+   * Get launch info from the server
+   * @author Gabe Abrams
+   * @return {object} status object with the following properties:
+   *   { launched, authorized, launchInfo } where launched is true if the user
+   *   has launched via LTI, authorized is true if the user is authorized to
+   *   use the API, and launchInfo is the launchInfo object documented in
+   *   caccl-lti
+   */
+  const getStatus = async () => {
+    const { body } = await sendRequest({
       host: canvasHost,
       path: `${config.apiForwardPathPrefix}/status`,
       method: 'GET',
-    })
-      .then((data) => {
-        return data.body;
-      });
+    });
+
+    return body;
   };
 
-  // Give client a function for calling the server
-  // Client should use this to call the server so that the client contacts the
-  // correct server while using the development environment
+  /**
+   * Send request while setting the default hostname to the server
+   * @author Gabe Abrams
+   * @param {object} opts - the same object/arguments that are accepted by
+   *   the sendRequest function as detailed in caccl-send-request
+   */
   const clientSendRequest = (opts = {}) => {
     const newOpts = opts;
     if (!opts.host) {
@@ -87,22 +96,37 @@ module.exports = (oldConfig = {}) => {
     return sendRequest(newOpts);
   };
 
-  // Give client a function for sending grade passback
-  // This may not function if the server has turned off client-side grade
-  // passback or if the current user didn't launch through an external
-  // assignment
-  const sendPassback = (request) => {
-    return sendRequest({
+  /**
+   * Send grade passback via the server. If the server has turned off
+   *   clientside grade passback, or if the current user didn't launch through
+   *   an external assignment, this function may not work.
+   * @author Gabe Abrams
+   * @param {object} request - an object containing all the information for
+   *   the passback request
+   * @param {string} [request.text] - the text of the submission. If this is
+   *   included, url cannot be included
+   * @param {string} [request.url] - a url to send as the student's
+   *   submission. If this is included, text cannot be included
+   * @param {number} [request.score] - the student's score on this assignment
+   * @param {number} [request.percent] - the student's score as a percent
+   *   (0-100) on the assignment
+   * @param {Date|string} [request.submittedAt=now] - a timestamp for when the
+   *   student submitted the grade. The type must either be a Date object or
+   *   an ISO 8601 formatted string
+   * @return {object} json response from Canvas
+   */
+  const sendPassback = async (request) => {
+    const { body } = sendRequest({
       host: canvasHost,
       path: `${config.apiForwardPathPrefix}/gradepassback`,
       method: 'POST',
       params: request,
-    })
-      .then((data) => {
-        return data.body;
-      });
+    });
+
+    return body;
   };
 
+  // Build the initialized object
   return {
     api,
     getStatus,

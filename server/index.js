@@ -8,7 +8,7 @@ const initPassback = require('./helpers/initPassback');
 
 /**
  * Initializes the CACCL library
- * @author Gabriel Abrams
+ * @author Gabe Abrams
  * APP:
  * @param {object} [app=generate new express app] - the express app to use and
  *   add middleware to. App must support POST body parsing and express-session.
@@ -79,8 +79,7 @@ const initPassback = require('./helpers/initPassback');
  *   body.next, a path/url to visit after completion)
  * @param {object|null} [tokenStore=memory token store] - null to turn off
  *   storage of refresh tokens, exclude to use memory token store,
- *   or include a custom token store of form { get(key), set(key, val) } where
- *   both functions return promises
+ *   or include a custom token store (see docs in caccl-authorizer project
  * @param {boolean} [simulateLaunchOnAuthorize] - if truthy, simulates an LTI
  *   launch upon successful authorization (if the user hasn't already launched
  *   via LTI), essentially allowing users to either launch via LTI or launch
@@ -171,7 +170,7 @@ module.exports = (oldConfig = {}) => {
         ? config.canvasHost
         : req.session.canvasHost || config.canvasHost
     );
-    const accessToken = (req.session.accessToken || config.accessToken);
+    const accessToken = (req.accessToken || config.accessToken);
 
     // Add api
     req.api = new API({
@@ -190,16 +189,10 @@ module.exports = (oldConfig = {}) => {
     // Install middleware to add req.api
     config.routesWithAPI.forEach((route) => {
       config.app.use(route, (req, res, next) => {
-        // Don't add api if we don't have an access token
-        if (
-          !req.session
-          || !req.session.accessToken
-        ) {
-          return next();
+        // Only add api if we have an access token
+        if (req.accessToken) {
+          addAPIToReq(req);
         }
-
-        // Add api
-        addAPIToReq(req);
 
         return next();
       });
@@ -255,7 +248,7 @@ module.exports = (oldConfig = {}) => {
   }
 
   // Add launch status support
-  config.app.get(config.apiForwardPathPrefix + '/status', (req, res) => {
+  config.app.get(`${config.apiForwardPathPrefix}/status`, (req, res) => {
     return res.json({
       launchInfo: req.session.launchInfo,
       launched: req.session.launched,

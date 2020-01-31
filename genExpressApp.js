@@ -14,7 +14,7 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
 /**
  * Creates a new express app with memory-based session, listening on env PORT or
  *   8080, and with randomized session secret and cookie name.
- * @author Gabriel Abrams
+ * @author Gabe Abrams
  * @param {number} [port=process.env.PORT || 443] - the port to listen
  *   to
  * @param {boolean} [forceSSL=port is 443 or sslKey and sslCertificate included]
@@ -54,7 +54,6 @@ module.exports = (config = {}) => {
     }
     port = parseInt(port);
   }
-
 
   if (config.verbose) {
     print.subtitle('Creating a new express app:');
