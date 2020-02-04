@@ -5,6 +5,7 @@ const errorCodes = require('../../errorCodes');
 
 /**
  * Initializes LTI 1.1 Grade Passback
+ * @author Gabe Abrams
  * @param {object} opts - an object containing all arguments
  * @param {Express App} opts.app - the express app to add routes to
  * @param {string} opts.apiForwardPathPrefix - the prefix to add before all
@@ -29,6 +30,22 @@ module.exports = (opts) => {
 
   // Add middleware to add grade passback functionality
   app.use('*', (req, res, next) => {
+    /**
+     * Send a passback request
+     * @author Gabe Abrams
+     * @param {object} request - an object containing all the information for
+     *   the passback request
+     * @param {string} [request.text] - the text of the submission. If this is
+     *   included, url cannot be included
+     * @param {string} [request.url] - a url to send as the student's
+     *   submission. If this is included, text cannot be included
+     * @param {number} [request.score] - the student's score on this assignment
+     * @param {number} [request.percent] - the student's score as a percent
+     *   (0-100) on the assignment
+     * @param {Date|string} [request.submittedAt=now] - a timestamp for when the
+     *   student submitted the grade. The type must either be a Date object or
+     *   an ISO 8601 formatted string
+     */
     req.sendPassback = async (request) => {
       // Make sure the request contains something to submit
       if (

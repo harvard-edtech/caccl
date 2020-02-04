@@ -6,47 +6,57 @@ const print = {};
 
 /**
  * Prints a new console header
+ * @author Gabe Abrams
  * @param {string} str - the string to print
  */
 print.head = (str) => {
+  // eslint-disable-next-line no-console
   console.log(`\n${str}`);
 };
 
 /**
  * Prints the status for a configuration variable
+ * @author Gabe Abrams
  * @param {string} name - the name of the variable
  * @param {boolean} isIncluded - if truthy, variable is marked as "included",
  *   otherwise marked as "excluded"
  * @param {string} [explanation] - added as a second line
  */
 print.variable = (name, isIncluded, explanation) => {
+  // eslint-disable-next-line no-console
   console.log(`- ${isIncluded ? print.inGreen('included') : print.inYellow('excluded')}: "${name}"${explanation ? '\n' : ''}${print.inGray(explanation)}`);
 };
 
 /**
  * Prints the status for a configuration boolean
+ * @author Gabe Abrams
  * @param {string} name - the name of the boolean
  * @param {boolean} value - if truthy, variable is marked as "true",
  *   otherwise marked as "false"
  * @param {string} [explanation] - added as a second line
  */
 print.boolean = (name, value, explanation) => {
+  // eslint-disable-next-line no-console
   console.log(`- ${value ? print.inGreen('true') : print.inYellow('false')}: "${name}"${explanation ? '\n' : ''}${print.inGray(explanation)}`);
 };
 
 /**
  * Prints a subtitle (grayed out item, indented once)
+ * @author Gabe Abrams
  * @param {string} str - the text in the subtitle
  */
 print.subtitle = (str) => {
+  // eslint-disable-next-line no-console
   console.log(print.inGray(`   - ${str}`));
 };
 
 /**
  * Prints a subsubtitle (grayed out item, indented twice)
+ * @author Gabe Abrams
  * @param {string} str - the text in the subtitle
  */
 print.subsubtitle = (str) => {
+  // eslint-disable-next-line no-console
   console.log(print.inGray(`     - ${str}`));
 };
 
@@ -97,7 +107,13 @@ Object.keys(print).forEach((key) => {
   printNonVerbose[key] = () => { return ''; };
 });
 
-
+/**
+ * Return a print object or a dummy object if verbose is false
+ * @author Gabe Abrams
+ * @param {boolean} [verbose] - if true, print function that's returned will
+ *   actually print (otherwise, it will do nothing)
+ * @return {function} print function
+ */
 module.exports = (verbose) => {
   if (verbose) {
     return print;

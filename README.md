@@ -111,9 +111,9 @@ _Get Info on Status, Auth, and LTI Launch:_
 _Grade Passback:_
 
 > CACCL supports LTI-based grade passback when the user was launched through an external assignment. If the user launched this way, you will be able to use the `sendPassback` function on the server to pass grade, timestamp, and/or submission data back to Canvas:
-> 
+>
 > In any server route, use the `req.sendPassback` function with the following parameters:
-> 
+>
 > Property | Type | Description
 > :--- | :--- | :---
 > score | number | the number of points to give the student. Either this or `percent` can be included, but not both
@@ -121,18 +121,18 @@ _Grade Passback:_
 > text | string | the student's text submission. Either this or `url` can be included, but not both
 > url | string | the student's url submission. Either this or `text` can be included, but not both
 > submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
-> 
+>
 > Example 1: on this 20 point assignment, give the student 15 points and send their text submission
-> 
+>
 > ```js
 > await req.sendPassback({
 >   score: 15,
 >   text: 'This is my submission',
 > });
 > ```
-> 
+>
 > Example 2: on this 20 point assignment, give the student 15 points and send their url submission
-> 
+>
 > ```js
 > await req.sendPassback({
 >   percent: 75,
@@ -242,9 +242,9 @@ _Sending requests to the server:_
 _Grade Passback:_
 
 > CACCL supports LTI-based grade passback on the front-end when the user was launched through an external assignment and when the server has `disableClientSidePassback` set to `false` (this is the default). Use the `sendPassback` function provided by `initCACCL` to pass grade, timestamp, and/or submission data back to Canvas:
-> 
+>
 > In any React component, use `sendPassback` with the following parameters:
-> 
+>
 > Property | Type | Description
 > :--- | :--- | :---
 > score | number | the number of points to give the student. Either this or `percent` can be included, but not both
@@ -252,18 +252,18 @@ _Grade Passback:_
 > text | string | the student's text submission. Either this or `url` can be included, but not both
 > url | string | the student's url submission. Either this or `text` can be included, but not both
 > submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
-> 
+>
 > Example 1: on this 20 point assignment, give the student 15 points and send their text submission
-> 
+>
 > ```js
 > await sendPassback({
 >   score: 15,
 >   text: 'This is my submission',
 > });
 > ```
-> 
+>
 > Example 2: on this 20 point assignment, give the student 15 points and send their url submission
-> 
+>
 > ```js
 > await sendPassback({
 >   percent: 75,
@@ -339,7 +339,7 @@ _Configuration for Canvas authorization:_
 > disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
 > developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ client_id: 'client_id', client_secret: 'client_secret' }` (our dummy vals for dev environment)
 > defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
-> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | null to turn off storage of refresh tokens or custom token store of form `{ get(key), set(key, val) }` where both get and set functions return promises | memory token store
+> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | include a custom token store (see [TokenStore docs](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) for specs) | memory token store
 > simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
 
 _Configuration for LTI launches:_
@@ -716,9 +716,9 @@ _Get Info on Status, Auth, and LTI Launch:_
 _Grade Passback:_
 
 > CACCL supports LTI-based grade passback when the user was launched through an external assignment. If the user launched this way, you will be able to use the `sendPassback` function on the server to pass grade, timestamp, and/or submission data back to Canvas:
-> 
+>
 > In any server route, use the `req.sendPassback` function with the following parameters:
-> 
+>
 > Property | Type | Description
 > :--- | :--- | :---
 > score | number | the number of points to give the student. Either this or `percent` can be included, but not both
@@ -726,18 +726,18 @@ _Grade Passback:_
 > text | string | the student's text submission. Either this or `url` can be included, but not both
 > url | string | the student's url submission. Either this or `text` can be included, but not both
 > submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
-> 
+>
 > Example 1: on this 20 point assignment, give the student 15 points and send their text submission
-> 
+>
 > ```js
 > await req.sendPassback({
 >   score: 15,
 >   text: 'This is my submission',
 > });
 > ```
-> 
+>
 > Example 2: on this 20 point assignment, give the student 15 points and send their url submission
-> 
+>
 > ```js
 > await req.sendPassback({
 >   percent: 75,
@@ -838,7 +838,7 @@ _Configuration for Canvas authorization:_
 > disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
 > developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ client_id: 'client_id', client_secret: 'client_secret' }` (our dummy vals for dev environment)
 > defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
-> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | null to turn off storage of refresh tokens or custom token store of form `{ get(key), set(key, val) }` where both get and set functions return promises | memory token store
+> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | include a custom token store (see [TokenStore docs](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) for specs) | memory token store
 > simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
 
 _Configuration for LTI launches:_

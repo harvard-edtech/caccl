@@ -10,7 +10,7 @@ const initCACCL = require('.');
 
 /**
  * Initializes the CACCL library
- * @author Gabriel Abrams
+ * @author Gabe Abrams
  * APP:
  * @param {object} [app=generate new express app] - the express app to use and
  *   add middleware to. If excluded, we generate a new express app (see
@@ -80,8 +80,7 @@ const initCACCL = require('.');
  *   body.next, a path/url to visit after completion)
  * @param {object|null} [tokenStore=memory token store] - null to turn off
  *   storage of refresh tokens, exclude to use memory token store,
- *   or include a custom token store of form { get(key), set(key, val) } where
- *   both functions return promises
+ *   or include a custom token store (see docs in caccl-authorizer project)
  * @param {boolean} [simulateLaunchOnAuthorize] - if truthy, simulates an LTI
  *   launch upon successful authorization (if the user hasn't already launched
  *   via LTI), essentially allowing users to either launch via LTI or launch

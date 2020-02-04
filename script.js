@@ -4,6 +4,7 @@ const validateConfigAndSetDefaults = require('./validateConfigAndSetDefaults/scr
 
 /**
  * Initialize a caccl-enabled script
+ * @author Gabe Abrams
  * @param {string} [config.accessToken] - An access token to add to all
  *   requests. Can be overridden by including `access_token` query/body
  *   parameter.

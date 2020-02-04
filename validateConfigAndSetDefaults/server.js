@@ -3,6 +3,12 @@ const path = require('path');
 const initPrint = require('./helpers/initPrint');
 const genExpressApp = require('../genExpressApp');
 
+/**
+ * Validates server configuration options and makes changes (sets defaults etc.)
+ * @author Gabe Abrams
+ * @param {object} oldConfig - the current configuration object
+ * @return {object} the new configuration object
+ */
 module.exports = (oldConfig) => {
   const config = oldConfig;
   const print = initPrint(config.verbose);
@@ -443,18 +449,18 @@ module.exports = (oldConfig) => {
       // We don't have authorization. The programmer will need to manually add
       // access tokens
       if (config.accessToken) {
-        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so the default access token you included ("accessToken") will be used unless you manually authorize users. You can manually authorize a user by adding users\' access tokens to their session: req.session.accessToken');
+        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so the default access token you included ("accessToken") will be used unless you manually authorize users. You can manually authorize a user by adding users\' access tokens to their session: req.accessToken');
       } else {
-        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so you will need to manually authorize users. You can do this by adding users\' access tokens to req.session.accessToken');
+        print.boolean('disableAuthorization', true, 'warning: the api is enabled but authorization is disabled, so you will need to manually authorize users. You can do this by adding users\' access tokens to req.accessToken');
       }
     } else {
       print.boolean('disableAuthorization', false, 'this is the recommended value: the api is enabled and authorization is enabled so users can be authorized for api access');
     }
   // The API is disabled. We have no need for authorization
   } else if (config.disableAuthorization) {
-    print.boolean('disableAuthorization', true, 'this is the recommended value: the api is disabled so we don\'t need authorization enabled unless you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
+    print.boolean('disableAuthorization', true, 'this is the recommended value: the api is disabled so we don\'t need authorization enabled unless you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.accessToken)');
   } else {
-    print.boolean('disableAuthorization', false, 'though the api is disabled, authorization is still enabled. This is only useful if you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.session.accessToken)');
+    print.boolean('disableAuthorization', false, 'though the api is disabled, authorization is still enabled. This is only useful if you plan on manually using users\' access tokens in your own code while not using our CACCL api functionality (access tokens are added as req.accessToken)');
   }
 
   // defaultAuthorizedRedirect

@@ -1,6 +1,6 @@
 {
   "name": "caccl",
-  "version": "1.0.133",
+  "version": "1.1.0",
   "description": "Canvas App Complete Connection Library: an all-in-one library for connecting your app to Canvas, handling lti, access tokens, and api.",
   "main": "index.js",
   "scripts": {
@@ -47,6 +47,7 @@
     "caccl-send-request": "^1.0.13",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "fast-json-stable-stringify": "^2.1.0",
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",

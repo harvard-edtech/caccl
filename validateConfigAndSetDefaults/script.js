@@ -1,5 +1,11 @@
 const initPrint = require('./helpers/initPrint');
 
+/**
+ * Validates script configuration options and makes changes (sets defaults etc.)
+ * @author Gabe Abrams
+ * @param {object} oldConfig - the current configuration object
+ * @return {object} the new configuration object
+ */
 module.exports = (oldConfig) => {
   const config = oldConfig;
   const print = initPrint(config.verbose);
