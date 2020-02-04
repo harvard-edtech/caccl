@@ -40,7 +40,7 @@
     "caccl-api": "^1.0.54",
     "caccl-api-forwarder": "^1.1.0",
     "caccl-authorizer": "^1.1.1",
-    "caccl-canvas-partial-simulator": "^1.0.36",
+    "caccl-canvas-partial-simulator": "^1.0.37",
     "caccl-error": "^1.0.3",
     "caccl-grade-passback": "^1.1.0",
     "caccl-lti": "^1.1.0",
