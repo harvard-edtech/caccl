@@ -1,3 +1,7 @@
+// Import stringify library
+const stringify = require('fast-json-stable-stringify');
+
+// Import local modules
 const initCACCL = require('.');
 
 const cacclInstanceCache = {}; // jsonified config => CACCL instance
@@ -11,7 +15,7 @@ const cacclInstanceCache = {}; // jsonified config => CACCL instance
  * @return {object} same response as /client/index.js
  */
 module.exports = (config = {}) => {
-  const cacheKey = JSON.stringify(config);
+  const cacheKey = stringify(config);
 
   // Create new instance if not already available
   if (!cacclInstanceCache[cacheKey]) {
