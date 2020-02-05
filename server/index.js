@@ -184,21 +184,6 @@ module.exports = (oldConfig = {}) => {
     });
   };
 
-  // Add server-side api
-  if (!config.disableServerSideAPI) {
-    // Install middleware to add req.api
-    config.routesWithAPI.forEach((route) => {
-      config.app.use(route, (req, res, next) => {
-        // Only add api if we have an access token
-        if (req.accessToken) {
-          addAPIToReq(req);
-        }
-
-        return next();
-      });
-    });
-  }
-
   // Add LTI support: initialize LTI manager
   if (!config.disableLTI) {
     initLTIManager({
@@ -233,6 +218,21 @@ module.exports = (oldConfig = {}) => {
       onLogin: addAPIToReq,
       simulateLaunchOnAuthorize: config.simulateLaunchOnAuthorize,
       scopes: config.scopes,
+    });
+  }
+
+  // Add server-side api
+  if (!config.disableServerSideAPI) {
+    // Install middleware to add req.api
+    config.routesWithAPI.forEach((route) => {
+      config.app.use(route, (req, res, next) => {
+        // Only add api if we have an access token
+        if (req.accessToken) {
+          addAPIToReq(req);
+        }
+
+        return next();
+      });
     });
   }
 
