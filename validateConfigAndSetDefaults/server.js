@@ -348,18 +348,9 @@ module.exports = (oldConfig) => {
     print.boolean('disableClientSideAPI', false, 'client-side api enabled: the server will forward requests from the client to Canvas');
   }
 
-  // apiForwardPathPrefix
-  if (config.apiForwardPathPrefix) {
-    if (config.disableClientSideAPI) {
-      print.variable('apiForwardPathPrefix', true, 'this will be ignored: we have no need for an apiForwardPathPrefix when client-side api (and thus, api forwarding) are disabled');
-    } else {
-      print.variable('apiForwardPathPrefix', true, 'we will use your "apiForwardPathPrefix" when forwarding requests from the client to Canvas. Remember to include the same "apiForwardPathPrefix" in the config for the client-side instance of CACCL');
-    }
-  } else if (config.disableClientSideAPI) {
-    print.variable('apiForwardPathPrefix', true, 'this is expected: we have no need for an apiForwardPathPrefix when client-side api (and thus, api forwarding) are disabled');
-  } else {
+  // apiForwardPathPrefix (needed for /status so it must be set no matter)
+  if (!config.apiForwardPathPrefix) {
     config.apiForwardPathPrefix = '/canvas';
-    print.variable('apiForwardPathPrefix', false, `we will use '${config.apiForwardPathPrefix}' when forwarding requests from the client to Canvas. Remember that the client should have the same "apiForwardPathPrefix": either exclude "apiForwardPathPrefix" from the client-side config for CACCL or set "apiForwardPathPrefix" to '${config.apiForwardPathPrefix}'`);
   }
 
   /*------------------------------------------------------------------------*/
