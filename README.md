@@ -140,48 +140,6 @@ _Grade Passback:_
 > });
 > ```
 
-_Scopes:_
-
-> CACCL apps support scopes. Just add a `scopes.js` file to the root folder of your project.
-> 
-> Your `scopes.js` file should export a scopes array. The scopes array can contain API functions like `api.course.listStudents` (recommended), or it can contain scope strings like `url:GET|/api/v1/accounts` (not recommended), or it can contain a mix of the two. There is one exception: the `api.other.endpoint` API function cannot be added to the list.
->
-> Example `scopes.js` file using API functions (recommended):
->
-> ```js
-> const api = require('caccl/API');
->
-> // All the API functions we use in our app:
-> module.exports = [
->   api.course.listStudents,
->   api.user.getProfile,
-> ];
-> ```
->
-> Example `scopes.js` file using manually copied scope strings (not recommended):
->
-> ```js
-> // List of scopes we use:
-> module.exports = [
->   'url:DELETE|/api/v1/courses/:course_id/assignments/:id',
->   'url:GET|/api/v1/users/:user_id/courses/:course_id/assignments',
-> ];
-> ```
->
-> Example `scopes.js` file mixing and matching API functions and scopes (we recommend listing API functions as much as possible):
->
-> ```js
-> const api = require('caccl/API');
-> 
-> // List of API functions and scopes we use:
-> module.exports = [
->   api.course.listStudents,
->   api.user.getProfile,
->   // There's no API function for this scope, so we list it manually:
->   'url:GET|/api/v1/users/:user_id/communication_channels/:communication_channel_id/notification_preferences',
-> ];
-> ```
-
 #### Front-end
 
 To **edit the front-end**, edit your React project in the `/client` folder. Start by editing `/client/src/App.js`. To integrate any component with the server or with Canvas, use the following:
@@ -396,6 +354,49 @@ _Configuration for LTI launches:_
 > nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
 > disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
 > disableClientSidePassback | boolean | if falsy, the client app cannot send grade passback to Canvas. If this is set to true, grade passback requests must be made from the server. Note: leaving this as false is convenient but does make it possible for clever users to spoof a grade passback request | `false`
+
+_Configuration for API Scopes:_
+
+> CACCL apps support scopes. Just add a `scopes.js` file to the root folder of your project.
+> 
+> Your `scopes.js` file should export a scopes array. The scopes array can contain API functions like `api.course.listStudents` (recommended), or it can contain scope strings like `url:GET|/api/v1/accounts` (not recommended), or it can contain a mix of the two. There is one exception: the `api.other.endpoint` API function cannot be added to the list.
+>
+> Example `scopes.js` file using API functions (recommended):
+>
+> ```js
+> const api = require('caccl/API');
+>
+> // All the API functions we use in our app:
+> module.exports = [
+>   api.course.listStudents,
+>   api.user.getProfile,
+> ];
+> ```
+>
+> Example `scopes.js` file using manually copied scope strings (not recommended):
+>
+> ```js
+> // List of scopes we use:
+> module.exports = [
+>   'url:DELETE|/api/v1/courses/:course_id/assignments/:id',
+>   'url:GET|/api/v1/users/:user_id/courses/:course_id/assignments',
+> ];
+> ```
+>
+> Example `scopes.js` file mixing and matching API functions and scopes (we recommend listing API functions as much as possible):
+>
+> ```js
+> const api = require('caccl/API');
+> 
+> // List of API functions and scopes we use:
+> module.exports = [
+>   api.course.listStudents,
+>   api.user.getProfile,
+>   // There's no API function for this scope, so we list it manually:
+>   'url:GET|/api/v1/users/:user_id/communication_channels/:communication_channel_id/notification_preferences',
+> ];
+> ```
+
 
 #### Configuring CACCL on the Client:
 
