@@ -37,9 +37,9 @@
   "dependencies": {
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
-    "caccl-api": "^1.0.58",
+    "caccl-api": "^1.0.59",
     "caccl-api-forwarder": "^1.1.5",
-    "caccl-authorizer": "^1.1.9",
+    "caccl-authorizer": "^1.1.10",
     "caccl-canvas-partial-simulator": "^1.0.40",
     "caccl-error": "^1.0.3",
     "caccl-grade-passback": "^1.1.0",
