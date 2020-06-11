@@ -32,12 +32,20 @@ const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
  * @param {string} [sslCertificate] - ssl certificate  to use to secure the
  *   connection. Only valid if both sslKey and sslCertificate are included. If
  *   value is a filename, that file is read and parsed
+ * @param {function} [expressAppPreprocessor] - function to run when the Express
+ *   app was just created (before any other operations are done on it). The
+ *   function should take one argument (the Express app)
  * @param {boolean} [verbose] - if truthy, prints information as it works
  * @return {object} express app
  */
 module.exports = (config = {}) => {
   const app = express();
   const print = initPrint(config.verbose);
+
+  // Run pre-processor
+  if (config.expressAppPreprocessor) {
+    config.expressAppPreprocessor(app);
+  }
 
   // Determine port
   let port = (

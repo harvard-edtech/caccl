@@ -544,6 +544,7 @@ module.exports = (oldConfig) => {
       sslCA: config.sslCA,
       verbose: config.verbose,
       port: config.port,
+      expressAppPreprocessor: config.expressAppPreprocessor,
     });
   }
 

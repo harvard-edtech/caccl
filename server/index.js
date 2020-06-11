@@ -41,6 +41,9 @@ const initPassback = require('./helpers/initPassback');
  * @param {string|array.<string>} [sslCA] - certificate chain linking a
  *   certificate authority to our ssl certificate. If string, certificates will
  *   be automatically split. Only valid if app is excluded
+ * @param {function} [expressAppPreprocessor] - function to run when the Express
+ *   app was just created (before any other operations are done on it). The
+ *   function should take one argument (the Express app)
  *
  * API:
  * @param {boolean} [disableServerSideAPI] - if false, automatically adds
