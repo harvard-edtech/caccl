@@ -37,7 +37,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
-    "caccl-api": "^1.0.62",
+    "caccl-api": "^1.0.63",
     "caccl-api-forwarder": "^1.1.5",
     "caccl-authorizer": "^1.1.14",
     "caccl-canvas-partial-simulator": "^1.0.41",
@@ -58,9 +58,9 @@
     "dce-selenium": "^1.0.56",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
-    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react": "^7.20.3",
     "mocha": "^8.0.1"
   }
 }
