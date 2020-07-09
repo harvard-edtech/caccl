@@ -17,8 +17,14 @@ module.exports = (oldConfig) => {
   /*                            File-based Config                           */
   /*------------------------------------------------------------------------*/
 
+  // Get the launch directory
+  let launchDirectory = process.env.INIT_CWD;
+  if (!launchDirectory) {
+    // Use the cwd() function instead
+    launchDirectory = process.cwd();
+  }
+
   // Function that imports a config file
-  const launchDirectory = process.env.INIT_CWD;
   const readConfig = (name) => {
     const configPath = path.join(launchDirectory, `config/${name}.js`);
     try {
