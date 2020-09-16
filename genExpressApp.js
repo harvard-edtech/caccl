@@ -104,6 +104,7 @@ module.exports = (config = {}) => {
     name: cookieName,
     saveUninitialized: false,
     secret: sessionSecret,
+    rolling: true,
   }));
 
   // Start Server
