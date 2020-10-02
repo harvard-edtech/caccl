@@ -2,15 +2,17 @@
 
 The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all-in-one library for building Canvas-integrated apps. By handling LTI, authorization, and API for you, CACCL makes building Canvas-integrated tools quick and easy.
 
-## This project is in Beta:
+## Support and Notices:
+
+### This project is in Beta
 
 This project is still in Beta. Breaking changes may occur at any time. Please be careful when updating your version of CACCL.
 
-## No Windows support:
+### No Windows support
 
 This project was developed to be run in a Mac or Linux environment. If you must develop in Windows, try [installing bash](https://www.google.com/search?q=install+linux+bash+on+windows), but understand that we do not test CACCL in Windows...so no guarantees this will work.
 
-## Node version requirement:
+### Node version requirement
 
 This project works best with Node v12 and higher.
 
