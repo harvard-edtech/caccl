@@ -10,6 +10,10 @@ This project is still in Beta. Breaking changes may occur at any time. Please be
 
 This project was developed to be run in a Mac or Linux environment. If you must develop in Windows, try [installing bash](https://www.google.com/search?q=install+linux+bash+on+windows), but understand that we do not test CACCL in Windows...so no guarantees this will work.
 
+## Node version requirement:
+
+This project works best with Node v12 and higher.
+
 # Quickstart
 
 ## Initialize your Project
