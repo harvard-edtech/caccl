@@ -39,7 +39,7 @@
     "body-parser": "^1.19.0",
     "caccl-api": "^1.0.75",
     "caccl-api-forwarder": "^1.1.6",
-    "caccl-authorizer": "^1.1.23",
+    "caccl-authorizer": "^1.1.24",
     "caccl-canvas-partial-simulator": "^1.0.43",
     "caccl-error": "^1.0.7",
     "caccl-grade-passback": "^1.1.3",
