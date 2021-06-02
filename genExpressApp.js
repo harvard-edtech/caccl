@@ -7,6 +7,9 @@ const http = require('http');
 const https = require('https');
 const randomstring = require('randomstring');
 
+// Use lightweight non-leaking memory store
+const MemoryStore = require('memorystore')(session);
+
 const initPrint = require('./validateConfigAndSetDefaults/helpers/initPrint');
 
 /* eslint-disable no-console */
@@ -100,6 +103,9 @@ module.exports = (config = {}) => {
     cookie: {
       maxAge: sessionDurationMillis,
     },
+    store: new MemoryStore({
+      checkPeriod: sessionDurationMillis, // prune expired entries
+    }),
     resave: true,
     name: cookieName,
     saveUninitialized: false,
