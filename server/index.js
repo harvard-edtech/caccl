@@ -74,6 +74,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
+// Import libs
+var express_1 = __importDefault(require("express"));
 // Import caccl libs
 var caccl_send_request_1 = __importDefault(require("caccl-send-request"));
 var caccl_lti_1 = __importStar(require("caccl-lti"));
@@ -414,19 +416,23 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
  * @param [opts.express.sessionSecret=env.SESSION_SECRET || randomly generated]
  *   session secret to use when encrypting sessions
  * @param [opts.express.cookieName=env.COOKIE_NAME || randomly generated] cookie
- *   name to use when identifying this app's session
+ *   name to use when identifying this app's session. Must not contain tabs or
+ *   spaces
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
+ * @param [opts.express.postprocessor] function to call after CACCL routes are
+ *   added but before the ('*' => react app) route is added. This is great for
+ *   adding other server-side routes
  */
 var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
-    var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI;
+    var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
     var _a, _b;
-    var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-    return __generator(this, function (_p) {
-        switch (_p.label) {
+    var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    return __generator(this, function (_q) {
+        switch (_q.label) {
             case 0:
                 app = ((_d = (_c = opts === null || opts === void 0 ? void 0 : opts.express) === null || _c === void 0 ? void 0 : _c.app) !== null && _d !== void 0 ? _d : (0, genExpressApp_1.default)(opts));
                 expressAppPreprocessor = (_e = opts.express) === null || _e === void 0 ? void 0 : _e.preprocessor;
@@ -444,7 +450,7 @@ var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, funct
                 return [4 /*yield*/, (0, caccl_lti_1.default)(__assign(__assign({}, ((_k = opts === null || opts === void 0 ? void 0 : opts.lti) !== null && _k !== void 0 ? _k : {})), { app: app, installationCredentials: installationCredentials }))];
             case 1:
                 // Initialize LTI
-                _p.sent();
+                _q.sent();
                 // Store installation credentials for later
                 mostRecentInstallationCreds = installationCredentials;
                 if (!(opts === null || opts === void 0 ? void 0 : opts.api)) return [3 /*break*/, 3];
@@ -467,14 +473,14 @@ var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, funct
                 return [4 /*yield*/, (0, caccl_authorizer_1.default)(__assign(__assign({}, opts === null || opts === void 0 ? void 0 : opts.api), { app: app, developerCredentials: developerCredentials }))];
             case 2:
                 // Initialize auth
-                _p.sent();
+                _q.sent();
                 disableClientSideAPI = !!((_o = opts === null || opts === void 0 ? void 0 : opts.api) === null || _o === void 0 ? void 0 : _o.disableClientSideAPI);
                 // Initialize auth forwarder
                 if (!disableClientSideAPI) {
                     // Client-side API is enabled. Add forwarder
                     (0, caccl_api_forwarder_1.default)({ app: app });
                 }
-                _p.label = 3;
+                _q.label = 3;
             case 3:
                 /*----------------------------------------*/
                 /*          Server-side Endpoints         */
@@ -573,6 +579,44 @@ var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, funct
                         }
                     });
                 }); });
+                /*----------------------------------------*/
+                /*              React Client              */
+                /*----------------------------------------*/
+                // Run postprocessor first
+                if ((_p = opts === null || opts === void 0 ? void 0 : opts.express) === null || _p === void 0 ? void 0 : _p.postprocessor) {
+                    opts.express.postprocessor(app);
+                }
+                initialWorkingDirectory = (process.env.PWD.endsWith('/server')
+                    ? process.env.PWD.substring(0, process.env.PWD.length - '/server'.length)
+                    : process.env.PWD);
+                // Change config for dev environment
+                if (thisIsDevEnvironment) {
+                    // Print a notice
+                    console.log('Server running in development mode');
+                    // Redirect all traffic to react development port
+                    app.get('*', function (req, res) {
+                        // Redirect to the appropriate 
+                        return res.redirect("http://localhost:3000".concat(req.path));
+                    });
+                }
+                else {
+                    buildDir_1 = "".concat(initialWorkingDirectory, "/client/build");
+                    // Serve styles, etc
+                    app.use(express_1.default.static(buildDir_1));
+                    // Send frontend
+                    app.get('*', function (req, res) {
+                        res.sendFile("".concat(buildDir_1, "/index.html"));
+                    });
+                }
+                // Serve the front-end
+                if (thisIsDevEnvironment) {
+                    // This is development! Redirect to front-end hosted at localhost:3000
+                    app.get('/', function (req, res) {
+                        return res.redirect('http://localhost:3000');
+                    });
+                }
+                else {
+                }
                 return [2 /*return*/];
         }
     });

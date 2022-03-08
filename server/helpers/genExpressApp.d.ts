@@ -8,7 +8,8 @@ import { Store as SessionStoreType } from 'express-session';
  * @param [opts.express.sessionSecret=env.SESSION_SECRET || randomly generated]
  *   session secret to use when encrypting sessions
  * @param [opts.express.cookieName=env.COOKIE_NAME || randomly generated] cookie
- *   name to use when identifying this app's session
+ *   name to use when identifying this app's session. Must not contain tabs or
+ *   spaces
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store

@@ -4,6 +4,9 @@ import session from 'express-session';
 import { Store as SessionStoreType } from 'express-session';
 import MemoryStore from 'memorystore';
 
+// Check if this is a dev environment
+const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
+
 /**
  * Generate a new express app
  * @author Gabe Abrams
@@ -12,7 +15,8 @@ import MemoryStore from 'memorystore';
  * @param [opts.express.sessionSecret=env.SESSION_SECRET || randomly generated]
  *   session secret to use when encrypting sessions
  * @param [opts.express.cookieName=env.COOKIE_NAME || randomly generated] cookie
- *   name to use when identifying this app's session
+ *   name to use when identifying this app's session. Must not contain tabs or
+ *   spaces
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
@@ -47,7 +51,7 @@ const genExpressApp = (
   const cookieName = String(
     opts.express?.cookieName
     || process.env.COOKIE_NAME
-    || `CACCL-based Canvas App – ${Date.now()}${Math.round(Math.random() * 1000000)}${Math.round(Math.random() * 1000000)}`
+    || `CACCL_Canvas_App_${Date.now()}${Math.round(Math.random() * 1000000)}${Math.round(Math.random() * 1000000)}`
   );
   const sessionMins = Number.parseFloat(String(
     opts.express?.sessionMins
@@ -66,7 +70,7 @@ const genExpressApp = (
 
   // Add body parsing
   app.use(express.json());
-  app.use(express.urlencoded());
+  app.use(express.urlencoded({ extended: true }));
 
   // Add express session
   app.use(session({
@@ -82,21 +86,31 @@ const genExpressApp = (
   }));
 
   // Serve the app
-  app
-    .listen(
+  if (thisIsDevEnvironment) {
+    // Start a development server that uses HTTPS
+    const serve = require('caccl-dev-server').default;
+    serve.default({
+      app,
       port,
-      () => {
-        console.log(`Listening on port: ${port}`)
-      },
-    )
-    .on(
-      'error',
-      (err) => {
-        console.log(`Could not listen on port: ${port}`);
-        console.log(err);
-        process.exit(1);
-      },
-    );
+    });
+  } else {
+    // Start a prod server
+    app
+      .listen(
+        port,
+        () => {
+          console.log(`Listening on port: ${port}`)
+        },
+      )
+      .on(
+        'error',
+        (err) => {
+          console.log(`Could not listen on port: ${port}`);
+          console.log(err);
+          process.exit(1);
+        },
+      );
+  }
   
   // Return the app
   return app;

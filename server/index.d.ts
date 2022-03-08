@@ -165,12 +165,16 @@ declare const redirectToSelfLaunch: (opts: {
  * @param [opts.express.sessionSecret=env.SESSION_SECRET || randomly generated]
  *   session secret to use when encrypting sessions
  * @param [opts.express.cookieName=env.COOKIE_NAME || randomly generated] cookie
- *   name to use when identifying this app's session
+ *   name to use when identifying this app's session. Must not contain tabs or
+ *   spaces
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
+ * @param [opts.express.postprocessor] function to call after CACCL routes are
+ *   added but before the ('*' => react app) route is added. This is great for
+ *   adding other server-side routes
  */
 declare const initCACCL: (opts?: {
     lti?: {
@@ -192,6 +196,7 @@ declare const initCACCL: (opts?: {
         sessionMins?: number;
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
+        postprocessor?: (app: express.Application) => void;
     };
 }) => Promise<void>;
 export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, };

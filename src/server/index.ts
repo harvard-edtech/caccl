@@ -398,12 +398,16 @@ const redirectToSelfLaunch = (
  * @param [opts.express.sessionSecret=env.SESSION_SECRET || randomly generated]
  *   session secret to use when encrypting sessions
  * @param [opts.express.cookieName=env.COOKIE_NAME || randomly generated] cookie
- *   name to use when identifying this app's session
+ *   name to use when identifying this app's session. Must not contain tabs or
+ *   spaces
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
+ * @param [opts.express.postprocessor] function to call after CACCL routes are
+ *   added but before the ('*' => react app) route is added. This is great for
+ *   adding other server-side routes
  */
 const initCACCL = async (
   opts?: {
@@ -426,6 +430,7 @@ const initCACCL = async (
       sessionMins?: number,
       sessionStore?: SessionStoreType,
       preprocessor?: (app: express.Application) => void,
+      postprocessor?: (app: express.Application) => void,
     },
   },
 ): Promise<void> => {
@@ -623,6 +628,61 @@ const initCACCL = async (
       }
     },
   );
+
+  /*----------------------------------------*/
+  /*              React Client              */
+  /*----------------------------------------*/
+
+  // Run postprocessor first
+  if (opts?.express?.postprocessor) {
+    opts.express.postprocessor(app);
+  }
+
+  // Determine initial working directory
+  const initialWorkingDirectory = (
+    process.env.PWD.endsWith('/server')
+      ? process.env.PWD.substring(0, process.env.PWD.length - '/server'.length)
+      : process.env.PWD
+  );
+
+  // Change config for dev environment
+  if (thisIsDevEnvironment) {
+    // Print a notice
+    console.log('Server running in development mode');
+
+    // Redirect all traffic to react development port
+    app.get(
+      '*',
+      (req, res) => {
+        // Redirect to the appropriate 
+        return res.redirect(`http://localhost:3000${req.path}`);
+      },
+    );
+  } else {
+    // This is production! Serve the build directory
+    const buildDir = `${initialWorkingDirectory}/client/build`;
+
+    // Serve styles, etc
+    app.use(express.static(buildDir));
+
+    // Send frontend
+    app.get(
+      '*',
+      (req, res) => {
+        res.sendFile(`${buildDir}/index.html`);
+      },
+    );
+  }
+
+  // Serve the front-end
+  if (thisIsDevEnvironment) {
+    // This is development! Redirect to front-end hosted at localhost:3000
+    app.get('/', (req, res) => {
+      return res.redirect('http://localhost:3000');
+    });
+  } else {
+    
+  }
 };
 
 /*------------------------------------------------------------------------*/

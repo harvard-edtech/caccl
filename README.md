@@ -142,6 +142,12 @@ From the top level of your project, create a `/config/devEnvironment.json` file 
 
 `studentAccessTokens` is an optional array of access tokens for students in the sandbox.
 
+If your app has any custom parameters that you want to include, add them in a `customParams` map:
+
+```ts
+
+```
+
 ### Done!
 
 You can now head over to the [Using CACCL](https://harvard-edtech.github.io/caccl/#using-caccl) section.
