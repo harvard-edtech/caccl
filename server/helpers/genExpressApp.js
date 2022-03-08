@@ -67,7 +67,7 @@ var genExpressApp = function (opts) {
     if (thisIsDevEnvironment) {
         // Start a development server that uses HTTPS
         var serve = require('caccl-dev-server').default;
-        serve.default({
+        serve({
             app: app,
             port: port,
         });
