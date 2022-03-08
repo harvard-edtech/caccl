@@ -4,9 +4,7 @@
   "description": "Canvas App Complete Connection Library: an all-in-one library for connecting your app to Canvas, handling lti, access tokens, and api.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --exit --recursive --reporter spec --timeout 5000",
-    "selenium": "node ./node_modules/dce-selenium/run",
-    "accept": "node accept"
+    "build": "tsc --project ./tsconfigClient.json && tsc --project ./tsconfigServer.json"
   },
   "repository": {
     "type": "git",
@@ -28,40 +26,33 @@
     "harvard",
     "dce"
   ],
-  "author": "Gabriel Abrams <gabeabrams@gmail.com>",
+  "author": "Gabe Abrams <gabeabrams@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/harvard-edtech/caccl/issues"
   },
   "homepage": "https://github.com/harvard-edtech/caccl#readme",
   "dependencies": {
-    "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
-    "caccl-api": "^1.0.79",
-    "caccl-api-forwarder": "^1.1.6",
-    "caccl-authorizer": "^1.1.27",
-    "caccl-canvas-partial-simulator": "^1.0.43",
-    "caccl-error": "^1.0.7",
-    "caccl-grade-passback": "^1.1.4",
-    "caccl-lti": "^1.1.8",
-    "caccl-send-request": "^1.0.15",
+    "caccl-api": "2.0.0-beta.10",
+    "caccl-api-forwarder": "2.0.0-beta.10",
+    "caccl-authorizer": "2.0.0-beta.10",
+    "caccl-error": "2.0.0-beta.10",
+    "caccl-grade-passback": "2.0.0-beta.10",
+    "caccl-lti": "2.0.0-beta.10",
+    "caccl-memory-store": "^2.0.0-beta.10",
+    "caccl-send-request": "2.0.0-beta.10",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "fast-json-stable-stringify": "^2.1.0",
-    "fs": "0.0.1-security",
-    "http": "0.0.0",
-    "https": "^1.0.0",
-    "memorystore": "^1.6.6",
-    "qs": "^6.10.1",
-    "randomstring": "^1.1.5"
+    "memorystore": "^1.6.7"
   },
   "devDependencies": {
-    "dce-selenium": "^1.0.59",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.1",
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.23.2",
-    "mocha": "^8.3.2"
+    "typescript": "^4.6.2"
   }
 }

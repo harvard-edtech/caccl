@@ -2,1121 +2,821 @@
 
 The **C**anvas **A**pp **C**omplete **C**onnection **L**ibrary (CACCL) is an all-in-one library for building Canvas-integrated apps. By handling LTI, authorization, and API for you, CACCL makes building Canvas-integrated tools quick and easy.
 
-## Support and Notices:
+**Beta:** this project is in beta and breaking changes may occur at any time.
 
-### This project is in Beta
+# Setup CACCL
 
-This project is still in Beta. Breaking changes may occur at any time. Please be careful when updating your version of CACCL.
+The fastest way to get set up is to use our template app. It uses Node.js and Express.js on the back-end and React on the front-end. Both use typescript. If you'd like to set up your project manually, check out the [Manual Setup](https://harvard-edtech.github.io/caccl/#manual-setup) section.
 
-### No Windows support
+## 1. Create Project
 
-This project was developed to be run in a Mac or Linux environment. If you must develop in Windows, try [installing bash](https://www.google.com/search?q=install+linux+bash+on+windows), but understand that we do not test CACCL in Windows...so no guarantees this will work.
+Make a new npm project and navigate to the top-level directory.
 
-### Node version requirement
+Then, use `npx create-caccl` and follow instructions.
 
-This project works best with Node v12 and higher.
+Among many other updates, you should now find two folders: `server/` and `client/` which contain an Express server and a React app, respectively.
 
-# Quickstart
+## 2. Set Up the Server
 
-## Initialize your Project
+Out of the box, your CACCL app will be ready to run in development mode. Here's how to set up your server so it is ready for production.
 
-#### 1. Create a new project:
+In `server/src/index.ts`, you'll find a call to `initCACCL({ ... })`. All CACCL configuration gets passed into `initCACCL`.
 
-In an empty directory or npm project directory, run:
+### Required: Configure LTI
 
-`npm init caccl`
+All CACCL apps integrate with Canvas via LTI. You can think of LTI as a standardized interface between Canvas and an app that integrates with Canvas. For more info on LTI, check out the [IMS Global LTI Docs](https://www.imsglobal.org/activity/learning-tools-interoperability).
 
-You'll be prompted with a list of project types. Choose a type and follow instructions.
+#### I. Add Credentials
 
-Project Type | Client | Description
-:--- | :--- | :---
-React + Express App | React | React front-end with a simple Express back-end
-Node.js Script | Terminal |  A simple Node.js script that runs in terminal
-EJS + Express Server-side App | EJS Templates | A server-side app with an Express server and UI templating with EJS
+When your LTI app is installed into Canvas, it will be installed with installation credentials: consumer key and consumer secret (also referred to as a shared secret).
 
-**Project type not listed?** If your type of project isn't listed above or you are creating a tool that only needs access to the Canvas API, see the [Manual Set Up](#manual-set-up) section.
+Provide your installation credential(s) to CACCL as an `lti.installationCredentials` map in the form `{ key => secret }`.
 
-#### 2. Read the docs for your project type:
-
-Once you've chosen from the list, follow instructions and jump to the corresponding docs:
-
-- [React + Express App Docs](#if-you-chose-react--express-app)
-- [Node.js Script](#if-you-chose-nodejs-script)
-- [EJS + Express Server-side App](#if-you-chose-ejs--express-server-side-app)
-
-
-
-## If you chose _React + Express App_...
-
-#### Table of Contents
-
-- [Developer Mode](#developer-mode)
-- [Back-end](#back-end)
-- [Front-end](#front-end)
-- [Configuring CACCL on the Server](#configuring-caccl-on-the-server)
-- [Configuring CACCL on the Client](#configuring-caccl-on-the-client)
-- [Adding Your App to Canvas](#adding-your-app-to-canvas)
-- [Deploying your App](#deploying-your-app)
-
-#### Developer Mode
-
-To **start your app in developer mode**, open three terminal windows in the project root directory. Run each of the following commands, one in each window:
-
-- `npm run dev:canvas` – starts a Canvas launch simulator
-- `npm run dev:server` – starts the app server
-- `npm run dev:client` – starts React's live dev environment
-
-**Launch:** to simulate an LTI launch for your app, see instructions in the first window (Canvas simulator).
-
-_FAQ: Which port will my app listen to?_
-
-> By default, we use port 443.
->
-> To choose a specific port, either set the "PORT" environment variable or add a `port` configuration option when calling `initCACCL` (see [Configuring CACCL on the Server](#configuring-caccl-on-the-server))
-
-#### Back-end
-
-To **edit the back-end**, edit `server.js`. The server is an express app. Visit the [expressjs.com app docs](https://expressjs.com/en/4x/api.html#app) for instructions on how to add routes, etc.
-
-_Canvas API:_
-
-> If the user is authorized, then `req.api` will be defined.
->
-> Use `req.api` to access Canvas from within a server route. `req.api` is an instance of caccl-api. See the full list of functions at the [caccl-api-docs](https://harvard-edtech.github.io/caccl-api/).
->
-> Example:
->
-> ```js
-> app.get('/name', async (req, res) => {
->   const profile = await req.api.user.self.getProfile();
->   return res.send(profile.name);
-> });
-> ```
-
-_Get Info on Status, Auth, and LTI Launch:_
-
-> CACCL stores status, auth, and LTI launch info in the user's session. See the following properties of `req.session`:
->
-> Property | Type | Description
-> :--- | :--- | :---
-> launched | boolean | if true, the user successfully launched the app via LTI
-> authorized | boolean | if true, we have authorization to access the Canvas API
-> authFailed | boolean | true if authorization failed
-> authFailureReason | string | the reason authorization failed if `authFailed` is true (see reasons list below)
-> launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
->
-> **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
->
-> Possible values of `authFailureReason`:
->
-> - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
-> - "internal_error" - an internal error occurred on the server while attempting to process authorization
-> - "denied" - the user denied the app access to Canvas when they were prompted
-> - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
-
-_Grade Passback:_
-
-> CACCL supports LTI-based grade passback when the user was launched through an external assignment. If the user launched this way, you will be able to use the `sendPassback` function on the server to pass grade, timestamp, and/or submission data back to Canvas:
->
-> In any server route, use the `req.sendPassback` function with the following parameters:
->
-> Property | Type | Description
-> :--- | :--- | :---
-> score | number | the number of points to give the student. Either this or `percent` can be included, but not both
-> percent | number | the percent of the points possible to give the student. Either this or `score` can be included, but not both
-> text | string | the student's text submission. Either this or `url` can be included, but not both
-> url | string | the student's url submission. Either this or `text` can be included, but not both
-> submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
->
-> Example 1: on this 20 point assignment, give the student 15 points and send their text submission
->
-> ```js
-> await req.sendPassback({
->   score: 15,
->   text: 'This is my submission',
-> });
-> ```
->
-> Example 2: on this 20 point assignment, give the student 15 points and send their url submission
->
-> ```js
-> await req.sendPassback({
->   percent: 75,
->   url: 'https://student.sub/is/this/link',
-> });
-> ```
-
-#### Front-end
-
-To **edit the front-end**, edit your React project in the `/client` folder. Start by editing `/client/src/App.js`. To integrate any component with the server or with Canvas, use the following:
-
-_Adding CACCL to a React Component:_
-
-> ```js
-> // Import CACCL
-> import initCACCL from 'caccl/client/cached';
->
-> // Initialize CACCL
-> const {
->   api,
->   getStatus,
->   sendRequest,
->   sendPassback,
-> } = initCACCL();
-> ```
->
-> See each section below on how to use `api`, `getStatus`, `sendRequest`, and `sendPassback`.
-
-_Canvas API:_
-
-> An instance of caccl-api is passed back from `initCACCL()`. See the full list of functions at the [caccl-api-docs](https://harvard-edtech.github.io/caccl-api/).
->
-> Example:
->
-> ```js
-> const { api } = initCACCL();
->
-> const students = await api.course.listStudents({ courseId: 532894 });
-> ```
->
-> We recommend handling errors with try-catch:
->
-> ```js
-> try {
->   const students = await api.course.listStudents({ courseId: 532894 });
->   ...
-> } catch (err) {
->   // Update app to show error:
->   this.setState({
->     status: 'error',
->     message: err.message,
->     code: err.code,
->   });
-> }
-> ```
-
-_Get Info on Status, Auth, and LTI Launch:_
-
-> Calling `getStatus` fetches many useful status variables from the server, as well as gets LTI launch information.
->
-> ```js
-> const { getStatus } = initCACCL();
->
-> const status = await getStatus();
-> ```
->
-> Properties of `status`:
->
-> Property | Type | Description
-> :--- | :--- | :---
-> launched | boolean | if true, the user successfully launched the app via LTI
-> authorized | boolean | if true, we have authorization to access the Canvas API
-> authFailed | boolean | true if authorization failed
-> authFailureReason | string | the reason authorization failed if `authFailed` is true (see reasons list below)
-> launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
->
-> **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
->
-> Possible values of `authFailureReason`:
->
-> - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
-> - "internal_error" - an internal error occurred on the server while attempting to process authorization
-> - "denied" - the user denied the app access to Canvas when they were prompted
-> - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
-
-_Sending requests to the server:_
-
-> Use `sendRequest` to send requests to the server. See [caccl-send-request docs](https://www.npmjs.com/package/caccl-send-request) for more information.
->
-> Example:
->
-> ```js
-> const { sendRequest } = initCACCL();
->
-> const { body, status, headers } = await sendRequest({
->   path: '/add-user',
->   method: 'POST',
->   params: {
->     name: 'Divardo Calicci',
->     age: 19,
->   },
-> });
-> ```
-
-> _Why use `sendRequest` instead of other request senders? Our `sendRequest` function works cross-domain with our development environment (dev server runs on one port, dev client runs on another)_
-
-_Grade Passback:_
-
-> CACCL supports LTI-based grade passback on the front-end when the user was launched through an external assignment and when the server has `disableClientSidePassback` set to `false` (this is the default). Use the `sendPassback` function provided by `initCACCL` to pass grade, timestamp, and/or submission data back to Canvas:
->
-> In any React component, use `sendPassback` with the following parameters:
->
-> Property | Type | Description
-> :--- | :--- | :---
-> score | number | the number of points to give the student. Either this or `percent` can be included, but not both
-> percent | number | the percent of the points possible to give the student. Either this or `score` can be included, but not both
-> text | string | the student's text submission. Either this or `url` can be included, but not both
-> url | string | the student's url submission. Either this or `text` can be included, but not both
-> submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
->
-> Example 1: on this 20 point assignment, give the student 15 points and send their text submission
->
-> ```js
-> await sendPassback({
->   score: 15,
->   text: 'This is my submission',
-> });
-> ```
->
-> Example 2: on this 20 point assignment, give the student 15 points and send their url submission
->
-> ```js
-> await sendPassback({
->   percent: 75,
->   url: 'https://student.sub/is/this/link',
-> });
-> ```
-
-#### Configuring CACCL on the Server
-
-To change the default canvasHost in your dev environment, edit the value in `config/devEnvironment.js`. To change this in your production environment, see the section on [deploying your app](#deploying-your-app).
-
-To customize other aspects of how CACCl functions on the server, edit the configuration options being passed into `initCACCL(...)` in `index.js`:
-
-_Configuration for Express server:_
-
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> port | number | the port to listen to | "PORT" environment var or 443
-> sessionSecret | string | the session secret to use when encrypting sessions | random string
-> cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
-> sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
-> onListenSuccess | function | function to call when server starts listening | `console.log`
-> onListenFail | function | function to call if server can't start listening | `console.log`
-> sslKey | string | ssl key or filename where key is stored | self-signed certificate key
-> sslCertificate | string | ssl certificate or filename where certificate is stored | self-signed certificate
-> sslCA | string[] or string | certificate chain linking a certificate authority to our ssl certificate. If type is string, certificates will automatically be split | none
-> clientOrigin | string | the origin host of the client (to allow CORS), if different from server host | none
->
-> If for any reason you want to **create the express server yourself**, just pass it in (see below). Note: If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> app | express server app | the express app to add routes to | optional | new express app
-
-_Configuration for server API access:_
-
-> If your app server doesn't need to access the Canvas API, set `disableServerSideAPI: true`.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
-> routesWithAPI | string[] | list of routes to add api support to, `*` wildcard supported | all routes
-> cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
-> cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
-> dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
-> sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
->
-> The following config options apply only to API requests made from the server via `req.api`:
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> accessToken | string | a default access token to apply to all requests, overridden by user's access token | none
-> defaultNumRetries | number | the number of times to retry failed requests | 3
-> itemsPerPage | number | the number of items to request on a get request | 100
-
-_Configuration for client-side API forwarding:_
-
-> Your React client sends Canvas API requests to the Express server, which forwards them to Canvas. If your React client doesn't need to access the Canvas API, set `disableClientSideAPI: true`.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> disableClientSideAPI | boolean | if false, server forwards Canvas API requests | `false`
-> apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded api requests. This is the prefix we use to listen for forwarded requests (ex: GET /api/v1/courses is forwarded through the server's /canvas/api/v1/courses route if this is set to "/canvas") | "/canvas"
->
-> Note: if you change `apiForwardPathPrefix` on the server, you need to change it on the client as well! We recommend not changing this.
-
-_Configuration for Canvas authorization:_
-
-> To access the Canvas API, we need an access token. CACCL gets the user's access token through Canvas' OAuth 2 authorization process. All you need to do is redirect the user to the launchPath and CACCL will perform the authorization process. If `disableAuthorizeOnLaunch` is false (see config for LTI launch), we authorize the user on launch.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
-> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ client_id: 'client_id', client_secret: 'client_secret' }` (our dummy vals for dev environment)
-> defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
-> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | include a custom token store (see [TokenStore docs](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) for specs) | memory token store
-> simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
-
-_Configuration for LTI launches:_
-
-> CACCL automatically accepts LTI launch requests and parses the launch request body. If your app is not launched via LTI, you can turn off this feature using `disableLTI: true`.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
-> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ consumer_key: 'consumer_key', consumer_secret: 'consumer_secret' }` (our dummy vals for dev environment)
-> redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
-> nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
-> disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
-> disableClientSidePassback | boolean | if falsy, the client app cannot send grade passback to Canvas. If this is set to true, grade passback requests must be made from the server. Note: leaving this as false is convenient but does make it possible for clever users to spoof a grade passback request | `false`
-
-_Configuration for API Scopes:_
-
-> CACCL apps support scopes. Just add a `scopes.js` file to the root folder of your project.
-> 
-> Your `scopes.js` file should export a scopes array. The scopes array can contain API functions like `api.course.listStudents` (recommended), or it can contain scope strings like `url:GET|/api/v1/accounts` (not recommended), or it can contain a mix of the two. There is one exception: the `api.other.endpoint` API function cannot be added to the list.
->
-> Example `scopes.js` file using API functions (recommended):
->
-> ```js
-> const api = require('caccl/API');
->
-> // All the API functions we use in our app:
-> module.exports = [
->   api.course.listStudents,
->   api.user.getProfile,
-> ];
-> ```
->
-> Example `scopes.js` file using manually copied scope strings (not recommended):
->
-> ```js
-> // List of scopes we use:
-> module.exports = [
->   'url:DELETE|/api/v1/courses/:course_id/assignments/:id',
->   'url:GET|/api/v1/users/:user_id/courses/:course_id/assignments',
-> ];
-> ```
->
-> Example `scopes.js` file mixing and matching API functions and scopes (we recommend listing API functions as much as possible):
->
-> ```js
-> const api = require('caccl/API');
-> 
-> // List of API functions and scopes we use:
-> module.exports = [
->   api.course.listStudents,
->   api.user.getProfile,
->   // There's no API function for this scope, so we list it manually:
->   'url:GET|/api/v1/users/:user_id/communication_channels/:communication_channel_id/notification_preferences',
-> ];
-> ```
-
-
-#### Configuring CACCL on the Client:
-
-When initializing CACCl within a React component, you can pass in configuration options to customize CACCL's behavior. Example:
-
-```js
-// Import CACCL
-import initCACCL from 'caccl/client/cached';
-
-// Initialize CACCL
-const {
-  api,
-  getStatus,
-  sendRequest,
-} = initCACCL({
-  defaultNumRetries: 5,
-  itemsPerPage: 200,
+```ts
+initCACCL({
+  lti: {
+    installationCredentials: {
+      'first-key': 'first-secret',
+      'second-key': 'second-secret',
+      ...
+    },
+  },
 });
 ```
 
-All configuration options are optional:
+If you only have one key/secret pair (all app installs use the same installation credentials), you can include your credentials as two environment variables instead: `CONSUMER_KEY` and `CONSUMER_SECRET`.
 
-Config Option | Type | Description | Default
-:--- | :--- | :--- | :---
-serverHost | string | the hostname of the server if not the same as the client | same as client
-defaultNumRetries | number | Number of times to retry a request | 3
-itemsPerPage | number | Number of items to request on a get request | 100
-cacheType | string | If 'memory', cache is stored in memory. If 'session', cache is stored in express the session | "memory"
-cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/docs/Cache.md) | Custom cache manager instance. Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
-sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
-apiForwardPathPrefix | string | API forwarding path prefix to add to all forwarded API requests. This is the prefix we prepend to all requests when sending them to the server for forwarding to Canvas. This config option _must be the same on the server and client_ | /canvas
+#### II. Choose Other Features
 
-#### Adding Your App to Canvas
+**Authorize After Launch (recommended):** If the api is configured (see the next section) and you'd like to automatically authorize users with the API when they launch via LTI, add the `lti.authorizeAfterLaunch: true` flag.
 
-Once you've built your app and have finished tested simulating LTI launches using our [developer mode](#developer-mode) tools, you can install your app into Canvas to test it out.
+```ts
+initCACCL({
+  lti: {
+    authorizeAfterLaunch: true,
+  },
+});
+```
 
-Just follow these steps:
-
-##### 1. Set up your installationCredentials
-
-_a. Generate your installationCredentials_
-
-> Use a random string generator to create your app's `consumer_key` and `consumer_secret`.
->
-> Example:
-
-> `consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja'`
-> `consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf'`
-
-_b. Save your installationCredentials to your production environment_
-
-> Save your installationCredentials in a secure place. We highly recommend not checking these into git. You'll need both the `consumer_key` and `consumer_secret` when deploying your app (see the section on [deploying your app](#deploying-your-app))
-
-##### 2. Set up your developerCredentials
-
-If your app does not access the Canvas API...
-
-> Make sure to set the following additional configuration options when calling `initCACCL` in your top-level `index.js` file:
->
-> ```js
-> initCACCL({
->   ...
->   disableAuthorization: true,
->   disableClientSideAPI: true,
->   disableServerSideAPI: true,
->   ...
-> });
-> ```
->
-> Since your app does not access the API, you have no need for `developerCredentials`. You are done with this step.
-
-If your app requires access to the Canvas API...
-
-> **a. Generate a developer key for your app**
-> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<apphostname>/launch`.
->
-> Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
->
-> **b. Keep your developerCredentials safe**
->
-> Save your developerCredentials in a secure place. We highly recommend not checking these into git. You'll need both the `client_id` and `client_secret` when deploying your app (see the section on [deploying your app](#deploying-your-app))
-
-##### 3. Deploy your app
-
-See the section on [deploying your app](#deploying-your-app).
-
-##### 4. Install your app into a Canvas course or account
-
-_a. Create your app's installation XML_
-
-> We recommend using an online tool for this step. Try googling "LTI XML Generator" or just use the [edu-apps xml generator](https://www.edu-apps.org/build_xml.html).
->
-> Tips:
->  
-> - Set the launch URL to `https://yourhost.com/launch` unless you changed the `launchPath` config parameter
-> - We recommend adding a "Course Navigation" extension (this is the launch type we support)
-
-_b. Install your app into Canvas_
-
-> a. Visit your Canvas course or account
-> b. Click "Settings"  
-> c. Click the "Apps" tab  
-> d. Click "View App Configurations"  
-> e. Click "+ App"  
-> f. Use the configuration type dropdown to select "Paste XML"  
-> g. Fill in your app's name, consumer key, and consumer secret
-> h. Paste the xml (generated in part a above) into the "XML Configuration" box  
-> h. Click "Submit"  
-> i. Refresh the page
->
-> Now, when visiting the course (or a course in the account) you just added your app to, you'll find that the app is installed. Note: if your XML wasn't configured to enable your app by default, you may need to go into Settings > Navigation and drag your app up so it's visible.
-
-##### 5. Launch your app via Canvas
-
-Once you've installed your app into a course or account, visit that course (or a course in that account). If you just installed the app, you may need to refresh the course page.
-
-If you set up your installation XML to include a navigation item _and_ your app is enabled, your app will show up in the left-hand navigation menu. Just click your app to launch it.
-
-### Deploying your app:
-
-##### Deploying on Heroku
-
-1. Create a new app on Heroku
-2. Set up your _Deployment method_:
-> This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
->
-> a. Under the "Deploy" tab, choose GitHub as your "Deployment method"  
-> b. Follow instructions to search for your app's repository and connect to it  
-> c. We also recommend clicking "Enable Automatic Deploys" so your app re-deploys any time you push to _master_.
-
-3. Set up your _Config Vars_:
-> a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
-> b. Add the following vars:   
->
-> KEY | VALUE
-> :--- | :---
-> CONSUMER_KEY | the consumer_key from your installationCredentials
-> CONSUMER_SECRET | the consumer_secret from your installationCredentials
-> CANVAS_HOST | the default canvasHost to use
->
-> c. If you created developerCredentials while following the steps in [Adding Your App to Canvas](#adding-your-app-to-canvas), add these vars as well:
->
-> KEY | VALUE
-> :--- | :---
-> CLIENT_ID | the client_id from your developerCredentials
-> CLIENT_SECRET | the client_secret from your developerCredentials
-
-4. You're done! To deploy a new version of your app, just push to the _master_ branch.
-
-If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
-
-##### Deploying on a server (e.g. Amazon EC2)
-
-1. Set up your server:
-> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your CACCL app and just upload your app code. Check out [Configuring CACCL on the Server](#configuring-caccl-on-the-server) for info on adding SSL certificates.
->
-> A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
-
-2. Add your installationCredentials:
-> Save the `consumer_key` and `consumer_secret` to `config/installationCredentials.js`. **Do not add this file in your developer environment**.
->
-> Example `installationCredentials.js` file:
->
-> ```js
-> module.exports = {
->   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
->   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
-> };
-> ```
-
-3. Add your developerCredentials:
-> Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
->
-> Example `developerCredentials.js` file:
->
-> ```js
-> module.exports = {
->   client_id: '10810000000003',
->   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
-> };
-> ```
-
-4. Add your canvasDefaults:
-> Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
->
-> Example `canvasDefaults.js` file:
->
-> ```js
-> module.exports = {
->   canvasHost: 'canvas.harvard.edu',
-> };
-> ```
-
-5. Install your app's dependencies
-> Run `npm install` on the server
-
-6. Build your app:
-> Run `npm run build` on the server
->
-> Alternatively, you can build your app before uploading it to the server. All up to you.
-
-7. Start your app:
-> Run `npm start` on the server
->
-> You may need to grant your app higher privileges by running `sudo npm start` instead.
-
-<hr>
-
-## If you chose _Node.js Script_...
-
-#### Table of Contents
-
-- [Run your script](#run-your-script)
-- [Edit your script](#edit-your-script)
-- [Configuring CACCL](#configuring-caccl)
-
-#### Run your script:
-
-To **run** your script, use `npm start` in the project root directory
-
-#### Edit your script:
-
-To **edit** your script, edit `script.js`. The script's only argument, `api`, is an instance of caccl-api...see the full list of functions at the [caccl-api-docs](https://harvard-edtech.github.io/caccl-api/).
-
-_Canvas API:_
-
-> Use `api`, the only argument of the function in `script.js`.
->
-> Example:
->
-> ```js
-> module.exports = async (api) => {
->   // Get profile via Canvas API
->   const profile = await api.user.self.getProfile();
->
->   // Say "hello"
->   console.log(`Hi ${profile.name}, it's great to meet you!`);
-> };
-> ```
->
-> See the full list of supported API functions at the [caccl-api-docs](https://harvard-edtech.github.io/caccl-api/).
->
-> We recommend handling errors using try-catch:
->
-> ```js
-> try {
->   const profile = await api.user.self.getProfile();
->   ...
-> } catch (err) {
->   console.log(`An error occurred (code: ${err.code}): ${err.message}`);
->   process.exit(1);
-> }
-
-#### Configuring CACCL:
-
-Before your script in `script.js` runs, we initialize CACCL in `index.js`. To customize CACCL's behavior or turn on/off certain functionality, edit the configuration options passed into `initCACCL(...)`:
-
-**Note:** configuration options are _optional_ unless otherwise stated. These configuration options only affect API requests made on the client, not those made via `req.api` on the server.
-
-Config Option | Type | Description | Default
-:--- | :--- | :--- | :---
-defaultNumRetries | number | the number of times to retry failed requests | 3
-itemsPerPage | number | the number of items to request on a get request | 100
-cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
-cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType: those caches are built-in) | none
-
-<hr>
-
-## If you chose _EJS + Express Server-side App_...
-
-#### Table of Contents
-
-- [Developer Mode](#developer-mode-1)
-- [Editing your app](#editing-your-app)
-- [Configuring CACCL](#configuring-caccl-1)
-- [Adding Your App to Canvas](#adding-your-app-to-canvas-1)
-- [Deploying your App](#deploying-your-app-1)
-
-#### Developer Mode
-
-To **start your app in developer mode**, open two terminal windows in the project root directory. Run each of the following commands, one in each window:
-
-- `npm run dev:canvas` – starts a Canvas launch simulator
-- `npm run dev:server` – starts the app server
-
-**Launch:** to simulate an LTI launch for your app, see instructions in the first window (Canvas simulator).
-
-#### Editing your app
-
-To add routes to your Express server, edit `routes.js`.
-
-_Checking if we have authorization to use API:_
-
-> Within a route, to check if we have authorization to use the API, simply check if `req.api` is defined:
->
-> ```js
-> app.get('/student-names', async (req, res) => {
->   if (!req.api) {
->     return res.send('Oops! You are not authorized.');
->   }
->   ...
-> });
-> ```
-
-_Canvas API:_
-
-> `req.api` is an instance of caccl-api. See the full list of functions at the [caccl-api-docs](https://harvard-edtech.github.io/caccl-api/).
->
-> Example:
->
-> ```js
-> app.get('/student-names', async (req, res) => {
->   if (!req.api) {
->     return res.send('Oops! You are not authorized.');
->   }
->   
->   const students = await req.api.course.listStudents({ courseId: 58320 });
->
->   const names = students.map(x => x.name).join(', ');
->
->   return res.send(`Here are all your student's names: ${names}`);
-> });
-> ```
->
-> We recommend handling errors with a try-catch statement:
->
-> ```js
-> app.get('/student-names', async (req, res) => {
->   ...
->   try {
->     const students = await req.api.course.listStudents({ courseId: 58320 });
->   } catch (err) {
->     return res.status(500).send(err.message);
->   }
->   ...
-> });
-> ```
-
-_Get Info on Status, Auth, and LTI Launch:_
-
-> CACCL stores status, auth, and LTI launch info in the user's session. See the following properties of `req.session`:
->
-> Property | Type | Description
-> :--- | :--- | :---
-> launched | boolean | if true, the user successfully launched the app via LTI
-> authorized | boolean | if true, we have authorization to access the Canvas API
-> authFailed | boolean | true if authorization failed
-> authFailureReason | string | the reason authorization failed if `authFailed` is true (see reasons list below)
-> launchInfo | object | included if `launched` is true, see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for full list of properties
->
-> **Note:** see [launchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for more on the `launchInfo` property.
->
-> Possible values of `authFailureReason`:
->
-> - "error" - a Canvas error occurred: Canvas responded erratically during the authorization process
-> - "internal_error" - an internal error occurred on the server while attempting to process authorization
-> - "denied" - the user denied the app access to Canvas when they were prompted
-> - "invalid_client" - the app's client_id is invalid: the app is not approved to interact with Canvas
-
-_Grade Passback:_
-
-> CACCL supports LTI-based grade passback when the user was launched through an external assignment. If the user launched this way, you will be able to use the `sendPassback` function on the server to pass grade, timestamp, and/or submission data back to Canvas:
->
-> In any server route, use the `req.sendPassback` function with the following parameters:
->
-> Property | Type | Description
-> :--- | :--- | :---
-> score | number | the number of points to give the student. Either this or `percent` can be included, but not both
-> percent | number | the percent of the points possible to give the student. Either this or `score` can be included, but not both
-> text | string | the student's text submission. Either this or `url` can be included, but not both
-> url | string | the student's url submission. Either this or `text` can be included, but not both
-> submittedAt | Date or ISO 8601 string | the submittedAt timestamp for the submission
->
-> Example 1: on this 20 point assignment, give the student 15 points and send their text submission
->
-> ```js
-> await req.sendPassback({
->   score: 15,
->   text: 'This is my submission',
-> });
-> ```
->
-> Example 2: on this 20 point assignment, give the student 15 points and send their url submission
->
-> ```js
-> await req.sendPassback({
->   percent: 75,
->   url: 'https://student.sub/is/this/link',
-> });
-> ```
-
-_Adding views:_
-
-> Add EJS templates to the `/views` folder. See [EJS docs](https://ejs.co) for full documentation. Here's a brief overview:
->
-> **Writing an EJS template:** In an `.ejs` template file, use `<%= ... %>` to add placeholder text, use `<%- ... %>` to add placeholder html, and use `<% ... %>` to run javascript. See examples:
->
-> ```html
-> <div>
->   <!-- Show app title (plain text) -->
->   <h1>
->     <%= title %>
->   </h1>
->
->   <!-- Show app description (html) -->
->   <p>
->     Description:&nbsp;
->     <%- description %>
->   </p>
->
->   <!-- Display number of students with correct pluralization: -->
->   <h2>
->     <% const plural = (numStudents > 1); %>
->     You have <%= numStudents %> student<%= plural ? '' : 's' %>.
->   </h2>
-> </div>
-> ```
->
-> **Rendering an EJS template:** Within an express route, use `res.render` to render an EJS template. In this example, we have a `/views/home.ejs` file
->
-> ```js
-> const path = require('path');
-> ...
-> app.get('/student-names', async (req, res) => {
->   return res.render(path.join(__dirname, 'views', 'home'), {
->     title: 'My App',
->     description: 'A <strong>fantastic</strong> app!',
->     numStudents: 24,
->   });
-> });
-> ```
-
-#### Configuring CACCL
-
-To change the default canvasHost in your dev environment, edit the value in `config/devEnvironment.js`. To change this in your production environment, see the section on [deploying your app](#deploying-your-app-1).
-
-To customize other aspects of how CACCl functions on the server, edit the configuration options being passed into `initCACCL(...)` in `index.js`:
-
-_Configuration for Express server:_
-
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> port | number | the port to listen to | "PORT" environment var or 443
-> sessionSecret | string | the session secret to use when encrypting sessions | random string
-> cookieName | string | the cookie name to sent to client's browser | "CACCL-based-app-session-[timestamp]-[random str]"
-> sessionMins | number | the number of minutes the session should last for | 360 (6 hours)
-> onListenSuccess | function | function to call when server starts listening | `console.log`
-> onListenFail | function | function to call if server can't start listening | `console.log`
-> sslKey | string | ssl key or filename where key is stored | self-signed certificate key
-> sslCertificate | string | ssl certificate or filename where certificate is stored | self-signed certificate
-> sslCA | string[] or string | certificate chain linking a certificate authority to our ssl certificate. If type is string, certificates will automatically be split | none
-> clientOrigin | string | the origin host of the client (to allow CORS), if different from server host | none
->
-> If for any reason you want to **create the express server yourself**, just pass it in (see below). Note: If you pass in your own express server, all customization options above will be ignored. When creating your express server, make sure you initialize body parsing and express-session.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> app | express server app | the express app to add routes to | optional | new express app
-
-_Configuration for API access:_
-
-> If your app doesn't need to access the Canvas API, set `disableServerSideAPI: true`.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> disableServerSideAPI | boolean | if false, adds `req.api` to routes encapsulated by routesWithAPI | `false`
-> routesWithAPI | string[] | list of routes to add API support to, `*` wildcard supported | all routes
-> cacheType | string | if 'memory', cache is stored in memory. If 'session', cache is stored in the express session. To include a custom cache, include it using the "cache" config option | none
-> cache | [Cache](https://github.com/harvard-edtech/caccl-api/blob/master/contributor-docs/Cache.md) | a custom cache instance (Not required if using 'memory' or 'session' cacheType (those caches are built-in) | none
-> dontUseLaunchCanvasHost | boolean | if false, when a user launches the app via LTI, we use the LTI launch host as the canvasHost | `false`
-> sendRequest | [SendRequest](https://github.com/harvard-edtech/caccl-send-request) | a function that sends an http request. We recommend leaving this as is | [caccl-send-request](https://github.com/harvard-edtech/caccl-send-request)
-> accessToken | string | a default access token to apply to all requests, overridden by user's access token | none
-> defaultNumRetries | number | the number of times to retry failed requests | 3
-> itemsPerPage | number | the number of items to request on a get request | 100
-
-_Configuration for Canvas authorization:_
-
-> To access the Canvas API, we need an access token. CACCL gets the user's access token through Canvas' OAuth 2 authorization process. All you need to do is redirect the user to the launchPath and CACCL will perform the authorization process. If `disableAuthorizeOnLaunch` is false (see config for LTI launch), we authorize the user on launch.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> disableAuthorization | boolean | if false, sets up automatic authorization when the user visits the launchPath | `false`
-> developerCredentials | object | Canvas app developer credentials in the form `{ client_id, client_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ client_id: 'client_id', client_secret: 'client_secret' }` (our dummy vals for dev environment)
-> defaultAuthorizedRedirect | string | the default route to redirect the user to after authorization is complete (you can override this for a specific authorization call by including `next=/path` as a query or body parameter when sending user to the launchPath) | "/"
-> tokenStore | [TokenStore](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) | include a custom token store (see [TokenStore docs](https://github.com/harvard-edtech/caccl-authorizer/blob/master/docs/TokenStore.md) for specs) | memory token store
-> simulateLaunchOnAuthorize | boolean | if true, simulates an LTI launch upon successful authorization (if user hasn't already launched via LTI), essentially allowing users to launc the tool by visiting the launchPath (GET). _Note:_ `simulateLaunchOnAuthorize` is not valid unless `disableAuthorization`, `disableLTI`, and `disableServerSideAPI` are all false. | `false`
-
-_Configuration for LTI launches:_
-
-> CACCL automatically accepts LTI launch requests and parses the launch request body. If your app is not launched via LTI, you can turn off this feature using `disableLTI: true`.
->
-> Config Option | Type | Description | Default
-> :--- | :--- | :--- | :---
-> disableLTI | boolean | if false, CACCL listens for and parses LTI launches | false
-> installationCredentials | object | installation consumer credentials to use to verify LTI launch requests in the form `{ consumer_key, consumer_secret }`. No need to include this in your dev environment (the default value is what we expect) | `{ consumer_key: 'consumer_key', consumer_secret: 'consumer_secret' }` (our dummy vals for dev environment)
-> redirectToAfterLaunch | string | the path to redirect to after a successful launch | "/"
-> nonceStore | object | a nonce store instance to use for keeping track of nonces of the form `{ check }` where `check` is a function: (nonce, timestamp) => Promise that resolves if valid, rejects if invalid
-> disableAuthorizeOnLaunch | boolean | if false, user is automatically authorized upon launch. _Note:_ `disableAuthorizeOnLaunch` is not valid unless `disableAuthorization` and `disableServerSideAPI` are false. | `false`
-> disableClientSidePassback | boolean | if falsy, the client app cannot send grade passback to Canvas. If this is set to true, grade passback requests must be made from the server. Note: leaving this as false is convenient but does make it possible for clever users to spoof a grade passback request | `false`
-
-#### Adding Your App to Canvas
-
-Once you've built your app and have finished tested simulating LTI launches using our [developer mode](#developer-mode-1) tools, you can install your app into Canvas to test it out.
-
-Just follow these steps:
-
-##### 1. Set up your installationCredentials
-
-_a. Generate your installationCredentials_
-
-> Use a random string generator to create your app's `consumer_key` and `consumer_secret`.
->
-> Example:
-
-> `consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja'`
-> `consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf'`
-
-_b. Save your installationCredentials to your production environment_
-
-> Save the `consumer_key` and `consumer_secret_ to `config/installationCredentials.js` **only in your production environment**
->
-> Example:
->
-> ```js
-> module.exports = {
->   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
->   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
-> };
-> ```
->
-> Do not edit this file in your development environment! In your development environment, your `installationCredentials.js` file should have `consumer_key: 'consumer_key'` and `consumer_secret: 'consumer_secret'` (our dummy developer environment values)
-
-##### 2. Set up your developerCredentials
-
-If your app does not access the Canvas API...
-
-> Make sure to set the following additional configuration options when calling `initCACCL` in your top-level `index.js` file:
->
-> ```js
-> initCACCL({
->   ...
->   disableAuthorization: true,
->   disableClientSideAPI: true,
->   disableServerSideAPI: true,
->   ...
-> });
-> ```
->
-> Since your app does not access the API, you have no need for `developerCredentials`. You are done with this step.
-
-If your app requires access to the Canvas API...
-
-> **a. Generate a developer key for your app**
->
-> Ask a Canvas account admin to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<apphostname>/launch`.
->
-> Once finished, the admin will be able to find your app's `client_id` printed in plain text in the "details" column and they'll be able to get your app's `client_secret` by clicking the "Show Key" button directly below your `client_id`.
->
-> **b. Save your developerCredentials to your production environment**
->
-> In your production environment only, edit your `config/developerCredentials.js` file and add your `client_id` and `client_secret`.
->
-> Example:
->
-> ```js
-> module.exports = {
->   client_id: '10810000000003',
->   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
-> };
-> ```
->
-> Do not edit this file in your developer environment! In your development environment, your `developerCredentials.js` file should have `client_id: 'client_id'` and `client_secret: 'client_secret'` (our dummy developer environment values)
-
-##### 3. Install your app into a Canvas course or account
-
-_a. Create your app's installation XML_
-
-> We recommend using an online tool for this step. Try googling "LTI XML Generator" or just use the [edu-apps xml generator](https://www.edu-apps.org/build_xml.html).
->
-> Tips:
->  
-> - Set the launch URL to `https://yourhost.com/launch` unless you changed the `launchPath` config parameter
-> - We recommend adding a "Course Navigation" extension (this is the launch type we support)
-
-_b. Install your app into Canvas_
-
-> a. Visit your Canvas course or account
-> b. Click "Settings"  
-> c. Click the "Apps" tab  
-> d. Click "View App Configurations"  
-> e. Click "+ App"  
-> f. Use the configuration type dropdown to select "Paste XML"  
-> g. Fill in your app's name, consumer key, and consumer secret
-> h. Paste the xml (generated in part a above) into the "XML Configuration" box  
-> h. Click "Submit"  
-> i. Refresh the page
->
-> Now, when visiting the course (or a course in the account) you just added your app to, you'll find that the app is installed. Note: if your XML wasn't configured to enable your app by default, you may need to go into Settings > Navigation and drag your app up so it's visible.
-
-##### 4. Deploy your app
-
-See the section on [deploying your app](#deploying-your-app-1).
-
-##### 5. Launch your app via Canvas
-
-Once you've installed your app into a course or account, visit that course (or a course in that account). If you just installed the app, you may need to refresh the course page.
-
-If you set up your installation XML to include a navigation item _and_ your app is enabled, your app will show up in the left-hand navigation menu. Just click your app to launch it.
-
-### Deploying your app:
-
-##### Deploying on Heroku
-
-1. Create a new app on Heroku
-2. Set up your _Deployment method_:
-> This is up to you, but here's what we think of as the easiest way to configure your Heroku app:
->
-> a. Under the "Deploy" tab, choose GitHub as your "Deployment method"  
-> b. Follow instructions to search for your app's repository and connect to it  
-> c. We also recommend clicking "Enable Automatic Deploys" so your app re-deploys any time you push to _master_.
-
-3. Set up your _Config Vars_:
-> a. Under the "Settings" tab, find the "Config Vars" section, and click "Reveal Config Vars"  
-> b. Add the following vars:   
->
-> KEY | VALUE
-> :--- | :---
-> CONSUMER_KEY | the consumer_key from your installationCredentials
-> CONSUMER_SECRET | the consumer_secret from your installationCredentials
-> CANVAS_HOST | the default canvasHost to use
->
-> c. If you created developerCredentials while following the steps in [Adding Your App to Canvas](#adding-your-app-to-canvas-1), add these vars as well:
->
-> KEY | VALUE
-> :--- | :---
-> CLIENT_ID | the client_id from your developerCredentials
-> CLIENT_SECRET | the client_secret from your developerCredentials
-
-4. You're done! To deploy a new version of your app, just push to the _master_ branch.
-
-If you need more info on Heroku, check out [Heroku's deployment guide](https://devcenter.heroku.com/articles/getting-started-with-nodejs#deploy-the-app).
-
-##### Deploying on a server (e.g. Amazon EC2)
-
-1. Set up your server:
-> We'll leave this up to you. The simplest way to do this is to add SSL certificates to your CACCL app and just upload your app code. Check out [Configuring CACCL](#configuring-caccl-1) for info on adding SSL certificates.
->
-> A more secure way of doing this is to set up _nginx_ to securely listen to port _443_ and to forward traffic to _8080_. Then, your app doesn't need to have elevated privileges to listen to port _443_.
-
-2. Add your installationCredentials:
-> Save the `consumer_key` and `consumer_secret` to `config/installationCredentials.js`. **Do not add this file in your developer environment**.
->
-> Example `installationCredentials.js` file:
->
-> ```js
-> module.exports = {
->   consumer_key: '32789ramgps984t3n49t8ka0er9gsdflja',
->   consumer_secret: 'sdfjklans8fn983b74n89t7b0qv9847b890cmtm3980ct7vlksjdf',
-> };
-> ```
-
-3. Add your developerCredentials:
-> Save the `client_id` and `client_secret` to `config/developerCredentials.js`. **Do not add this file in your developer environment**.
->
-> Example `developerCredentials.js` file:
->
-> ```js
-> module.exports = {
->   client_id: '10810000000003',
->   client_secret: '389andvn7849tb5sjd098fgk08490583409m54bt73948n980548',
-> };
-> ```
-
-4. Add your canvasDefaults:
-> Save the default `canvasHost` value to `config/canvasDefaults.js`. **Do not add this file in your developer environment**.
->
-> Example `canvasDefaults.js` file:
->
-> ```js
-> module.exports = {
->   canvasHost: 'canvas.harvard.edu',
-> };
-> ```
-
-5. Install your app's dependencies
-> Run `npm install` on the server
-
-6. Build your app:
-> Run `npm run build` on the server
->
-> Alternatively, you can build your app before uploading it to the server. All up to you.
-
-7. Start your app:
-> Run `npm start` on the server
->
-> You may need to grant your app higher privileges by running `sudo npm start` instead.
-
-## Manual Set Up:
-
-### I'm Creating a Tool that Only Needs Access to the Canvas API...
-
-This section is only relevant if your tool already has a Canvas access token. In other words, your tool either doesn't need to handle LTI launches or Canvas authorization to get users' access tokens, or your tool handles LTI and Canvas authorization on its own.
-
-Your tool only needs to import [caccl-api](https://harvard-edtech.github.io/caccl-api/#use-caccl-api-manually-), one sub-component of CACCL. View [the caccl-api docs](https://harvard-edtech.github.io/caccl-api/#use-caccl-api-manually-) and scroll down to the "[Use CACCL API Manually](https://harvard-edtech.github.io/caccl-api/#use-caccl-api-manually-)" section.
-
-### I'm Setting up a Custom Project...
-
-You'll need CACCL set up on your server and client (if you have a client). See the following guides:
-
-Building your custom app:
-
-- [Using CACCL on an Express Server](https://github.com/harvard-edtech/caccl/blob/master/docs/server.md)
-- [Using CACCL on a Client](https://github.com/harvard-edtech/caccl/blob/master/docs/client.md)
-
-Testing your custom app:
-
-- [Easier testing with a partially simulated Canvas environment](https://github.com/harvard-edtech/caccl/blob/master/docs/testing_custom_project.md)
+**Self Launch:** Usually, LTI apps are launched by users who start in Canvas. However, if you'd like your app to be able to launch itself, CACCL has a clever self-launch process that allows your app to launch itself, given information about the Canvas instance and course. To enable this feature, add an `lti.selfLaunch` configuration object. CACCL needs to know the appId (also referred to as the external tool id) of your app as it is installed in the course that you'd like to self-launch from. For more information, see the [Enable Self Launch](https://harvard-edtech.github.io/caccl/#enable-self-launch) section. There are many ways you can share appIds with CACCL:
+
+### Optional: Configure API
+
+You can skip this section if your app doesn't need to access the Canvas API on behalf of the current user. If your app uses a predefined access token (not recommended), check out the [Access API via Predefined Access Token](https://harvard-edtech.github.io/caccl/#access-api-via-predefined-access-token) section.
+
+#### I. Add Credentials
+
+To integrate with the Canvas API, your app needs to be registered with the Canvas instance. This is something you'll need to work through with the school/university/organization and their Canvas admins. Once they approve your app and add it to their Canvas instance, you should be able to get developer credentials for the app (client id and secret).
+
+Provide your developer credential(s) to CACCL as an `auth.developerCredentials` map in the form `{ canvasHost => { clientId, clientSecret } }`.
+
+```ts
+initCACCL({
+  auth: {
+    developerCredentials: {
+      'canvas.harvard.edu': {
+        clientId: '12340000000000000000125',
+        clientSecret: 'dgha7ht29837hgasdhfa0873grasheklh287gt097a08h3ug8',
+      },
+    },
+  },
+});
+```
+
+If you only have one set of developer credentials to include, you can include your credentials as three environment variables: `DEFAULT_CANVAS_HOST`, `CLIENT_ID`, and `CLIENT_SECRET`.
+
+#### II. Configure Client-side API
+
+If your client-side React app accesses the Canvas API directly, you can skip this section. But if your client app does not need access to the Canvas API, you can disable it by adding the following flag:
+
+```ts
+initCACCL({
+  api: {
+    disableClientSideAPI: true,
+  },
+});
+```
+
+## 3. Setup Development Mode
+
+### Create a Sandbox Course
+
+First, you'll need access to "sandbox course" in a real Canvas instance. You can visit [canvas.instructure.com](https://canvas.instructure.com/login/canvas) to log in or create an account. A "sandbox course" can be any Canvas course that is used for testing. We recommend adding one test teacher, at least one test TA, and at least one test student to your sandbox.
+
+### Get Access Tokens for All Test Users
+
+Get each test user's access token (teacher, TAs, students):
+
+1. Log in as the user
+1. Click "Account" in the top left
+1. Click "Settings"
+1. Scroll down to "+ Access Token"
+1. Follow instructions
+
+### Create a /config/devEnvironment.json File
+
+From the top level of your project, create a `/config/devEnvironment.json` file and add your sandbox information:
+
+```json
+{
+  "canvasHost": "canvas.harvard.edu",
+  "courseId": 19248,
+  "teacherAccessToken": "1234~fasdhf782egjoasidnfga8723rhfahs9d8ga7yegf",
+  "taAccessTokens": [
+    "1234~ncb6dhf0qe9gga6q3b48vb87df8adf787w"
+  ],
+  "studentAccessTokens": [
+    "1234~3r5983tbtnfm28tn2898ansd928377t097",
+    "1234~riout8r9e8u7y38f7a78odg8g7rgh87aer"
+  ]
+}
+```
+
+`canvasHost` is the hostname of the Canvas instance containing your sandbox. This is optional and defaults to `canvas.instructure.com`.
+
+`courseId` can be found in the URL when visiting the Canvas course: `https://canvas.harvard.edu/courses/19248` where `19248` is the id.
+
+`teacherAccessToken` is the access token for a teacher in the sandbox.
+
+`taAccessTokens` is an optional array of access tokens for TAs in the sandbox.
+
+`studentAccessTokens` is an optional array of access tokens for students in the sandbox.
+
+### Done!
+
+You can now head over to the [Using CACCL](https://harvard-edtech.github.io/caccl/#using-caccl) section.
+
+Check out the [Advanced Setup](https://harvard-edtech.github.io/caccl/#advanced-setup) section for more advanced configuration.
+
+# Using CACCL
+
+Now that your CACCL app is configured, you're ready to start development!
+
+## Start App in Development Mode
+
+Open three terminal windows/tabs and navigate to the top-level directory of the project.
+
+In the first window, use `npm run dev:server` to initialize the server in dev mode.
+
+In the second window, use `npm run dev:client` to initialize the client in dev mode.
+
+In the third window, use `npm run dev:canvas` to initialize a Canvas launch simulator.
+
+Follow instructions in the third window. Logs from the server will appear in the first window and logs from the client will appear in the browser console.
+
+## Check LTI/Auth Status and Get Launch Info
+
+To check the user's current status, use CACCL's `getStatus` function to get a status object.
+
+If the user has not launched via LTI, the status object will take the form:
+
+```ts
+{
+  launched: false,
+}
+```
+
+If the user has launched via LTI, the status object will take the form:
+
+```ts
+{
+  launched: true,
+  launchInfo: LaunchInfo,
+  authorized: boolean,
+}
+```
+
+Where `authorized` is true if the user is authorized to access the Canvas API and `launchInfo` contains all LTI launch info. See the [LaunchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for detailed information on all the properties in the `launchInfo` object.
+
+### On the server:
+
+Import `getStatus`:
+
+```ts
+import { getStatus } from 'caccl/server';
+```
+
+From within a route, call `getStatus` with the express `req` instance:
+
+```ts
+const status = await getStatus(req);
+```
+
+### On the client:
+
+Import `getStatus`:
+
+```ts
+import { getStatus } from 'caccl/client';
+```
+
+From anywhere in the client, call `getStatus`:
+
+```ts
+const status = await getStatus();
+```
+
+## Access Canvas API
+
+First, make sure the user is authorized to access the Canvas API. See the section above to check if `status.authorized` is `true`. If the user is not authorized, consider setting`lti.authorizeAfterLaunch` to `true` so users are automatically authorized when they launch. Otherwise, you can [manually trigger the authorization process](https://harvard-edtech.github.io/caccl/#trigger-authorization-process).
+
+### On the server:
+
+Import `getAPI`:
+
+```ts
+import { getAPI } from 'caccl/server';
+```
+
+From within a route, call `getAPI` with the express `req` instance:
+
+```ts
+const api = await getAPI({
+  req,
+});
+```
+
+Use `api` to interact with the Canvas API. Check out the [CACCL API Docs](https://harvard-edtech.github.io/caccl-api/) for more info on all the powerful CACCL API functions that make it super easy to work with the Canvas API. Note: the default value for `courseId` will be the id of the course that the user launched from. Example:
+
+```ts
+const students = await api.course.listStudents();
+```
+
+### On the client
+
+Import `getAPI`:
+
+```ts
+import { getAPI } from 'caccl/client';
+```
+
+From within a route, call `getAPI`:
+
+```ts
+const api = await getAPI();
+```
+
+Use `api` to interact with the Canvas API. Check out the [CACCL API Docs](https://harvard-edtech.github.io/caccl-api/) for more info on all the powerful CACCL API functions that make it super easy to work with the Canvas API. Note: the default value for `courseId` will be the id of the course that the user launched from. Example:
+
+```ts
+const students = await api.course.listStudents();
+```
+
+### More options:
+
+If you want to set a default number of times that requests are retried, include `numRetries` (if excluded, `numRetries` is 3):
+
+```ts
+// Server
+const api = await getAPI({
+  res,
+  numRetries: 5,
+});
+
+// Client
+const api = await getAPI({
+  numRetries: 5,
+});
+```
+
+If you want to set a default number of items per page, include `itemsPerPage` (if excluded, `itemsPerPage` is 100):
+
+```ts
+// Server
+const api = await getAPI({
+  res,
+  itemsPerPage: 50,
+});
+
+// Client
+const api = await getAPI({
+  itemsPerPage: 50,
+});
+```
+
+You can mix and match all of these additional options.
+
+## Trigger Authorization Process
+
+If you set `lti.authorizeAfterLaunch` to `true`, your user should be authorized for Canvas API access as soon as they launch via LTI, so this section will probably be irrelevant to you.
+
+If you don't always want users to be authorized for Canvas API access (maybe they only need it for advanced features, for example), you can leave out the `lti.authorizeAfterLaunch` flag and manually redirect the user to the authorization process whenever you need API access.
+
+### On the server:
+
+Import `getStatus`:
+
+```ts
+import { redirectToAuth } from 'caccl/server';
+```
+
+From within a route, call `redirectToAuth` with the express `req` instance:
+
+```ts
+redirectToAuth(res);
+```
+
+### On the client:
+
+Import `redirectToAuth`:
+
+```ts
+import { redirectToAuth } from 'caccl/client';
+```
+
+From anywhere in the client, call `redirectToAuth`:
+
+```ts
+redirectToAuth();
+```
+
+## Trigger a Self Launch
+
+If your users launch your app via Canvas, you don't need to [enable self launches](https://harvard-edtech.github.io/caccl/#enable-self-launch) and you can skip this section.
+
+If you [enabled self launch](https://harvard-edtech.github.io/caccl/#enable-self-launch), you can trigger a self-launch which redirects the user through Canvas for an LTI launch. This is useful if the user starts in your app instead of starting in Canvas.
+
+### On the server:
+
+Import `redirectToSelfLaunch`:
+
+```ts
+import { redirectToSelfLaunch } from 'caccl/server';
+```
+
+From within a route, call `redirectToSelfLaunch`:
+
+```ts
+redirectToSelfLaunch({
+  res,
+  courseId: 123875,
+});
+```
+
+### On the client:
+
+Import `redirectToSelfLaunch`:
+
+```ts
+import { redirectToSelfLaunch } from 'caccl/client';
+```
+
+From anywhere on the client, call `redirectToSelfLaunch`:
+
+```ts
+redirectToSelfLaunch({
+  courseId: 123875,
+});
+```
+
+### More options
+
+If the Canvas hostname is not the default self-launch value, you can manually include it as `canvasHost`:
+
+```ts
+// Server
+redirectToSelfLaunch({
+  res,
+  courseId: 123875,
+  canvasHost: 'canvas.harvard.edu',
+});
+
+// Client
+redirectToSelfLaunch({
+  courseId: 123875,
+  canvasHost: 'canvas.harvard.edu',
+});
+```
+
+If you already know the appId and you don't want CACCL to look up the appId using the maps and/or admin access token, you can include the id as `appId`:
+
+```ts
+// Server
+redirectToSelfLaunch({
+  res,
+  courseId: 123875,
+  appId: 58394,
+});
+
+// Client
+redirectToSelfLaunch({
+  courseId: 123875,
+  appId: 58394,
+});
+```
+
+If you'd like to store some state in the `launchInfo` object (helpful for resuming tasks or otherwise supporting continuity), you can include the state as a JSONifiable object as `selfLaunchState`. After the self-launch, you'll find this state in `launchInfo.selfLaunchState`.
+
+```ts
+// Server
+redirectToSelfLaunch({
+  res,
+  courseId: 123875,
+  selfLaunchState: {
+    nextPage: '/discussions',
+  },
+});
+
+// Client
+redirectToSelfLaunch({
+  courseId: 123875,
+  selfLaunchState: {
+    nextPage: '/discussions',
+  },
+});
+```
+
+You can mix and match all of these additional options.
+
+## Send Grade Passback
+
+If your app is a custom assignment and it finishes by passing grades back to Canvas, you can use CACCL's `handlePassback` function to send feedback/points/etc. to Canvas.
+
+### On the server:
+
+Import `handlePassback`:
+
+```ts
+import { handlePassback } from 'caccl/server';
+```
+
+From within a route, call `handlePassback` with the express `req` instance:
+
+```ts
+// Text submission
+handlePassback({
+  req,
+  text: 'Text of the submission',
+});
+
+// URL submission
+handlePassback({
+  req,
+  url: 'https://url.of/the/submission',
+});
+```
+
+To add a grade, either include `score` (raw point value) or `percent` (percent of total allowed points):
+
+```ts
+// Include score
+handlePassback({
+  req,
+  ...
+  score: 24,
+});
+
+// Include percent
+handlePassback({
+  req,
+  ...
+  percent: 97,
+});
+```
+
+To overwrite the submission timestamp (defaults to now), include either a string (ISO 8601) or JS Date instance as `submittedAt`:
+
+```ts
+handlePassback({
+  req,
+  ...
+  submittedAt: subDateObj,
+});
+```
+
+### On the client:
+
+Import `handlePassback`:
+
+```ts
+import { handlePassback } from 'caccl/client';
+```
+
+From anywhere on the client, call `handlePassback`:
+
+```ts
+// Text submission
+handlePassback({
+  text: 'Text of the submission',
+});
+
+// URL submission
+handlePassback({
+  url: 'https://url.of/the/submission',
+});
+```
+
+To add a grade, either include `score` (raw point value) or `percent` (percent of total allowed points):
+
+```ts
+// Include score
+handlePassback({
+  ...
+  score: 24,
+});
+
+// Include percent
+handlePassback({
+  ...
+  percent: 97,
+});
+```
+
+To overwrite the submission timestamp (defaults to now), include either a string (ISO 8601) or JS Date instance as `submittedAt`:
+
+```ts
+handlePassback({
+  ...
+  submittedAt: subDateObj,
+});
+```
+
+## Send Other Requests
+
+You're welcome to use another request sender, but if you use ours, it'll provide more consistency and will ensure your requests work with the development environment.
+
+### On the server:
+
+Import `sendRequest`:
+
+```ts
+import { sendRequest } from 'caccl/server';
+```
+
+See below on how to use sendRequest.
+
+### On the client:
+
+Import `redirectToAuth`:
+
+```ts
+import { redirectToAuth } from 'caccl/client';
+```
+
+See below on how to use sendRequest.
+
+### Using sendRequest
+
+To send requests, simply call `sendRequest` with the `path` of the endpoint:
+
+```ts
+const response = await sendRequest({
+  path: '/api/boards',
+});
+```
+
+The **response** is an object of the form `{ body, status, headers }` where `body` is the JSON data returned from the endpoint, `status` is the http status code, and `headers` is a map of headers in the response.
+
+If the hostname is not the same as the current server, include it as `host`:
+
+```ts
+const response = await sendRequest({
+  path: '/api/boards',
+  host: 'another.host.com',
+});
+```
+
+If the method is not `GET`, you can include it as `method`:
+
+```ts
+const response = await sendRequest({
+  path: '/api/boards',
+  method: 'POST',
+});
+```
+
+Independent of the method of request, you can include an object of parameters. These are send as either the body or query (depending on the method) and each value is stringified. If you need to send a JSON object as a parameter value, `JSON.stringify` it and then `JSON.parse` it on the other end. Include parameters as `params`:
+
+```ts
+const response = await sendRequest({
+  path: '/api/boards',
+  method: 'POST',
+  params: {
+    title: 'My Board',
+    position: 10,
+  },
+});
+```
+
+There are also a few advanced options:
+
+- Include `headers`, a map `{ name => value }` of headers to include with the request
+- Include `numRetries` to allow the request sender to retry the request this number of times
+- Set `ignoreSSLIssues` to `true` to ignore SSL Issues
+
+# Deploying Your App
+
+## Get Credentials
+
+Installation credentials are created by you. We recommend using a powerful random string generator to generate consumer secrets, and we recommend using a combination of random text and descriptive text for consumer keys. Example:
+
+```ts
+consumerKey = 'clientname-248915tjds8f';
+consumerSecret = 'fja8web7g9a9s8mue8t2b-3t7n-98asdn7f8v6as5dv76fb8a67sdtfsd-gne8g';
+```
+
+Developer credentials are created by whoever manages the Canvas instance that you're trying to integrate with. For example, if the instance for a university, try reaching out to their central IT department or Canvas admin team. If you are a 3rd party company, be prepared for your client to require a contract and security review at this point. Once you reach the appropriate person, ask them to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<AppHostName>/canvas/launch`.
+
+## Build Your App
+
+To build your app, simply run `npm run build` from the top-level directory of the app. You might want to run `npm install` before building, just to make sure all dependencies are all installed.
+
+## Start Your App
+
+Once your app is built, simply run `npm run start` from the top-level directory of the app.
+
+## Install Your App
+
+To install your app into a course, you'll need to create an LTI configuration cartridge (XML). There are great tools online for building these XML files. Try googling "LTI XML Generator" or just use the [edu-apps xml generator](https://www.edu-apps.org/build_xml.html). Set the launch URL as `https://<AppHostName>/canvas/launch`.
+
+Once you have the cartridge, install your LTI app using these steps:
+
+1. Open the Canvas course or account that you'd like to install the app into
+1. Click "Settings" in the left-hand navigation menu
+1. Switch to the "Apps" tab
+1. Click "View App Configurations"
+1. Click "+ App"
+1. Set "Configuration Type" to "Paste XML"
+1. Add an appropriate App Name
+1. Set "Consumer Key" to one of your consumer keys
+1. Set "Shared Secret" to the associated consumer secret
+1. Paste your cartridge in the "XML Configuration" box
+1. Click "Submit"
+
+Note: it's convenient to upload this XML cartridge to your app's server. Then, you can use the "By URL" configuration type and just paste the URL instead of the full XML contents.
+
+# Advanced Setup
+
+### Use Custom Express App
+
+By default, CACCL sets up an express server for you. However, if you want more control, you have two options:
+
+#### Customize CACCL's Express App
+
+Either include an `express` configuration object when initializing CACCL or use environment variables to customize. All parameters are optional: you can include any params and exclude any params as well. You can also mix and match between parameters and environment variables.
+
+| Description | Config Param | Environment Variable | Default |
+| :--- | :--- | :--- | :--- |
+| Port to listen to | port | PORT | 8080 |
+| Session secret | sessionSecret | SESSION_SECRET | random |
+| Cookie name | cookieName | COOKIE_NAME | random |
+| Session duration (min) | sessionMins | SESSION_MINS | 360 |
+
+Example:
+
+```ts
+initCACCL({
+  express: {
+    cookieName: 'My App',
+    sessionDuration: 60,
+  },
+});
+```
+
+You can also include a custom [express-session](https://www.npmjs.com/package/express-session) store as `express.sessionStore`. By default, we use a non-leaking memory store.
+
+Finally, if there are any operations you'd like to perform on the express app after it is set up but before CACCL adds any routes to it, include an `express.preprocessor` function.
+
+#### Provide Your Own Express App
+
+If you'd like complete control over the express app configuration, create your own express app, make sure you add support for an [express-session](https://www.npmjs.com/package/express-session), and include it as `express.app`.
+
+```ts
+initCACCL({
+  express: {
+    app: myCustomApp,
+  },
+});
+```
+
+### Access API via Predefined Access Token
+
+Although we recommend using CACCL's oauth exchange process to authorize the user and then access the Canvas API on their behalf, sometimes you may already have an access token that is predefined. If this is the case, you can create your own instance of the CACCL API:
+
+```ts
+import initAPI from 'caccl-api';
+
+const api = initAPI({
+  canvasHost: 'canvas.harvard.edu',
+  accessToken: '1234~fdjabv9w8efnlaijspo8egbaiushefw2etghkj',
+});
+```
+
+You can also include advanced API configuration defaults:
+
+| Description | Config Param | Default |
+| :--- | :--- | :--- |
+| Number of times to retry failed requests | numRetries | 3 |
+| Default number of items to request per page | itemsPerPage | 100 |
+| Default courseId to use for requests | defaultCourseId | none |
+
+Example:
+
+```ts
+const api = initAPI({
+  canvasHost: 'canvas.harvard.edu',
+  accessToken: '1234~fdjabv9w8efnlaijspo8egbaiushefw2etghkj',
+  numRetries: 5,
+});
+```
+
+Use `api` to interact with the Canvas API. Check out the [CACCL API Docs](https://harvard-edtech.github.io/caccl-api/) for more info on all the powerful CACCL API functions that make it super easy to work with the Canvas API. Example:
+
+```ts
+const students = await api.course.listStudents();
+```
+
+### Enable Self Launch
+
+Usually, LTI apps are launched by users who start in Canvas. However, if you'd like your app to be able to launch itself, CACCL has a clever self-launch process that allows your app to launch itself, given information about the Canvas instance and course. To enable this feature, add an `lti.selfLaunch` configuration object. CACCL needs to know the appId (also referred to as the external tool id) of your app as it is installed in the course that you'd like to self-launch from. There are many ways you can share appIds with CACCL:
+
+If an appId is used across an entire Canvas instance (there is only one appId for that Canvas instance), include it in the `lti.selfLaunch.hostAppIdMap` map `{ canvasHost => appId }`:
+
+```ts
+initCACCL({
+  lti: {
+    selfLaunch: {
+      hostAppId: {
+        'canvas.harvard.edu': 18934,
+      },
+    },
+  },
+});
+```
+
+If an appId is used in a specific course in a Canvas instance, include it in the `lti.selfLaunch.courseAppIdMap` map `{ canvasHost => courseId => appId }`:
+
+```ts
+initCACCL({
+  lti: {
+    selfLaunch: {
+      courseAppIdMap: {
+        'canvas.harvard.edu': {
+          124892: 84290,
+          124899: 92848,
+        },
+      },
+    },
+  },
+});
+```
+
+If an appId is not known ahead of time, you can include Canvas admin access token(s) so your app can look up appIds on the fly. Include the tokens in the `lti.selfLaunch.adminAccessTokenMap` map `{ canvasHost => accessToken[] }`:
+
+```ts
+initCACCL({
+  lti: {
+    selfLaunch: {
+      adminAccessTokenMap: {
+        'canvas.harvard.edu': [
+          '1423~jf8tu0jalsjdf0jgh8ha9w8uefljasdf8jrga',
+          '1423~f8g09jgha9shd31hg9hha89qwrpmzhdb8398h',
+        ],
+      },
+    },
+  },
+});
+```
+
+If you include `lti.selfLaunch.adminAccessTokenMap`, CACCL will cache appIds in a store that implements our [CACCLStore](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/CACCLStore.d.ts) interface. We default to a memory-based token store, but you can provide your own store by including an `lti.selfLaunch.initAppIdStore` function that implement our [CACCLStore Initialization Function](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/InitCACCLStore.d.ts) interface. Pro tip: create your own custom store and pre-populate it with appIds (store keys take the form `${canvasHost}/${courseId}` and values are appIds).
+
+```ts
+initCACCL({
+  lti: {
+    selfLaunch: {
+      initAppIdStore: initMyMongoBasedStore,
+    },
+  },
+});
+```
+
+If you have other runtime logic that determines the appropriate appId, you can also provide the appId when triggering a self-launch.
+
+Finally, when performing a self-launch, you'll need both a `courseId` and `canvasHost`. If there's a `canvasHost` that you use more often, you can include an `lti.selfLaunch.defaultCanvasHost` so you don't have to include the `canvasHost` if self-launching via that `defaultCanvasHost`.
+
+```ts
+initCACCL({
+  lti: {
+    selfLaunch: {
+      defaultCanvasHost: 'canvas.harvard.edu',
+    },
+  },
+});
+```
+
+### Manual Setup
+
+If you'd like to set up your own project from scratch, or if you'd like to integrate CACCL with an existing app:
+
+1. Add `caccl` to your server and client with `npm install --save caccl`
+1. On your server, initialize CACCL:
+
+```ts
+import initCACCL from 'caccl/server';
+
+await initCACCL({
+  ...
+});
+```
+
+Then, you can follow other instructions on configuring CACCL on the server (see sections above).
