@@ -136,20 +136,26 @@ exports.sendRequest = sendRequest;
  * @returns status
  */
 var getStatus = function (req) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, launched, launchInfo, authorized, _b, status;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _a, launched, launchInfo, authorized, err_1, status;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 _a = (0, caccl_lti_1.getLaunchInfo)(req), launched = _a.launched, launchInfo = _a.launchInfo;
-                if (!authDisabled) return [3 /*break*/, 1];
-                _b = false;
-                return [3 /*break*/, 3];
-            case 1: return [4 /*yield*/, (0, caccl_authorizer_1.getAccessToken)(req)];
+                authorized = false;
+                if (!!authDisabled) return [3 /*break*/, 4];
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, (0, caccl_authorizer_1.getAccessToken)(req)];
             case 2:
-                _b = !!(_c.sent());
-                _c.label = 3;
+                authorized = !!(_b.sent());
+                return [3 /*break*/, 4];
             case 3:
-                authorized = (_b);
+                err_1 = _b.sent();
+                // Error occurred while getting the access token. Not authorized
+                authorized = false;
+                return [3 /*break*/, 4];
+            case 4:
                 if (launched) {
                     status = {
                         launched: launched,
@@ -188,7 +194,7 @@ exports.getStatus = getStatus;
  *   an ISO 8601 formatted string
  */
 var handlePassback = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
-    var req, text, url, score, percent, submittedAt, _a, launched, launchInfo, consumerSecret, success, err_1;
+    var req, text, url, score, percent, submittedAt, _a, launched, launchInfo, consumerSecret, success, err_2;
     var _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
@@ -276,7 +282,7 @@ var handlePassback = function (opts) { return __awaiter(void 0, void 0, void 0, 
                 }
                 return [3 /*break*/, 4];
             case 3:
-                err_1 = _d.sent();
+                err_2 = _d.sent();
                 throw new caccl_error_1.default({
                     message: 'We could not send grades back to Canvas via passback because Canvas did not accept the appropriate updates.',
                     code: ErrorCode_1.default.PassbackUnsuccessful,
@@ -538,7 +544,7 @@ var initCACCL = function (opts) {
                      * @returns success response
                      */
                     app.get(CACCL_PATHS_1.default.STATUS, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-                        var status_1, err_2;
+                        var status_1, err_3;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -552,11 +558,11 @@ var initCACCL = function (opts) {
                                             status: status_1,
                                         })];
                                 case 2:
-                                    err_2 = _a.sent();
+                                    err_3 = _a.sent();
                                     return [2 /*return*/, res.status(500).json({
                                             success: false,
-                                            message: (err_2.message || 'We could not get the current user\'s status.'),
-                                            code: (err_2.code || ErrorCode_1.default.StatusFailed),
+                                            message: (err_3.message || 'We could not get the current user\'s status.'),
+                                            code: (err_3.code || ErrorCode_1.default.StatusFailed),
                                         })];
                                 case 3: return [2 /*return*/];
                             }
@@ -578,7 +584,7 @@ var initCACCL = function (opts) {
                      *   ISO 8601 formatted string
                      */
                     app.post(CACCL_PATHS_1.default.HANDLE_PASSBACK, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-                        var text, url, score, percent, submittedAt, err_3;
+                        var text, url, score, percent, submittedAt, err_4;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -615,11 +621,11 @@ var initCACCL = function (opts) {
                                             success: true,
                                         })];
                                 case 2:
-                                    err_3 = _a.sent();
+                                    err_4 = _a.sent();
                                     return [2 /*return*/, res.status(500).json({
                                             success: false,
-                                            message: (err_3.message || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
-                                            code: (err_3.code || ErrorCode_1.default.PassbackUnsuccessful),
+                                            message: (err_4.message || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
+                                            code: (err_4.code || ErrorCode_1.default.PassbackUnsuccessful),
                                         })];
                                 case 3: return [2 /*return*/];
                             }

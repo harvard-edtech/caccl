@@ -98,11 +98,15 @@ const getStatus = async (req: express.Request): Promise<CACCLStatus> => {
   const { launched, launchInfo } = getLaunchInfo(req);
 
   // Check if the user is authorized
-  const authorized = (
-    authDisabled
-      ? false
-      : !!(await getAccessToken(req))
-  );
+  let authorized: boolean = false;
+  if (!authDisabled) {
+    try {
+      authorized = !!(await getAccessToken(req));
+    } catch (err) {
+      // Error occurred while getting the access token. Not authorized
+      authorized = false;
+    }
+  }
 
   // Build a status response and optionally check auth status
   let status: CACCLStatus;
