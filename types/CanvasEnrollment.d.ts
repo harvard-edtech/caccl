@@ -1,0 +1,58 @@
+interface CanvasEnrollment {
+    id: number;
+    course_id: number;
+    sis_course_id: string;
+    course_integration_id: string;
+    course_section_id: number;
+    section_integration_id: string;
+    sis_account_id: string;
+    sis_section_id: string;
+    sis_user_id: string;
+    enrollment_state: string;
+    limit_privileges_to_course_section: boolean;
+    sis_import_id: number;
+    root_account_id: number;
+    type: ('StudentEnrollment' | 'TeacherEnrollment' | 'TaEnrollment' | 'DesignerEnrollment' | 'ObserverEnrollment');
+    user_id: number;
+    associated_user_id: (number | null);
+    role: ('StudentEnrollment' | 'TeacherEnrollment' | 'TaEnrollment' | 'DesignerEnrollment' | 'ObserverEnrollment' | string);
+    role_id: number;
+    created_at: string;
+    updated_at: string;
+    start_at: string;
+    end_at: string;
+    last_activity_at: string;
+    last_attended_at: string;
+    total_activity_time: number;
+    html_url: string;
+    grades: {
+        html_url: string;
+        current_score: number;
+        current_grade: string;
+        final_score: number;
+        final_grade: string;
+    };
+    user: {
+        id: number;
+        name: string;
+        sortable_name: string;
+        short_name: string;
+    };
+    override_grade: string;
+    override_score: number;
+    unposted_current_grade?: string | null;
+    unposted_final_grade?: string | null;
+    unposted_current_score?: number | null;
+    unposted_final_score: number;
+    has_grading_periods?: boolean | null;
+    totals_for_all_grading_periods_option: boolean;
+    current_grading_period_title?: string | null;
+    current_grading_period_id?: number | null;
+    current_period_override_grade?: string | null;
+    current_period_override_score?: number | null;
+    current_period_unposted_current_score?: number | null;
+    current_period_unposted_final_score?: number | null;
+    current_period_unposted_current_grade?: string | null;
+    current_period_unposted_final_grade?: string | null;
+}
+export default CanvasEnrollment;
