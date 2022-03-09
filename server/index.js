@@ -442,215 +442,231 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
  *   added but before the ('*' => react app) route is added. This is great for
  *   adding other server-side routes
  */
-var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
-    var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
-    var _a, _b;
-    var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-    return __generator(this, function (_q) {
-        switch (_q.label) {
-            case 0:
-                // Store state
-                authDisabled = !(opts === null || opts === void 0 ? void 0 : opts.api);
-                app = ((_d = (_c = opts === null || opts === void 0 ? void 0 : opts.express) === null || _c === void 0 ? void 0 : _c.app) !== null && _d !== void 0 ? _d : (0, genExpressApp_1.default)(opts));
-                // Add cross-origin handler for development mode
-                if (thisIsDevEnvironment) {
-                    app.use(function (req, res, next) {
-                        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-                        res.setHeader('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-                        res.setHeader('Access-Control-Allow-Credentials', 'true');
-                        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-                        res.setHeader('Access-Control-Request-Headers', '*');
-                        if (req.method === 'OPTIONS') {
-                            return res.sendStatus(200);
-                        }
-                        next();
-                    });
-                }
-                expressAppPreprocessor = (_e = opts.express) === null || _e === void 0 ? void 0 : _e.preprocessor;
-                if (expressAppPreprocessor) {
-                    expressAppPreprocessor(app);
-                }
-                installationCredentials = (thisIsDevEnvironment
-                    ? { consumer_key: 'consumer_secret' } // Dummy values for Canvas sim
-                    : (
-                    // Passed in map
-                    (_g = (_f = opts === null || opts === void 0 ? void 0 : opts.lti) === null || _f === void 0 ? void 0 : _f.installationCredentials) !== null && _g !== void 0 ? _g : (_a = {},
-                        _a[(_h = process.env.CONSUMER_KEY) !== null && _h !== void 0 ? _h : 'consumer_key'] = ((_j = process.env.CONSUMER_SECRET) !== null && _j !== void 0 ? _j : 'consumer_secret'),
-                        _a)));
-                // Initialize LTI
-                return [4 /*yield*/, (0, caccl_lti_1.default)(__assign(__assign({}, ((_k = opts === null || opts === void 0 ? void 0 : opts.lti) !== null && _k !== void 0 ? _k : {})), { app: app, installationCredentials: installationCredentials }))];
-            case 1:
-                // Initialize LTI
-                _q.sent();
-                // Store installation credentials for later
-                mostRecentInstallationCreds = installationCredentials;
-                if (!(opts === null || opts === void 0 ? void 0 : opts.api)) return [3 /*break*/, 3];
-                developerCredentials = (thisIsDevEnvironment
-                    ? {
-                        'localhost:8088': {
-                            clientId: 'client_id',
-                            clientSecret: 'client_secret',
-                        },
-                    } // Dummy values for Canvas sim
-                    : (
-                    // Passed in map
-                    (_m = (_l = opts === null || opts === void 0 ? void 0 : opts.api) === null || _l === void 0 ? void 0 : _l.developerCredentials) !== null && _m !== void 0 ? _m : (_b = {},
-                        _b[process.env.DEFAULT_CANVAS_HOST] = {
-                            clientId: process.env.CLIENT_ID,
-                            clientSecret: process.env.CLIENT_SECRET,
-                        },
-                        _b)));
-                // Initialize auth
-                return [4 /*yield*/, (0, caccl_authorizer_1.default)(__assign(__assign({}, opts === null || opts === void 0 ? void 0 : opts.api), { app: app, developerCredentials: developerCredentials }))];
-            case 2:
-                // Initialize auth
-                _q.sent();
-                disableClientSideAPI = !!((_o = opts === null || opts === void 0 ? void 0 : opts.api) === null || _o === void 0 ? void 0 : _o.disableClientSideAPI);
-                // Initialize auth forwarder
-                if (!disableClientSideAPI) {
-                    // Client-side API is enabled. Add forwarder
-                    (0, caccl_api_forwarder_1.default)({ app: app });
-                }
-                _q.label = 3;
-            case 3:
-                /*----------------------------------------*/
-                /*          Server-side Endpoints         */
-                /*----------------------------------------*/
-                /* ------------- Status ------------- */
-                /**
-                 * Get the CACCL status of the current user
-                 * @author Gabe Abrams
-                 * @returns success response
-                 */
-                app.get(CACCL_PATHS_1.default.STATUS, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-                    var status_1, err_2;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                _a.trys.push([0, 2, , 3]);
-                                return [4 /*yield*/, getStatus(req)];
-                            case 1:
-                                status_1 = _a.sent();
-                                // Send status to client
-                                return [2 /*return*/, res.status(200).json({
-                                        success: true,
-                                        status: status_1,
-                                    })];
-                            case 2:
-                                err_2 = _a.sent();
-                                return [2 /*return*/, res.status(500).json({
-                                        success: false,
-                                        message: (err_2.message || 'We could not get the current user\'s status.'),
-                                        code: (err_2.code || ErrorCode_1.default.StatusFailed),
-                                    })];
-                            case 3: return [2 /*return*/];
-                        }
-                    });
-                }); });
-                /* --------- Grade Passback --------- */
-                /**
-                 * Handle a client's request to perform grade passback
-                 * @author Gabe Abrams
-                 * @param {string} [text] the text of the submission. If this is
-                 *   included, url cannot be included
-                 * @param {string} [url] a url to send as the student's submission.
-                 *   If this is included, text cannot be included
-                 * @param {number} [score] the student's score on this assignment
-                 * @param {number} [percent] the student's score as a percent (0-100)
-                 *   on the assignment
-                 * @param {string} [submittedAt=now] a timestamp for when the
-                 *   student submitted the grade. The type must either be an
-                 *   ISO 8601 formatted string
-                 */
-                app.post(CACCL_PATHS_1.default.HANDLE_PASSBACK, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-                    var text, url, score, percent, submittedAt, err_3;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                _a.trys.push([0, 2, , 3]);
-                                text = (req.body.text
-                                    ? String(req.body.text)
-                                    : undefined);
-                                url = (req.body.url
-                                    ? String(req.body.url)
-                                    : undefined);
-                                score = (req.body.score
-                                    ? Number.parseFloat(req.body.score)
-                                    : undefined);
-                                percent = (req.body.percent
-                                    ? Number.parseFloat(req.body.percent)
-                                    : undefined);
-                                submittedAt = (req.body.submittedAt
-                                    ? String(req.body.submittedAt)
-                                    : undefined);
-                                // Call helper
-                                return [4 /*yield*/, handlePassback({
-                                        req: req,
-                                        text: text,
-                                        url: url,
-                                        score: score,
-                                        percent: percent,
-                                        submittedAt: submittedAt,
-                                    })];
-                            case 1:
-                                // Call helper
-                                _a.sent();
-                                // Send a success response
-                                return [2 /*return*/, res.status(200).json({
-                                        success: true,
-                                    })];
-                            case 2:
-                                err_3 = _a.sent();
-                                return [2 /*return*/, res.status(500).json({
-                                        success: false,
-                                        message: (err_3.message || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
-                                        code: (err_3.code || ErrorCode_1.default.PassbackUnsuccessful),
-                                    })];
-                            case 3: return [2 /*return*/];
-                        }
-                    });
-                }); });
-                /*----------------------------------------*/
-                /*              React Client              */
-                /*----------------------------------------*/
-                // Run postprocessor first
-                if ((_p = opts === null || opts === void 0 ? void 0 : opts.express) === null || _p === void 0 ? void 0 : _p.postprocessor) {
-                    opts.express.postprocessor(app);
-                }
-                initialWorkingDirectory = (process.env.PWD.endsWith('/server')
-                    ? process.env.PWD.substring(0, process.env.PWD.length - '/server'.length)
-                    : process.env.PWD);
-                // Change config for dev environment
-                if (thisIsDevEnvironment) {
-                    // Print a notice
-                    console.log('Server running in development mode. This is not safe for production use.');
-                    // Redirect all traffic to react development port
-                    app.get('*', function (req, res) {
-                        // Redirect to the appropriate 
-                        return res.redirect("http://localhost:3000".concat(req.path));
-                    });
-                }
-                else {
-                    buildDir_1 = "".concat(initialWorkingDirectory, "/client/build");
-                    // Serve styles, etc
-                    app.use(express_1.default.static(buildDir_1));
-                    // Send frontend
-                    app.get('*', function (req, res) {
-                        res.sendFile("".concat(buildDir_1, "/index.html"));
-                    });
-                }
-                // Serve the front-end
-                if (thisIsDevEnvironment) {
-                    // This is development! Redirect to front-end hosted at localhost:3000
-                    app.get('/', function (req, res) {
-                        return res.redirect('http://localhost:3000');
-                    });
-                }
-                else {
-                }
-                return [2 /*return*/];
-        }
+var initCACCL = function (opts) {
+    if (opts === void 0) { opts = {}; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
+        var _a, _b;
+        var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+        return __generator(this, function (_q) {
+            switch (_q.label) {
+                case 0:
+                    app = ((_d = (_c = opts === null || opts === void 0 ? void 0 : opts.express) === null || _c === void 0 ? void 0 : _c.app) !== null && _d !== void 0 ? _d : (0, genExpressApp_1.default)(opts));
+                    // Add cross-origin handler for development mode
+                    if (thisIsDevEnvironment) {
+                        app.use(function (req, res, next) {
+                            res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+                            res.setHeader('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+                            res.setHeader('Access-Control-Allow-Credentials', 'true');
+                            res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+                            res.setHeader('Access-Control-Request-Headers', '*');
+                            if (req.method === 'OPTIONS') {
+                                return res.sendStatus(200);
+                            }
+                            next();
+                        });
+                    }
+                    expressAppPreprocessor = (_e = opts.express) === null || _e === void 0 ? void 0 : _e.preprocessor;
+                    if (expressAppPreprocessor) {
+                        expressAppPreprocessor(app);
+                    }
+                    installationCredentials = (thisIsDevEnvironment
+                        ? { consumer_key: 'consumer_secret' } // Dummy values for Canvas sim
+                        : (
+                        // Passed in map
+                        (_g = (_f = opts === null || opts === void 0 ? void 0 : opts.lti) === null || _f === void 0 ? void 0 : _f.installationCredentials) !== null && _g !== void 0 ? _g : (_a = {},
+                            _a[(_h = process.env.CONSUMER_KEY) !== null && _h !== void 0 ? _h : 'consumer_key'] = ((_j = process.env.CONSUMER_SECRET) !== null && _j !== void 0 ? _j : 'consumer_secret'),
+                            _a)));
+                    // Initialize LTI
+                    return [4 /*yield*/, (0, caccl_lti_1.default)(__assign(__assign({}, ((_k = opts === null || opts === void 0 ? void 0 : opts.lti) !== null && _k !== void 0 ? _k : {})), { app: app, installationCredentials: installationCredentials }))];
+                case 1:
+                    // Initialize LTI
+                    _q.sent();
+                    // Store installation credentials for later
+                    mostRecentInstallationCreds = installationCredentials;
+                    /* ---------- Auth and API ---------- */
+                    // By default, auth is disabled
+                    authDisabled = true;
+                    if (!
+                    // Options are passed in
+                    (opts.api
+                        // Options are in environment
+                        || (process.env.DEFAULT_CANVAS_HOST
+                            && process.env.CLIENT_ID
+                            && process.env.CLIENT_SECRET)
+                        // Using development environment fake creds
+                        || thisIsDevEnvironment)) 
+                    // Options are passed in
+                    return [3 /*break*/, 3];
+                    developerCredentials = (thisIsDevEnvironment
+                        ? {
+                            'localhost:8088': {
+                                clientId: 'client_id',
+                                clientSecret: 'client_secret',
+                            },
+                        } // Dummy values for Canvas sim
+                        : (
+                        // Passed in map
+                        (_m = (_l = opts === null || opts === void 0 ? void 0 : opts.api) === null || _l === void 0 ? void 0 : _l.developerCredentials) !== null && _m !== void 0 ? _m : (_b = {},
+                            _b[process.env.DEFAULT_CANVAS_HOST] = {
+                                clientId: process.env.CLIENT_ID,
+                                clientSecret: process.env.CLIENT_SECRET,
+                            },
+                            _b)));
+                    // Store state
+                    authDisabled = false;
+                    // Initialize auth
+                    return [4 /*yield*/, (0, caccl_authorizer_1.default)(__assign(__assign({}, opts === null || opts === void 0 ? void 0 : opts.api), { app: app, developerCredentials: developerCredentials }))];
+                case 2:
+                    // Initialize auth
+                    _q.sent();
+                    disableClientSideAPI = !!((_o = opts === null || opts === void 0 ? void 0 : opts.api) === null || _o === void 0 ? void 0 : _o.disableClientSideAPI);
+                    // Initialize auth forwarder
+                    if (!disableClientSideAPI) {
+                        // Client-side API is enabled. Add forwarder
+                        (0, caccl_api_forwarder_1.default)({ app: app });
+                    }
+                    _q.label = 3;
+                case 3:
+                    /*----------------------------------------*/
+                    /*          Server-side Endpoints         */
+                    /*----------------------------------------*/
+                    /* ------------- Status ------------- */
+                    /**
+                     * Get the CACCL status of the current user
+                     * @author Gabe Abrams
+                     * @returns success response
+                     */
+                    app.get(CACCL_PATHS_1.default.STATUS, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+                        var status_1, err_2;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    return [4 /*yield*/, getStatus(req)];
+                                case 1:
+                                    status_1 = _a.sent();
+                                    // Send status to client
+                                    return [2 /*return*/, res.status(200).json({
+                                            success: true,
+                                            status: status_1,
+                                        })];
+                                case 2:
+                                    err_2 = _a.sent();
+                                    return [2 /*return*/, res.status(500).json({
+                                            success: false,
+                                            message: (err_2.message || 'We could not get the current user\'s status.'),
+                                            code: (err_2.code || ErrorCode_1.default.StatusFailed),
+                                        })];
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); });
+                    /* --------- Grade Passback --------- */
+                    /**
+                     * Handle a client's request to perform grade passback
+                     * @author Gabe Abrams
+                     * @param {string} [text] the text of the submission. If this is
+                     *   included, url cannot be included
+                     * @param {string} [url] a url to send as the student's submission.
+                     *   If this is included, text cannot be included
+                     * @param {number} [score] the student's score on this assignment
+                     * @param {number} [percent] the student's score as a percent (0-100)
+                     *   on the assignment
+                     * @param {string} [submittedAt=now] a timestamp for when the
+                     *   student submitted the grade. The type must either be an
+                     *   ISO 8601 formatted string
+                     */
+                    app.post(CACCL_PATHS_1.default.HANDLE_PASSBACK, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+                        var text, url, score, percent, submittedAt, err_3;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    text = (req.body.text
+                                        ? String(req.body.text)
+                                        : undefined);
+                                    url = (req.body.url
+                                        ? String(req.body.url)
+                                        : undefined);
+                                    score = (req.body.score
+                                        ? Number.parseFloat(req.body.score)
+                                        : undefined);
+                                    percent = (req.body.percent
+                                        ? Number.parseFloat(req.body.percent)
+                                        : undefined);
+                                    submittedAt = (req.body.submittedAt
+                                        ? String(req.body.submittedAt)
+                                        : undefined);
+                                    // Call helper
+                                    return [4 /*yield*/, handlePassback({
+                                            req: req,
+                                            text: text,
+                                            url: url,
+                                            score: score,
+                                            percent: percent,
+                                            submittedAt: submittedAt,
+                                        })];
+                                case 1:
+                                    // Call helper
+                                    _a.sent();
+                                    // Send a success response
+                                    return [2 /*return*/, res.status(200).json({
+                                            success: true,
+                                        })];
+                                case 2:
+                                    err_3 = _a.sent();
+                                    return [2 /*return*/, res.status(500).json({
+                                            success: false,
+                                            message: (err_3.message || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
+                                            code: (err_3.code || ErrorCode_1.default.PassbackUnsuccessful),
+                                        })];
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); });
+                    /*----------------------------------------*/
+                    /*              React Client              */
+                    /*----------------------------------------*/
+                    // Run postprocessor first
+                    if ((_p = opts === null || opts === void 0 ? void 0 : opts.express) === null || _p === void 0 ? void 0 : _p.postprocessor) {
+                        opts.express.postprocessor(app);
+                    }
+                    initialWorkingDirectory = (process.env.PWD.endsWith('/server')
+                        ? process.env.PWD.substring(0, process.env.PWD.length - '/server'.length)
+                        : process.env.PWD);
+                    // Change config for dev environment
+                    if (thisIsDevEnvironment) {
+                        // Print a notice
+                        console.log('Server running in development mode. This is not safe for production use.');
+                        // Redirect all traffic to react development port
+                        app.get('*', function (req, res) {
+                            // Redirect to the appropriate 
+                            return res.redirect("http://localhost:3000".concat(req.path));
+                        });
+                    }
+                    else {
+                        buildDir_1 = "".concat(initialWorkingDirectory, "/client/build");
+                        // Serve styles, etc
+                        app.use(express_1.default.static(buildDir_1));
+                        // Send frontend
+                        app.get('*', function (req, res) {
+                            res.sendFile("".concat(buildDir_1, "/index.html"));
+                        });
+                    }
+                    // Serve the front-end
+                    if (thisIsDevEnvironment) {
+                        // This is development! Redirect to front-end hosted at localhost:3000
+                        app.get('/', function (req, res) {
+                            return res.redirect('http://localhost:3000');
+                        });
+                    }
+                    else {
+                    }
+                    return [2 /*return*/];
+            }
+        });
     });
-}); };
+};
 exports.default = initCACCL;
 //# sourceMappingURL=index.js.map

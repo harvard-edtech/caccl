@@ -425,7 +425,7 @@ const redirectToSelfLaunch = (
  *   adding other server-side routes
  */
 const initCACCL = async (
-  opts?: {
+  opts: {
     lti?: {
       installationCredentials: InstallationCredentials,
       initNonceStore?: InitCACCLStore,
@@ -447,11 +447,8 @@ const initCACCL = async (
       preprocessor?: (app: express.Application) => void,
       postprocessor?: (app: express.Application) => void,
     },
-  },
+  } = {},
 ): Promise<void> => {
-  // Store state
-  authDisabled = !opts?.api;
-
   /*----------------------------------------*/
   /*                 Express                */
   /*----------------------------------------*/
@@ -533,7 +530,22 @@ const initCACCL = async (
 
   /* ---------- Auth and API ---------- */
 
-  if (opts?.api) {
+  // By default, auth is disabled
+  authDisabled = true;
+
+  // Add auth if we can
+  if (
+    // Options are passed in
+    opts.api
+    // Options are in environment
+    || (
+      process.env.DEFAULT_CANVAS_HOST
+      && process.env.CLIENT_ID
+      && process.env.CLIENT_SECRET
+    )
+    // Using development environment fake creds
+    || thisIsDevEnvironment
+  ) {
     // Get developer credentials
     let developerCredentials: DeveloperCredentials = (
       thisIsDevEnvironment
@@ -555,6 +567,9 @@ const initCACCL = async (
           }
         )
     );
+
+    // Store state
+    authDisabled = false;
 
     // Initialize auth
     await initAuth({
