@@ -495,7 +495,7 @@ var initCACCL = function (opts) {
                     authDisabled = true;
                     if (!
                     // Options are passed in
-                    (opts.api
+                    ((opts.api && opts.api.developerCredentials)
                         // Options are in environment
                         || (process.env.DEFAULT_CANVAS_HOST
                             && process.env.CLIENT_ID
@@ -513,7 +513,7 @@ var initCACCL = function (opts) {
                         } // Dummy values for Canvas sim
                         : (
                         // Passed in map
-                        (_m = (_l = opts === null || opts === void 0 ? void 0 : opts.api) === null || _l === void 0 ? void 0 : _l.developerCredentials) !== null && _m !== void 0 ? _m : (_b = {},
+                        (_m = (_l = opts.api) === null || _l === void 0 ? void 0 : _l.developerCredentials) !== null && _m !== void 0 ? _m : (_b = {},
                             _b[process.env.DEFAULT_CANVAS_HOST] = {
                                 clientId: process.env.CLIENT_ID,
                                 clientSecret: process.env.CLIENT_SECRET,

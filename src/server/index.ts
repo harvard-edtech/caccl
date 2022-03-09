@@ -540,7 +540,7 @@ const initCACCL = async (
   // Add auth if we can
   if (
     // Options are passed in
-    opts.api
+    (opts.api && opts.api.developerCredentials)
     // Options are in environment
     || (
       process.env.DEFAULT_CANVAS_HOST
@@ -561,7 +561,7 @@ const initCACCL = async (
         } // Dummy values for Canvas sim
         : (
           // Passed in map
-          opts?.api?.developerCredentials
+          opts.api?.developerCredentials
           // Map from environment
           ?? {
             [process.env.DEFAULT_CANVAS_HOST]: {
