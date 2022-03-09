@@ -33,6 +33,11 @@ import genExpressApp from './helpers/genExpressApp';
 // Check if this is a dev environment
 const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
 
+// Force ignoring SSL issues
+if (thisIsDevEnvironment) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 /*------------------------------------------------------------------------*/
 /*                                 Caching                                */
 /*------------------------------------------------------------------------*/

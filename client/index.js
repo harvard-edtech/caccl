@@ -89,7 +89,7 @@ var serverHost = (thisIsDevEnvironment
  */
 var sendRequest = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, (0, caccl_send_request_1.default)(__assign(__assign({}, opts), { host: serverHost, ignoreSSLIssues: !!thisIsDevEnvironment }))];
+        return [2 /*return*/, (0, caccl_send_request_1.default)(__assign(__assign({}, opts), { host: serverHost }))];
     });
 }); };
 exports.sendRequest = sendRequest;

@@ -62,7 +62,6 @@ const sendRequest = async (
   return cacclSendRequest({
     ...opts,
     host: serverHost,
-    ignoreSSLIssues: !!thisIsDevEnvironment,
   });
 };
 

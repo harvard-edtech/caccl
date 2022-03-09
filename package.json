@@ -34,13 +34,13 @@
   "homepage": "https://github.com/harvard-edtech/caccl#readme",
   "dependencies": {
     "caccl-api": "2.0.0-beta.17",
-    "caccl-api-forwarder": "2.0.0-beta.15",
-    "caccl-authorizer": "^2.0.0-beta.18",
+    "caccl-api-forwarder": "2.0.0-beta.16",
+    "caccl-authorizer": "^2.0.0-beta.19",
     "caccl-error": "2.0.0-beta.15",
     "caccl-grade-passback": "2.0.0-beta.15",
     "caccl-lti": "^2.0.0-beta.17",
     "caccl-memory-store": "^2.0.0-beta.15",
-    "caccl-send-request": "2.0.0-beta.15",
+    "caccl-send-request": "2.0.0-beta.16",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "memorystore": "^1.6.7"

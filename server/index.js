@@ -92,6 +92,10 @@ var CACCL_PATHS_1 = __importDefault(require("./shared/constants/CACCL_PATHS"));
 var genExpressApp_1 = __importDefault(require("./helpers/genExpressApp"));
 // Check if this is a dev environment
 var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
+// Force ignoring SSL issues
+if (thisIsDevEnvironment) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 /*------------------------------------------------------------------------*/
 /*                                 Caching                                */
 /*------------------------------------------------------------------------*/

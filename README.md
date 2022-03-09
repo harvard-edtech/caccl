@@ -608,7 +608,6 @@ There are also a few advanced options:
 
 - Include `headers`, a map `{ name => value }` of headers to include with the request
 - Include `numRetries` to allow the request sender to retry the request this number of times
-- Set `ignoreSSLIssues` to `true` to ignore SSL Issues
 
 # Deploying Your App
 
