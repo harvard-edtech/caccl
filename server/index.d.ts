@@ -118,9 +118,9 @@ declare const redirectToSelfLaunch: (opts: {
  * @author Gabe Abrams
  * @param [opts] object containing all arguments
  * @param [opts.lti] object containing all LTI configuration params
- * @param [opts.lti.installationCredentials=env vars} an object where keys are
+ * @param [opts.lti.installationCredentials=env vars] an object where keys are
  *   LTI consumer keys and values are LTI shared secrets. If excluded, defaults
- *   to { [process.env.CONSUMER_KEY | 'consumer_key']: (process.env.CONSUMER_SECRET | 'consumer_secret') }
+ *   to { [env.CONSUMER_KEY | 'consumer_key']: (env.CONSUMER_SECRET | 'consumer_secret') }
  * @param [opts.lti.authorizeAfterLaunch] if true, start the Canvas OAuth
  *   authorization process upon successful LTI launch
  * @param [opts.lti.initNonceStore=memory store factory] a function that creates
@@ -143,13 +143,13 @@ declare const redirectToSelfLaunch: (opts: {
  *   Canvas admin tokens that will be used to look up appIds. The tokens will
  *   be used in order: the first token will be used, then if that fails, the
  *   second token will be used, and so on.
- * @param [opts.lti.selfLaunch.defaultCanvasHost=process.env.DEFAULT_CANVAS_HOST] default Canvas host to use in
+ * @param [opts.lti.selfLaunch.defaultCanvasHost=env.DEFAULT_CANVAS_HOST] default Canvas host to use in
  *   self launches
  * @param [opts.api] object containing all api and authorization configuration
  *   params. Must be included if integrating with the Canvas API
  * @param [opts.api.developerCredentials] map of developer credentials
  *   to use when authorizing this app with canvas. If excluded, defaults to
- *   { [process.env.DEFAULT_CANVAS_HOST]: { [process.env.CLIENT_ID]: process.env.CLIENT_SECRET } }
+ *   { [env.DEFAULT_CANVAS_HOST]: { [env..CLIENT_ID]: env..CLIENT_SECRET } }
  * @param [opts.api.initTokenStore=memory store factory] a function that
  *   creates a store for keeping track of user's API tokens and auth status
  * @param [opts.api.disableClientSideAPI] if true, do not allow the client
@@ -178,13 +178,13 @@ declare const redirectToSelfLaunch: (opts: {
  */
 declare const initCACCL: (opts?: {
     lti?: {
-        installationCredentials: InstallationCredentials;
+        installationCredentials?: InstallationCredentials;
         initNonceStore?: InitCACCLStore;
         selfLaunch?: SelfLaunchConfig;
         authorizeAfterLaunch?: boolean;
     };
     api?: {
-        developerCredentials: DeveloperCredentials;
+        developerCredentials?: DeveloperCredentials;
         initTokenStore?: InitCACCLStore;
         disableClientSideAPI?: boolean;
     };
