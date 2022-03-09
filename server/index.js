@@ -435,6 +435,20 @@ var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, funct
         switch (_q.label) {
             case 0:
                 app = ((_d = (_c = opts === null || opts === void 0 ? void 0 : opts.express) === null || _c === void 0 ? void 0 : _c.app) !== null && _d !== void 0 ? _d : (0, genExpressApp_1.default)(opts));
+                // Add cross-origin handler for development mode
+                if (thisIsDevEnvironment) {
+                    app.use(function (req, res, next) {
+                        res.setHeader('Access-Control-Allow-Origin', 'localhost:3000');
+                        res.setHeader('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+                        res.setHeader('Access-Control-Allow-Credentials', 'true');
+                        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+                        res.setHeader('Access-Control-Request-Headers', '*');
+                        if (req.method === 'OPTIONS') {
+                            return res.sendStatus(200);
+                        }
+                        next();
+                    });
+                }
                 expressAppPreprocessor = (_e = opts.express) === null || _e === void 0 ? void 0 : _e.preprocessor;
                 if (expressAppPreprocessor) {
                     expressAppPreprocessor(app);
@@ -592,7 +606,7 @@ var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, funct
                 // Change config for dev environment
                 if (thisIsDevEnvironment) {
                     // Print a notice
-                    console.log('Server running in development mode');
+                    console.log('Server running in development mode. This is not safe for production use.');
                     // Redirect all traffic to react development port
                     app.get('*', function (req, res) {
                         // Redirect to the appropriate 
