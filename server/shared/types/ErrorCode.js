@@ -4,7 +4,7 @@
  * @author Gabe Abrams
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-// Highest error: CSERV10
+// Highest error: CSERV11
 var ErrorCode;
 (function (ErrorCode) {
     ErrorCode["NoLaunchInfo"] = "CSERV1";
@@ -17,6 +17,7 @@ var ErrorCode;
     ErrorCode["CantInitAPIWithoutAuth"] = "CSERV8";
     ErrorCode["PassbackBeforeCACCLInitialized"] = "CSERV9";
     ErrorCode["StatusFailed"] = "CSERV10";
+    ErrorCode["NoAPIAuthDisabled"] = "CSERV11";
 })(ErrorCode || (ErrorCode = {}));
 ;
 exports.default = ErrorCode;

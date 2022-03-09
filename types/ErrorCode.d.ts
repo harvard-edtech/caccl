@@ -12,6 +12,7 @@ declare enum ErrorCode {
     CantInitAPIWithoutLaunch = "CSERV7",
     CantInitAPIWithoutAuth = "CSERV8",
     PassbackBeforeCACCLInitialized = "CSERV9",
-    StatusFailed = "CSERV10"
+    StatusFailed = "CSERV10",
+    NoAPIAuthDisabled = "CSERV11"
 }
 export default ErrorCode;

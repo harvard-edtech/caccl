@@ -3,7 +3,7 @@
  * @author Gabe Abrams
  */
 
-// Highest error: CSERV10
+// Highest error: CSERV11
 
 enum ErrorCode {
   NoLaunchInfo = 'CSERV1',
@@ -16,6 +16,7 @@ enum ErrorCode {
   CantInitAPIWithoutAuth = 'CSERV8',
   PassbackBeforeCACCLInitialized = 'CSERV9',
   StatusFailed = 'CSERV10',
+  NoAPIAuthDisabled = 'CSERV11',
 };
 
 export default ErrorCode;

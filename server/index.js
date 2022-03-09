@@ -97,6 +97,8 @@ var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
 /*------------------------------------------------------------------------*/
 // Store credentials from most recent initialization
 var mostRecentInstallationCreds;
+// Store whether certain features are disabled
+var authDisabled;
 /*------------------------------------------------------------------------*/
 /*                                Functions                               */
 /*------------------------------------------------------------------------*/
@@ -134,14 +136,20 @@ exports.sendRequest = sendRequest;
  * @returns status
  */
 var getStatus = function (req) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, launched, launchInfo, authorized, status;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, launched, launchInfo, authorized, _b, status;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 _a = (0, caccl_lti_1.getLaunchInfo)(req), launched = _a.launched, launchInfo = _a.launchInfo;
-                return [4 /*yield*/, (0, caccl_authorizer_1.getAccessToken)(req)];
-            case 1:
-                authorized = !!(_b.sent());
+                if (!authDisabled) return [3 /*break*/, 1];
+                _b = false;
+                return [3 /*break*/, 3];
+            case 1: return [4 /*yield*/, (0, caccl_authorizer_1.getAccessToken)(req)];
+            case 2:
+                _b = !!(_c.sent());
+                _c.label = 3;
+            case 3:
+                authorized = (_b);
                 if (launched) {
                     status = {
                         launched: launched,
@@ -296,6 +304,13 @@ var getAPI = function (opts) { return __awaiter(void 0, void 0, void 0, function
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
+                // Error if auth is disabled
+                if (authDisabled) {
+                    throw new caccl_error_1.default({
+                        message: 'Auth is not enabled, so you cannot get a copy of the API.',
+                        code: ErrorCode_1.default.NoAPIAuthDisabled,
+                    });
+                }
                 _a = (0, caccl_lti_1.getLaunchInfo)(opts.req), launched = _a.launched, launchInfo = _a.launchInfo;
                 if (!launched || !launchInfo.canvasHost) {
                     throw new caccl_error_1.default({
@@ -434,6 +449,8 @@ var initCACCL = function (opts) { return __awaiter(void 0, void 0, void 0, funct
     return __generator(this, function (_q) {
         switch (_q.label) {
             case 0:
+                // Store state
+                authDisabled = !(opts === null || opts === void 0 ? void 0 : opts.api);
                 app = ((_d = (_c = opts === null || opts === void 0 ? void 0 : opts.express) === null || _c === void 0 ? void 0 : _c.app) !== null && _d !== void 0 ? _d : (0, genExpressApp_1.default)(opts));
                 // Add cross-origin handler for development mode
                 if (thisIsDevEnvironment) {

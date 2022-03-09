@@ -40,6 +40,9 @@ const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
 // Store credentials from most recent initialization
 let mostRecentInstallationCreds: { [k: string]: string };
 
+// Store whether certain features are disabled
+let authDisabled: boolean;
+
 /*------------------------------------------------------------------------*/
 /*                                Functions                               */
 /*------------------------------------------------------------------------*/
@@ -95,7 +98,11 @@ const getStatus = async (req: express.Request): Promise<CACCLStatus> => {
   const { launched, launchInfo } = getLaunchInfo(req);
 
   // Check if the user is authorized
-  const authorized = !!(await getAccessToken(req));
+  const authorized = (
+    authDisabled
+      ? false
+      : !!(await getAccessToken(req))
+  );
 
   // Build a status response and optionally check auth status
   let status: CACCLStatus;
@@ -268,6 +275,14 @@ const getAPI = async (
     itemsPerPage?: number,
   },
 ): Promise<API> => {
+  // Error if auth is disabled
+  if (authDisabled) {
+    throw new CACCLError({
+      message: 'Auth is not enabled, so you cannot get a copy of the API.',
+      code: ErrorCode.NoAPIAuthDisabled,
+    });
+  }
+
   // Get user's launch info
   const { launched, launchInfo } = getLaunchInfo(opts.req);
   if (!launched || !launchInfo.canvasHost) {
@@ -434,6 +449,9 @@ const initCACCL = async (
     },
   },
 ): Promise<void> => {
+  // Store state
+  authDisabled = !opts?.api;
+
   /*----------------------------------------*/
   /*                 Express                */
   /*----------------------------------------*/
