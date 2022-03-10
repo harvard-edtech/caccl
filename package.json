@@ -1,6 +1,6 @@
 {
   "name": "caccl",
-  "version": "2.0.0-beta.27",
+  "version": "2.0.0-beta.28",
   "description": "Canvas App Complete Connection Library: an all-in-one library for connecting your app to Canvas, handling lti, access tokens, and api.",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,7 @@
   "homepage": "https://github.com/harvard-edtech/caccl#readme",
   "dependencies": {
     "caccl-api": "2.0.0-beta.17",
-    "caccl-api-forwarder": "2.0.0-beta.17",
+    "caccl-api-forwarder": "2.0.0-beta.18",
     "caccl-authorizer": "^2.0.0-beta.19",
     "caccl-error": "2.0.0-beta.15",
     "caccl-grade-passback": "2.0.0-beta.15",
