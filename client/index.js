@@ -196,29 +196,32 @@ var cachedAPIs = new Map(); // jsonified apiOpts => API instance
  *   per page
  * @returns CACCL API instance
  */
-var getAPI = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
-    var cacheKey, api;
-    return __generator(this, function (_a) {
-        cacheKey = JSON.stringify(opts !== null && opts !== void 0 ? opts : {});
-        api = cachedAPIs.get(cacheKey);
-        // Finish if we found a cached version of the API
-        if (api) {
+var getAPI = function (opts) {
+    if (opts === void 0) { opts = {}; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var cacheKey, api;
+        return __generator(this, function (_a) {
+            cacheKey = JSON.stringify(opts);
+            api = cachedAPIs.get(cacheKey);
+            // Finish if we found a cached version of the API
+            if (api) {
+                return [2 /*return*/, api];
+            }
+            // Create a new instance (no cached version)
+            api = (0, caccl_api_1.default)({
+                numRetries: opts.numRetries,
+                itemsPerPage: opts.itemsPerPage,
+                canvasHost: serverHost,
+                pathPrefix: CACCL_PATHS_1.default.FORWARDER_PREFIX,
+                defaultCourseId: COURSE_ID_REPLACE_WITH_CURR_1.default,
+            });
+            // Store in cache
+            cachedAPIs.set(cacheKey, api);
+            // Return new api instance
             return [2 /*return*/, api];
-        }
-        // Create a new instance (no cached version)
-        api = (0, caccl_api_1.default)({
-            numRetries: opts.numRetries,
-            itemsPerPage: opts.itemsPerPage,
-            canvasHost: serverHost,
-            pathPrefix: CACCL_PATHS_1.default.FORWARDER_PREFIX,
-            defaultCourseId: COURSE_ID_REPLACE_WITH_CURR_1.default,
         });
-        // Store in cache
-        cachedAPIs.set(cacheKey, api);
-        // Return new api instance
-        return [2 /*return*/, api];
     });
-}); };
+};
 exports.getAPI = getAPI;
 /*----------------------------------------*/
 /*                Redirects               */

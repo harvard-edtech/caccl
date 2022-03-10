@@ -175,13 +175,13 @@ const cachedAPIs = new Map<string,API>(); // jsonified apiOpts => API instance
  * @returns CACCL API instance
  */
 const getAPI = async (
-  opts?: {
+  opts: {
     numRetries?: number,
     itemsPerPage?: number,
-  },
+  } = {},
 ): Promise<API> => {
   // Look up in cache
-  const cacheKey = JSON.stringify(opts ?? {});
+  const cacheKey = JSON.stringify(opts);
   let api: API = cachedAPIs.get(cacheKey);
 
   // Finish if we found a cached version of the API
