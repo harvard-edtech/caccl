@@ -101,8 +101,8 @@ if (thisIsDevEnvironment) {
 /*------------------------------------------------------------------------*/
 // Store credentials from most recent initialization
 var mostRecentInstallationCreds;
-// Store whether certain features are disabled
-var authDisabled;
+// Store whether certain features are enabled
+var authEnabled;
 /*------------------------------------------------------------------------*/
 /*                                Functions                               */
 /*------------------------------------------------------------------------*/
@@ -146,7 +146,7 @@ var getStatus = function (req) { return __awaiter(void 0, void 0, void 0, functi
             case 0:
                 _a = (0, caccl_lti_1.getLaunchInfo)(req), launched = _a.launched, launchInfo = _a.launchInfo;
                 authorized = false;
-                if (!!authDisabled) return [3 /*break*/, 4];
+                if (!authEnabled) return [3 /*break*/, 4];
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
@@ -315,7 +315,7 @@ var getAPI = function (opts) { return __awaiter(void 0, void 0, void 0, function
         switch (_b.label) {
             case 0:
                 // Error if auth is disabled
-                if (authDisabled) {
+                if (!authEnabled) {
                     throw new caccl_error_1.default({
                         message: 'Auth is not enabled, so you cannot get a copy of the API.',
                         code: ErrorCode_1.default.NoAPIAuthDisabled,
@@ -398,7 +398,8 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
  *   LTI consumer keys and values are LTI shared secrets. If excluded, defaults
  *   to { [env.CONSUMER_KEY | 'consumer_key']: (env.CONSUMER_SECRET | 'consumer_secret') }
  * @param [opts.lti.dontAuthorizeAfterLaunch] if false, redirect the user to
- *   the CACCL authorizer after a successful LTI launch
+ *   the CACCL authorizer after a successful LTI launch. Note: if api/auth is
+ *   disabled, dontAuthorizeAfterLaunch will be set to true automatically
  * @param [opts.lti.initNonceStore=memory store factory] a function that creates
  *   a store for keeping track of used nonces
  * @param [opts.lti.selfLaunch] if included, self launches will be enabled and
@@ -455,11 +456,11 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
 var initCACCL = function (opts) {
     if (opts === void 0) { opts = {}; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
+        var app, expressAppPreprocessor, authEnabled, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
         var _a, _b;
-        var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-        return __generator(this, function (_q) {
-            switch (_q.label) {
+        var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        return __generator(this, function (_r) {
+            switch (_r.label) {
                 case 0:
                     app = ((_d = (_c = opts === null || opts === void 0 ? void 0 : opts.express) === null || _c === void 0 ? void 0 : _c.app) !== null && _d !== void 0 ? _d : (0, genExpressApp_1.default)(opts));
                     // Add cross-origin handler for development mode
@@ -480,6 +481,15 @@ var initCACCL = function (opts) {
                     if (expressAppPreprocessor) {
                         expressAppPreprocessor(app);
                     }
+                    authEnabled = (
+                    // Options are passed in
+                    (opts.api && opts.api.developerCredentials)
+                        // Options are in environment
+                        || (process.env.DEFAULT_CANVAS_HOST
+                            && process.env.CLIENT_ID
+                            && process.env.CLIENT_SECRET)
+                        // Using development environment fake credentials
+                        || thisIsDevEnvironment);
                     installationCredentials = (thisIsDevEnvironment
                         ? { consumer_key: 'consumer_secret' } // Dummy values for Canvas sim
                         : (
@@ -488,26 +498,17 @@ var initCACCL = function (opts) {
                             _a[(_h = process.env.CONSUMER_KEY) !== null && _h !== void 0 ? _h : 'consumer_key'] = ((_j = process.env.CONSUMER_SECRET) !== null && _j !== void 0 ? _j : 'consumer_secret'),
                             _a)));
                     // Initialize LTI
-                    return [4 /*yield*/, (0, caccl_lti_1.default)(__assign(__assign({}, ((_k = opts === null || opts === void 0 ? void 0 : opts.lti) !== null && _k !== void 0 ? _k : {})), { app: app, installationCredentials: installationCredentials }))];
+                    return [4 /*yield*/, (0, caccl_lti_1.default)(__assign(__assign({}, ((_k = opts === null || opts === void 0 ? void 0 : opts.lti) !== null && _k !== void 0 ? _k : {})), { dontAuthorizeAfterLaunch: !!(
+                            // Flag is true
+                            ((_l = opts === null || opts === void 0 ? void 0 : opts.lti) === null || _l === void 0 ? void 0 : _l.dontAuthorizeAfterLaunch)
+                                // Auth is not enabled
+                                || !authEnabled), app: app, installationCredentials: installationCredentials }))];
                 case 1:
                     // Initialize LTI
-                    _q.sent();
+                    _r.sent();
                     // Store installation credentials for later
                     mostRecentInstallationCreds = installationCredentials;
-                    /* ---------- Auth and API ---------- */
-                    // By default, auth is disabled
-                    authDisabled = true;
-                    if (!
-                    // Options are passed in
-                    ((opts.api && opts.api.developerCredentials)
-                        // Options are in environment
-                        || (process.env.DEFAULT_CANVAS_HOST
-                            && process.env.CLIENT_ID
-                            && process.env.CLIENT_SECRET)
-                        // Using development environment fake creds
-                        || thisIsDevEnvironment)) 
-                    // Options are passed in
-                    return [3 /*break*/, 3];
+                    if (!authEnabled) return [3 /*break*/, 3];
                     developerCredentials = (thisIsDevEnvironment
                         ? {
                             'localhost:8088': {
@@ -517,26 +518,24 @@ var initCACCL = function (opts) {
                         } // Dummy values for Canvas sim
                         : (
                         // Passed in map
-                        (_m = (_l = opts.api) === null || _l === void 0 ? void 0 : _l.developerCredentials) !== null && _m !== void 0 ? _m : (_b = {},
+                        (_o = (_m = opts.api) === null || _m === void 0 ? void 0 : _m.developerCredentials) !== null && _o !== void 0 ? _o : (_b = {},
                             _b[process.env.DEFAULT_CANVAS_HOST] = {
                                 clientId: process.env.CLIENT_ID,
                                 clientSecret: process.env.CLIENT_SECRET,
                             },
                             _b)));
-                    // Store state
-                    authDisabled = false;
                     // Initialize auth
                     return [4 /*yield*/, (0, caccl_authorizer_1.default)(__assign(__assign({}, opts === null || opts === void 0 ? void 0 : opts.api), { app: app, developerCredentials: developerCredentials }))];
                 case 2:
                     // Initialize auth
-                    _q.sent();
-                    disableClientSideAPI = !!((_o = opts === null || opts === void 0 ? void 0 : opts.api) === null || _o === void 0 ? void 0 : _o.disableClientSideAPI);
+                    _r.sent();
+                    disableClientSideAPI = !!((_p = opts === null || opts === void 0 ? void 0 : opts.api) === null || _p === void 0 ? void 0 : _p.disableClientSideAPI);
                     // Initialize auth forwarder
                     if (!disableClientSideAPI) {
                         // Client-side API is enabled. Add forwarder
                         (0, caccl_api_forwarder_1.default)({ app: app });
                     }
-                    _q.label = 3;
+                    _r.label = 3;
                 case 3:
                     /*----------------------------------------*/
                     /*          Server-side Endpoints         */
@@ -639,7 +638,7 @@ var initCACCL = function (opts) {
                     /*              React Client              */
                     /*----------------------------------------*/
                     // Run postprocessor first
-                    if ((_p = opts === null || opts === void 0 ? void 0 : opts.express) === null || _p === void 0 ? void 0 : _p.postprocessor) {
+                    if ((_q = opts === null || opts === void 0 ? void 0 : opts.express) === null || _q === void 0 ? void 0 : _q.postprocessor) {
                         opts.express.postprocessor(app);
                     }
                     initialWorkingDirectory = (process.env.PWD.endsWith('/server')

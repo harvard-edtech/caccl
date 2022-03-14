@@ -122,7 +122,8 @@ declare const redirectToSelfLaunch: (opts: {
  *   LTI consumer keys and values are LTI shared secrets. If excluded, defaults
  *   to { [env.CONSUMER_KEY | 'consumer_key']: (env.CONSUMER_SECRET | 'consumer_secret') }
  * @param [opts.lti.dontAuthorizeAfterLaunch] if false, redirect the user to
- *   the CACCL authorizer after a successful LTI launch
+ *   the CACCL authorizer after a successful LTI launch. Note: if api/auth is
+ *   disabled, dontAuthorizeAfterLaunch will be set to true automatically
  * @param [opts.lti.initNonceStore=memory store factory] a function that creates
  *   a store for keeping track of used nonces
  * @param [opts.lti.selfLaunch] if included, self launches will be enabled and

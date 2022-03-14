@@ -45,8 +45,8 @@ if (thisIsDevEnvironment) {
 // Store credentials from most recent initialization
 let mostRecentInstallationCreds: { [k: string]: string };
 
-// Store whether certain features are disabled
-let authDisabled: boolean;
+// Store whether certain features are enabled
+let authEnabled: boolean;
 
 /*------------------------------------------------------------------------*/
 /*                                Functions                               */
@@ -104,7 +104,7 @@ const getStatus = async (req: express.Request): Promise<CACCLStatus> => {
 
   // Check if the user is authorized
   let authorized: boolean = false;
-  if (!authDisabled) {
+  if (authEnabled) {
     try {
       authorized = !!(await getAccessToken(req));
     } catch (err) {
@@ -285,7 +285,7 @@ const getAPI = async (
   },
 ): Promise<API> => {
   // Error if auth is disabled
-  if (authDisabled) {
+  if (!authEnabled) {
     throw new CACCLError({
       message: 'Auth is not enabled, so you cannot get a copy of the API.',
       code: ErrorCode.NoAPIAuthDisabled,
@@ -379,7 +379,8 @@ const redirectToSelfLaunch = (
  *   LTI consumer keys and values are LTI shared secrets. If excluded, defaults
  *   to { [env.CONSUMER_KEY | 'consumer_key']: (env.CONSUMER_SECRET | 'consumer_secret') }
  * @param [opts.lti.dontAuthorizeAfterLaunch] if false, redirect the user to
- *   the CACCL authorizer after a successful LTI launch
+ *   the CACCL authorizer after a successful LTI launch. Note: if api/auth is
+ *   disabled, dontAuthorizeAfterLaunch will be set to true automatically
  * @param [opts.lti.initNonceStore=memory store factory] a function that creates
  *   a store for keeping track of used nonces
  * @param [opts.lti.selfLaunch] if included, self launches will be enabled and
@@ -504,6 +505,20 @@ const initCACCL = async (
     expressAppPreprocessor(app);
   }
 
+  // Check if auth is enabled
+  const authEnabled = (
+    // Options are passed in
+    (opts.api && opts.api.developerCredentials)
+    // Options are in environment
+    || (
+      process.env.DEFAULT_CANVAS_HOST
+      && process.env.CLIENT_ID
+      && process.env.CLIENT_SECRET
+    )
+    // Using development environment fake credentials
+    || thisIsDevEnvironment
+  );
+
   /*----------------------------------------*/
   /*               CACCL Libs               */
   /*----------------------------------------*/
@@ -530,6 +545,12 @@ const initCACCL = async (
   // Initialize LTI
   await initLTI({
     ...(opts?.lti ?? {}),
+    dontAuthorizeAfterLaunch: !!(
+      // Flag is true
+      opts?.lti?.dontAuthorizeAfterLaunch
+      // Auth is not enabled
+      || !authEnabled
+    ),
     app,
     installationCredentials,
   });
@@ -539,22 +560,8 @@ const initCACCL = async (
 
   /* ---------- Auth and API ---------- */
 
-  // By default, auth is disabled
-  authDisabled = true;
-
   // Add auth if we can
-  if (
-    // Options are passed in
-    (opts.api && opts.api.developerCredentials)
-    // Options are in environment
-    || (
-      process.env.DEFAULT_CANVAS_HOST
-      && process.env.CLIENT_ID
-      && process.env.CLIENT_SECRET
-    )
-    // Using development environment fake creds
-    || thisIsDevEnvironment
-  ) {
+  if (authEnabled) {
     // Get developer credentials
     let developerCredentials: DeveloperCredentials = (
       thisIsDevEnvironment
@@ -576,9 +583,6 @@ const initCACCL = async (
           }
         )
     );
-
-    // Store state
-    authDisabled = false;
 
     // Initialize auth
     await initAuth({
