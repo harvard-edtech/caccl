@@ -397,8 +397,8 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
  * @param [opts.lti.installationCredentials=env vars] an object where keys are
  *   LTI consumer keys and values are LTI shared secrets. If excluded, defaults
  *   to { [env.CONSUMER_KEY | 'consumer_key']: (env.CONSUMER_SECRET | 'consumer_secret') }
- * @param [opts.lti.authorizeAfterLaunch] if true, start the Canvas OAuth
- *   authorization process upon successful LTI launch
+ * @param [opts.lti.dontAuthorizeAfterLaunch] if false, redirect the user to
+ *   the CACCL authorizer after a successful LTI launch
  * @param [opts.lti.initNonceStore=memory store factory] a function that creates
  *   a store for keeping track of used nonces
  * @param [opts.lti.selfLaunch] if included, self launches will be enabled and
