@@ -48,12 +48,12 @@ If you only have one key/secret pair (all app installs use the same installation
 
 #### II. Choose Other Features
 
-**Authorize After Launch (recommended):** If the api is configured (see the next section) and you'd like to automatically authorize users with the API when they launch via LTI, add the `lti.authorizeAfterLaunch: true` flag.
+**Disable Authorization After Launch:** If the api is configured (see the next section) but you would not like to automatically authorize users with the API when they launch via LTI, add the `lti.dontAuthorizeAfterLaunch: true` flag. This is not a feature that's used very often, but it is useful if you _sometimes_ want users to be redirected for API authorization (perhaps you only use the API for specific features or specific users). Then, since the user will not automatically be authorized to use the API, you'll need to manually redirect the user to the authorization process (see the "redirectToAuth" function in later sections). Note: the `lti.dontAuthorizeAfterLaunch` flag is automatically set to true if the app is not set up for API integration.
 
 ```ts
 initCACCL({
   lti: {
-    authorizeAfterLaunch: true,
+    dontAuthorizeAfterLaunch: true,
   },
 });
 ```
