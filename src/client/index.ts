@@ -219,7 +219,11 @@ const getAPI = async (
  * @author Gabe Abrams
  */
 const redirectToAuth = () => {
-  window.location.href = CACCL_PATHS.AUTHORIZE;
+  window.location.href = (
+    thisIsDevEnvironment
+      ? `https://localhost:8080${CACCL_PATHS.AUTHORIZE}`
+      : CACCL_PATHS.AUTHORIZE
+  );
 };
 
 /**
@@ -246,7 +250,8 @@ const redirectToSelfLaunch = (
     selfLaunchState?: any,
   },
 ) => {
-  return window.location.href = getSelfLaunchURL({
+  // Get the path of the self launch page
+  const path = getSelfLaunchURL({
     ...opts,
     appId: (
       thisIsDevEnvironment
@@ -254,6 +259,13 @@ const redirectToSelfLaunch = (
         : opts.appId
     ),
   });
+
+  // Redirect to the appropriate path
+  window.location.href = (
+    thisIsDevEnvironment
+      ? `https://localhost:8080${path}`
+      : path
+  );
 };
 
 /*------------------------------------------------------------------------*/

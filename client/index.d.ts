@@ -100,7 +100,7 @@ declare const redirectToSelfLaunch: (opts: {
     canvasHost?: string;
     appId?: number;
     selfLaunchState?: any;
-}) => string;
+}) => void;
 /**
  * Init CACCL on the client. This is not necessary in this version of CACCL
  *   but may become necessary in future versions

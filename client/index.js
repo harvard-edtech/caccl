@@ -236,7 +236,9 @@ exports.getAPI = getAPI;
  * @author Gabe Abrams
  */
 var redirectToAuth = function () {
-    window.location.href = CACCL_PATHS_1.default.AUTHORIZE;
+    window.location.href = (thisIsDevEnvironment
+        ? "https://localhost:8080".concat(CACCL_PATHS_1.default.AUTHORIZE)
+        : CACCL_PATHS_1.default.AUTHORIZE);
 };
 exports.redirectToAuth = redirectToAuth;
 /**
@@ -256,9 +258,14 @@ exports.redirectToAuth = redirectToAuth;
  *   be sensitive data.
  */
 var redirectToSelfLaunch = function (opts) {
-    return window.location.href = (0, caccl_lti_1.getSelfLaunchURL)(__assign(__assign({}, opts), { appId: (thisIsDevEnvironment
+    // Get the path of the self launch page
+    var path = (0, caccl_lti_1.getSelfLaunchURL)(__assign(__assign({}, opts), { appId: (thisIsDevEnvironment
             ? CACCL_SIM_TOOL_ID_1.default
             : opts.appId) }));
+    // Redirect to the appropriate path
+    window.location.href = (thisIsDevEnvironment
+        ? "https://localhost:8080".concat(path)
+        : path);
 };
 exports.redirectToSelfLaunch = redirectToSelfLaunch;
 /*------------------------------------------------------------------------*/
