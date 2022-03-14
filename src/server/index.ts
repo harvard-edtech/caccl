@@ -26,6 +26,7 @@ import ServerPassbackRequest from './shared/types/ServerPassbackRequest';
 
 // Import shared constants
 import CACCL_PATHS from './shared/constants/CACCL_PATHS';
+import CACCL_SIM_TOOL_ID from './shared/constants/CACCL_SIM_TOOL_ID';
 
 // Import helpers
 import genExpressApp from './helpers/genExpressApp';
@@ -363,7 +364,14 @@ const redirectToSelfLaunch = (
     selfLaunchState?: any,
   },
 ) => {
-  return opts.res.redirect(getSelfLaunchURL(opts));
+  return opts.res.redirect(getSelfLaunchURL({
+    ...opts,
+    appId: (
+      thisIsDevEnvironment
+        ? CACCL_SIM_TOOL_ID
+        : opts.appId
+    ),
+  }));
 };
 
 /*------------------------------------------------------------------------*/

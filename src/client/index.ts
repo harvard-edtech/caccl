@@ -13,6 +13,7 @@ import ClientPassbackRequest from './shared/types/ClientPassbackRequest';
 // Import shared constants
 import CACCL_PATHS from './shared/constants/CACCL_PATHS';
 import COURSE_ID_REPLACE_WITH_CURR from './shared/constants/COURSE_ID_REPLACE_WITH_CURR';
+import CACCL_SIM_TOOL_ID from './shared/constants/CACCL_SIM_TOOL_ID';
 
 // Check if this is a dev environment
 const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
@@ -245,7 +246,14 @@ const redirectToSelfLaunch = (
     selfLaunchState?: any,
   },
 ) => {
-  return window.location.href = getSelfLaunchURL(opts);
+  return window.location.href = getSelfLaunchURL({
+    ...opts,
+    appId: (
+      thisIsDevEnvironment
+        ? CACCL_SIM_TOOL_ID
+        : opts.appId
+    ),
+  });
 };
 
 /*------------------------------------------------------------------------*/

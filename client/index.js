@@ -61,6 +61,7 @@ var ErrorCode_1 = __importDefault(require("./shared/types/ErrorCode"));
 // Import shared constants
 var CACCL_PATHS_1 = __importDefault(require("./shared/constants/CACCL_PATHS"));
 var COURSE_ID_REPLACE_WITH_CURR_1 = __importDefault(require("./shared/constants/COURSE_ID_REPLACE_WITH_CURR"));
+var CACCL_SIM_TOOL_ID_1 = __importDefault(require("./shared/constants/CACCL_SIM_TOOL_ID"));
 // Check if this is a dev environment
 var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
 // Get the server's hostname
@@ -255,7 +256,9 @@ exports.redirectToAuth = redirectToAuth;
  *   be sensitive data.
  */
 var redirectToSelfLaunch = function (opts) {
-    return window.location.href = (0, caccl_lti_1.getSelfLaunchURL)(opts);
+    return window.location.href = (0, caccl_lti_1.getSelfLaunchURL)(__assign(__assign({}, opts), { appId: (thisIsDevEnvironment
+            ? CACCL_SIM_TOOL_ID_1.default
+            : opts.appId) }));
 };
 exports.redirectToSelfLaunch = redirectToSelfLaunch;
 /*------------------------------------------------------------------------*/

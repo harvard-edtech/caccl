@@ -88,6 +88,7 @@ var LaunchType_1 = __importDefault(require("caccl-lti/lib/types/LaunchType"));
 var ErrorCode_1 = __importDefault(require("./shared/types/ErrorCode"));
 // Import shared constants
 var CACCL_PATHS_1 = __importDefault(require("./shared/constants/CACCL_PATHS"));
+var CACCL_SIM_TOOL_ID_1 = __importDefault(require("./shared/constants/CACCL_SIM_TOOL_ID"));
 // Import helpers
 var genExpressApp_1 = __importDefault(require("./helpers/genExpressApp"));
 // Check if this is a dev environment
@@ -383,7 +384,9 @@ exports.redirectToAuth = redirectToAuth;
  *   be sensitive data.
  */
 var redirectToSelfLaunch = function (opts) {
-    return opts.res.redirect((0, caccl_lti_1.getSelfLaunchURL)(opts));
+    return opts.res.redirect((0, caccl_lti_1.getSelfLaunchURL)(__assign(__assign({}, opts), { appId: (thisIsDevEnvironment
+            ? CACCL_SIM_TOOL_ID_1.default
+            : opts.appId) })));
 };
 exports.redirectToSelfLaunch = redirectToSelfLaunch;
 /*------------------------------------------------------------------------*/
