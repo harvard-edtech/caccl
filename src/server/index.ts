@@ -514,7 +514,7 @@ const initCACCL = async (
   }
 
   // Check if auth is enabled
-  const authEnabled = (
+  authEnabled = !!(
     // Options are passed in
     (opts.api && opts.api.developerCredentials)
     // Options are in environment

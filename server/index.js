@@ -459,7 +459,7 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
 var initCACCL = function (opts) {
     if (opts === void 0) { opts = {}; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var app, expressAppPreprocessor, authEnabled, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
+        var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
         var _a, _b;
         var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
         return __generator(this, function (_r) {
@@ -484,7 +484,8 @@ var initCACCL = function (opts) {
                     if (expressAppPreprocessor) {
                         expressAppPreprocessor(app);
                     }
-                    authEnabled = (
+                    // Check if auth is enabled
+                    authEnabled = !!(
                     // Options are passed in
                     (opts.api && opts.api.developerCredentials)
                         // Options are in environment
