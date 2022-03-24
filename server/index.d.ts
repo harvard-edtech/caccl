@@ -190,7 +190,16 @@ declare const initCACCL: (opts?: {
         disableClientSideAPI?: boolean;
     };
     express?: {
-        app?: express.Application;
+        app: express.Application;
+        port: undefined;
+        sessionSecret: undefined;
+        cookieName: undefined;
+        sessionMins: undefined;
+        sessionStore: undefined;
+        preprocessor: undefined;
+        postprocessor: undefined;
+    } | {
+        app: undefined;
         port?: number;
         sessionSecret?: string;
         cookieName?: string;
@@ -199,6 +208,6 @@ declare const initCACCL: (opts?: {
         preprocessor?: (app: express.Application) => void;
         postprocessor?: (app: express.Application) => void;
     };
-}) => Promise<void>;
+}) => Promise<express.Application>;
 export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, };
 export default initCACCL;

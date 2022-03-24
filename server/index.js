@@ -461,11 +461,14 @@ var initCACCL = function (opts) {
     return __awaiter(void 0, void 0, void 0, function () {
         var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
         var _a, _b;
-        var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
-        return __generator(this, function (_r) {
-            switch (_r.label) {
+        var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+        return __generator(this, function (_q) {
+            switch (_q.label) {
                 case 0:
-                    app = ((_d = (_c = opts === null || opts === void 0 ? void 0 : opts.express) === null || _c === void 0 ? void 0 : _c.app) !== null && _d !== void 0 ? _d : (0, genExpressApp_1.default)(opts));
+                    app = (_c = opts.express) === null || _c === void 0 ? void 0 : _c.app;
+                    if (!app) {
+                        (0, genExpressApp_1.default)(opts);
+                    }
                     // Add cross-origin handler for development mode
                     if (thisIsDevEnvironment) {
                         app.use(function (req, res, next) {
@@ -480,7 +483,7 @@ var initCACCL = function (opts) {
                             next();
                         });
                     }
-                    expressAppPreprocessor = (_e = opts.express) === null || _e === void 0 ? void 0 : _e.preprocessor;
+                    expressAppPreprocessor = (_d = opts.express) === null || _d === void 0 ? void 0 : _d.preprocessor;
                     if (expressAppPreprocessor) {
                         expressAppPreprocessor(app);
                     }
@@ -498,18 +501,18 @@ var initCACCL = function (opts) {
                         ? { consumer_key: 'consumer_secret' } // Dummy values for Canvas sim
                         : (
                         // Passed in map
-                        (_g = (_f = opts.lti) === null || _f === void 0 ? void 0 : _f.installationCredentials) !== null && _g !== void 0 ? _g : (_a = {},
-                            _a[(_h = process.env.CONSUMER_KEY) !== null && _h !== void 0 ? _h : 'consumer_key'] = ((_j = process.env.CONSUMER_SECRET) !== null && _j !== void 0 ? _j : 'consumer_secret'),
+                        (_f = (_e = opts.lti) === null || _e === void 0 ? void 0 : _e.installationCredentials) !== null && _f !== void 0 ? _f : (_a = {},
+                            _a[(_g = process.env.CONSUMER_KEY) !== null && _g !== void 0 ? _g : 'consumer_key'] = ((_h = process.env.CONSUMER_SECRET) !== null && _h !== void 0 ? _h : 'consumer_secret'),
                             _a)));
                     // Initialize LTI
-                    return [4 /*yield*/, (0, caccl_lti_1.default)(__assign(__assign({}, ((_k = opts === null || opts === void 0 ? void 0 : opts.lti) !== null && _k !== void 0 ? _k : {})), { dontAuthorizeAfterLaunch: !!(
+                    return [4 /*yield*/, (0, caccl_lti_1.default)(__assign(__assign({}, ((_j = opts === null || opts === void 0 ? void 0 : opts.lti) !== null && _j !== void 0 ? _j : {})), { dontAuthorizeAfterLaunch: !!(
                             // Flag is true
-                            ((_l = opts === null || opts === void 0 ? void 0 : opts.lti) === null || _l === void 0 ? void 0 : _l.dontAuthorizeAfterLaunch)
+                            ((_k = opts === null || opts === void 0 ? void 0 : opts.lti) === null || _k === void 0 ? void 0 : _k.dontAuthorizeAfterLaunch)
                                 // Auth is not enabled
                                 || !authEnabled), app: app, installationCredentials: installationCredentials }))];
                 case 1:
                     // Initialize LTI
-                    _r.sent();
+                    _q.sent();
                     // Store installation credentials for later
                     mostRecentInstallationCreds = installationCredentials;
                     if (!authEnabled) return [3 /*break*/, 3];
@@ -522,7 +525,7 @@ var initCACCL = function (opts) {
                         } // Dummy values for Canvas sim
                         : (
                         // Passed in map
-                        (_o = (_m = opts.api) === null || _m === void 0 ? void 0 : _m.developerCredentials) !== null && _o !== void 0 ? _o : (_b = {},
+                        (_m = (_l = opts.api) === null || _l === void 0 ? void 0 : _l.developerCredentials) !== null && _m !== void 0 ? _m : (_b = {},
                             _b[process.env.DEFAULT_CANVAS_HOST] = {
                                 clientId: process.env.CLIENT_ID,
                                 clientSecret: process.env.CLIENT_SECRET,
@@ -532,14 +535,14 @@ var initCACCL = function (opts) {
                     return [4 /*yield*/, (0, caccl_authorizer_1.default)(__assign(__assign({}, opts === null || opts === void 0 ? void 0 : opts.api), { app: app, developerCredentials: developerCredentials }))];
                 case 2:
                     // Initialize auth
-                    _r.sent();
-                    disableClientSideAPI = !!((_p = opts === null || opts === void 0 ? void 0 : opts.api) === null || _p === void 0 ? void 0 : _p.disableClientSideAPI);
+                    _q.sent();
+                    disableClientSideAPI = !!((_o = opts === null || opts === void 0 ? void 0 : opts.api) === null || _o === void 0 ? void 0 : _o.disableClientSideAPI);
                     // Initialize auth forwarder
                     if (!disableClientSideAPI) {
                         // Client-side API is enabled. Add forwarder
                         (0, caccl_api_forwarder_1.default)({ app: app });
                     }
-                    _r.label = 3;
+                    _q.label = 3;
                 case 3:
                     /*----------------------------------------*/
                     /*          Server-side Endpoints         */
@@ -642,7 +645,7 @@ var initCACCL = function (opts) {
                     /*              React Client              */
                     /*----------------------------------------*/
                     // Run postprocessor first
-                    if ((_q = opts === null || opts === void 0 ? void 0 : opts.express) === null || _q === void 0 ? void 0 : _q.postprocessor) {
+                    if ((_p = opts === null || opts === void 0 ? void 0 : opts.express) === null || _p === void 0 ? void 0 : _p.postprocessor) {
                         opts.express.postprocessor(app);
                     }
                     initialWorkingDirectory = (process.env.PWD.endsWith('/server')
@@ -654,7 +657,7 @@ var initCACCL = function (opts) {
                         console.log('Server running in development mode. This is not safe for production use.');
                         // Redirect all traffic to react development port
                         app.get('*', function (req, res) {
-                            // Redirect to the appropriate 
+                            // Redirect to the appropriate front-end site
                             return res.redirect("http://localhost:3000".concat(req.path));
                         });
                     }
@@ -667,16 +670,8 @@ var initCACCL = function (opts) {
                             res.sendFile("".concat(buildDir_1, "/index.html"));
                         });
                     }
-                    // Serve the front-end
-                    if (thisIsDevEnvironment) {
-                        // This is development! Redirect to front-end hosted at localhost:3000
-                        app.get('/', function (req, res) {
-                            return res.redirect('http://localhost:3000');
-                        });
-                    }
-                    else {
-                    }
-                    return [2 /*return*/];
+                    // Return the express app
+                    return [2 /*return*/, app];
             }
         });
     });

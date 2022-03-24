@@ -455,56 +455,76 @@ const initCACCL = async (
       initTokenStore?: InitCACCLStore,
       disableClientSideAPI?: boolean,
     },
-    express?: {
-      app?: express.Application,
-      port?: number,
-      sessionSecret?: string,
-      cookieName?: string,
-      sessionMins?: number,
-      sessionStore?: SessionStoreType,
-      preprocessor?: (app: express.Application) => void,
-      postprocessor?: (app: express.Application) => void,
-    },
+    express?: (
+      // Either include an express app
+      | {
+        app: express.Application,
+        port: undefined,
+        sessionSecret: undefined,
+        cookieName: undefined,
+        sessionMins: undefined,
+        sessionStore: undefined,
+        preprocessor: undefined,
+        postprocessor: undefined
+      }
+      // ...OR customize the CACCL-built express app
+      | {
+        app: undefined,
+        port?: number,
+        sessionSecret?: string,
+        cookieName?: string,
+        sessionMins?: number,
+        sessionStore?: SessionStoreType,
+        preprocessor?: (app: express.Application) => void,
+        postprocessor?: (app: express.Application) => void,
+      }
+    ),
   } = {},
-): Promise<void> => {
+): Promise<express.Application> => {
   /*----------------------------------------*/
   /*                 Express                */
   /*----------------------------------------*/
 
   // Initialize the express app
-  const app = (
-    opts?.express?.app
-    ?? genExpressApp(opts)
-  );
+  let app: express.Application = opts.express?.app;
+  if (!app) {
+    genExpressApp(opts)
+  }
 
   // Add cross-origin handler for development mode
   if (thisIsDevEnvironment) {
-    app.use((req, res, next) => {
-      res.setHeader(
-        'Access-Control-Allow-Origin',
-        'http://localhost:3000',
-      );
-      res.setHeader(
-        'Access-Control-Allow-Methods',
-        'PUT, POST, GET, DELETE, OPTIONS',
-      );
-      res.setHeader(
-        'Access-Control-Allow-Credentials',
-        'true',
-      );
-      res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept',
-      );
-      res.setHeader(
-        'Access-Control-Request-Headers',
-        '*',
-      );
-      if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
-      }
-      next();
-    });
+    app.use(
+      (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ) => {
+        res.setHeader(
+          'Access-Control-Allow-Origin',
+          'http://localhost:3000',
+        );
+        res.setHeader(
+          'Access-Control-Allow-Methods',
+          'PUT, POST, GET, DELETE, OPTIONS',
+        );
+        res.setHeader(
+          'Access-Control-Allow-Credentials',
+          'true',
+        );
+        res.setHeader(
+          'Access-Control-Allow-Headers',
+          'Origin, X-Requested-With, Content-Type, Accept',
+        );
+        res.setHeader(
+          'Access-Control-Request-Headers',
+          '*',
+        );
+        if (req.method === 'OPTIONS') {
+          return res.sendStatus(200);
+        }
+        next();
+      },
+    );
   }
 
   // Call express app preprocessor
@@ -622,7 +642,7 @@ const initCACCL = async (
    */
   app.get(
     CACCL_PATHS.STATUS,
-    async (req, res) => {
+    async (req: express.Request, res: express.Response) => {
       // Get status
       try {
         const status = await getStatus(req);
@@ -660,7 +680,7 @@ const initCACCL = async (
    */
   app.post(
     CACCL_PATHS.HANDLE_PASSBACK,
-    async (req, res) => {
+    async (req: express.Request, res: express.Response) => {
       try {
         // Get info from request body
         const text = (
@@ -737,8 +757,8 @@ const initCACCL = async (
     // Redirect all traffic to react development port
     app.get(
       '*',
-      (req, res) => {
-        // Redirect to the appropriate 
+      (req: express.Request, res: express.Response) => {
+        // Redirect to the appropriate front-end site
         return res.redirect(`http://localhost:3000${req.path}`);
       },
     );
@@ -752,21 +772,14 @@ const initCACCL = async (
     // Send frontend
     app.get(
       '*',
-      (req, res) => {
+      (req: express.Request, res: express.Response) => {
         res.sendFile(`${buildDir}/index.html`);
       },
     );
   }
 
-  // Serve the front-end
-  if (thisIsDevEnvironment) {
-    // This is development! Redirect to front-end hosted at localhost:3000
-    app.get('/', (req, res) => {
-      return res.redirect('http://localhost:3000');
-    });
-  } else {
-    
-  }
+  // Return the express app
+  return app;
 };
 
 /*------------------------------------------------------------------------*/
