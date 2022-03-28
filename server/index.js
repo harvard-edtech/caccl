@@ -467,7 +467,7 @@ var initCACCL = function (opts) {
                 case 0:
                     app = (_c = opts.express) === null || _c === void 0 ? void 0 : _c.app;
                     if (!app) {
-                        (0, genExpressApp_1.default)(opts);
+                        app = (0, genExpressApp_1.default)(opts);
                     }
                     // Add cross-origin handler for development mode
                     if (thisIsDevEnvironment) {

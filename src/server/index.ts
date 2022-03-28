@@ -488,7 +488,7 @@ const initCACCL = async (
   // Initialize the express app
   let app: express.Application = opts.express?.app;
   if (!app) {
-    genExpressApp(opts)
+    app = genExpressApp(opts);
   }
 
   // Add cross-origin handler for development mode
