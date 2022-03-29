@@ -559,7 +559,7 @@ See below on how to use sendRequest.
 
 ### On the client:
 
-Import `redirectToAuth`:
+Import `sendRequest`:
 
 ```ts
 import { sendRequest } from 'caccl/client';
