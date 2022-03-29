@@ -597,7 +597,7 @@ const response = await sendRequest({
 });
 ```
 
-Independent of the method of request, you can include an object containing parameters. These are send as either the body or query (depending on the method) and each value is stringified. If you need to send a JSON object as a parameter value, `JSON.stringify` it and then `JSON.parse` it on the other end. Include parameters as `params`:
+Independent of the method of request, you can include an object containing parameters. These are sent as either the body or query (depending on the method) and each value is stringified. If you need to send a JSON object as a parameter value, `JSON.stringify` it and then `JSON.parse` it on the other end. Include parameters as `params`:
 
 ```ts
 const response = await sendRequest({
