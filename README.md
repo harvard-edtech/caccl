@@ -145,7 +145,13 @@ From the top level of your project, create a `/config/devEnvironment.json` file 
 If your app has any custom parameters that you want to include, add them in a `customParams` map:
 
 ```ts
-
+{
+  ...
+  "customParams": {
+    "name": "value"
+    ...
+  }
+}
 ```
 
 ### Done!
@@ -556,7 +562,7 @@ See below on how to use sendRequest.
 Import `redirectToAuth`:
 
 ```ts
-import { redirectToAuth } from 'caccl/client';
+import { sendRequest } from 'caccl/client';
 ```
 
 See below on how to use sendRequest.
@@ -591,7 +597,7 @@ const response = await sendRequest({
 });
 ```
 
-Independent of the method of request, you can include an object of parameters. These are send as either the body or query (depending on the method) and each value is stringified. If you need to send a JSON object as a parameter value, `JSON.stringify` it and then `JSON.parse` it on the other end. Include parameters as `params`:
+Independent of the method of request, you can include an object containing parameters. These are send as either the body or query (depending on the method) and each value is stringified. If you need to send a JSON object as a parameter value, `JSON.stringify` it and then `JSON.parse` it on the other end. Include parameters as `params`:
 
 ```ts
 const response = await sendRequest({
