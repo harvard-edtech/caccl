@@ -755,12 +755,21 @@ const initCACCL = async (
     console.log('Server running in development mode. This is not safe for production use.');
 
     // Redirect all traffic to react development port
-    app.get(
-      '*',
-      (req: express.Request, res: express.Response) => {
-        // Redirect to the appropriate front-end site
-        return res.redirect(`http://localhost:3000${req.path}`);
+    // (delay so server can add routes)
+    setTimeout(
+      () => {
+        app.get(
+          '*',
+          (
+            req: express.Request,
+            res: express.Response,
+          ) => {
+            // Redirect to the appropriate front-end site
+            return res.redirect(`http://localhost:3000${req.path}`);
+          },
+        );
       },
+      2000,
     );
   } else {
     // This is production! Serve the build directory

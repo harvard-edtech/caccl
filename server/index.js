@@ -656,10 +656,13 @@ var initCACCL = function (opts) {
                         // Print a notice
                         console.log('Server running in development mode. This is not safe for production use.');
                         // Redirect all traffic to react development port
-                        app.get('*', function (req, res) {
-                            // Redirect to the appropriate front-end site
-                            return res.redirect("http://localhost:3000".concat(req.path));
-                        });
+                        // (delay so server can add routes)
+                        setTimeout(function () {
+                            app.get('*', function (req, res) {
+                                // Redirect to the appropriate front-end site
+                                return res.redirect("http://localhost:3000".concat(req.path));
+                            });
+                        }, 2000);
                     }
                     else {
                         buildDir_1 = "".concat(initialWorkingDirectory, "/client/build");
