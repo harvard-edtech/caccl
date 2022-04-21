@@ -51,11 +51,18 @@ var genExpressApp = function (opts) {
     // Add body parsing
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: true }));
+    // Create cookie settings
+    var cookie = {
+        maxAge: (sessionMins * 60000),
+    };
+    // Add dev settings for cookie
+    if (thisIsDevEnvironment) {
+        cookie.sameSite = 'none';
+        cookie.secure = true;
+    }
     // Add express session
     app.use((0, express_session_1.default)({
-        cookie: {
-            maxAge: (sessionMins * 60000),
-        },
+        cookie: cookie,
         store: sessionStore,
         resave: true,
         name: cookieName,

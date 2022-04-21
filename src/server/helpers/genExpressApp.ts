@@ -72,11 +72,20 @@ const genExpressApp = (
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  // Create cookie settings
+  const cookie: { [k: string]: any } = {
+    maxAge: (sessionMins * 60000),
+  };
+
+  // Add dev settings for cookie
+  if (thisIsDevEnvironment) {
+    cookie.sameSite = 'none';
+    cookie.secure = true;
+  }
+
   // Add express session
   app.use(session({
-    cookie: {
-      maxAge: (sessionMins * 60000),
-    },
+    cookie,
     store: sessionStore,
     resave: true,
     name: cookieName,
