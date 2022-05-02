@@ -747,7 +747,7 @@ If an appId is used across an entire Canvas instance (there is only one appId fo
 initCACCL({
   lti: {
     selfLaunch: {
-      hostAppId: {
+      hostAppIdMap: {
         'canvas.harvard.edu': 18934,
       },
     },
