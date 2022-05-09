@@ -40,6 +40,16 @@ if (thisIsDevEnvironment) {
 }
 
 /*------------------------------------------------------------------------*/
+/*                             Augment Session                            */
+/*------------------------------------------------------------------------*/
+
+declare module 'express-session' {
+  interface SessionData {
+    selfLaunchState: any,
+  }
+}
+
+/*------------------------------------------------------------------------*/
 /*                                 Caching                                */
 /*------------------------------------------------------------------------*/
 
@@ -87,6 +97,41 @@ const sendRequest = async (
   headers: { [k in string]: any },
 }> => {
   return cacclSendRequest(opts);
+};
+
+/*----------------------------------------*/
+/*            Self Launch State           */
+/*----------------------------------------*/
+
+/**
+ * Get current self launch state
+ * @author Gabe Abrams
+ * @param req express request instance
+ * @param [dontClear] if true, self launch state will be left until the next
+ *   time someone calls getSelfLaunchState
+ * @returns self launch state or undefined if a self launch did not recently
+ *   occur
+ */
+const getSelfLaunchState = async (
+  req: express.Request,
+  dontClear?: boolean,
+): Promise<any | undefined> => {
+  // Get self launch state
+  const selfLaunchState = (req.session as any).selfLaunchState ?? undefined;
+
+  // Clear state
+  if (!dontClear) {
+    // Delete
+    delete req.session.selfLaunchState;
+
+    // Save session
+    await new Promise((resolve) => {
+      req.session.save(resolve);
+    });
+  }
+
+  // Return self launch state
+  return selfLaunchState;
 };
 
 /*----------------------------------------*/
@@ -343,20 +388,21 @@ const redirectToAuth = (res: express.Response) => {
  *   self-launch is enabled via CACCL on the server.
  * @author Gabe Abrams
  * @param opts object containing all arguments
+ * @param opts.req express request object
  * @param opts.res express response object
  * @param opts.courseId the Canvas id of the course to launch from
  * @param [opts.canvasHost=defaultCanvasHost] host of the
  *   Canvas instance containing the course to launch from
  * @param [opts.appId=look up appId] id for this app as it is installed in
  *   Canvas in the course
- * @param [selfLaunchState] self launch state to add to launchInfo
- *   so you can keep track of state through the self launch process. This
- *   object will appear at launchInfo.selfLaunchState. Must be JSONifiable.
- *   Note: this information will be passed in the URL, so it should not
- *   be sensitive data.
+ * @param [selfLaunchState='self launch occurred with no state passed in'] self
+ *   launch state to pass through (retrievable via getSelfLaunchState function).
+ *   This is useful if you need to keep track of state through the self launch
+ *   process. Must be JSONifiable.
  */
 const redirectToSelfLaunch = (
   opts: {
+    req: express.Request,
     res: express.Response,
     courseId: number,
     canvasHost?: string,
@@ -364,6 +410,16 @@ const redirectToSelfLaunch = (
     selfLaunchState?: any,
   },
 ) => {
+  // Store self launch state
+  opts.req.session.selfLaunchState = (
+    opts.selfLaunchState
+    ?? 'self launch occurred with no state passed in'
+  );
+
+  // Save state asynchronously
+  opts.req.session.save();
+  
+  // Redirect user
   return opts.res.redirect(getSelfLaunchURL({
     ...opts,
     appId: (
@@ -802,6 +858,7 @@ export {
   getAPI,
   redirectToAuth,
   redirectToSelfLaunch,
+  getSelfLaunchState,
 };
 
 export default initCACCL;

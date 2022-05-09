@@ -73,7 +73,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
+exports.getSelfLaunchState = exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
 // Import libs
 var express_1 = __importDefault(require("express"));
 // Import caccl libs
@@ -131,6 +131,43 @@ var sendRequest = function (opts) { return __awaiter(void 0, void 0, void 0, fun
     });
 }); };
 exports.sendRequest = sendRequest;
+/*----------------------------------------*/
+/*            Self Launch State           */
+/*----------------------------------------*/
+/**
+ * Get current self launch state
+ * @author Gabe Abrams
+ * @param req express request instance
+ * @param [dontClear] if true, self launch state will be left until the next
+ *   time someone calls getSelfLaunchState
+ * @returns self launch state or undefined if a self launch did not recently
+ *   occur
+ */
+var getSelfLaunchState = function (req, dontClear) { return __awaiter(void 0, void 0, void 0, function () {
+    var selfLaunchState;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                selfLaunchState = (_a = req.session.selfLaunchState) !== null && _a !== void 0 ? _a : undefined;
+                if (!!dontClear) return [3 /*break*/, 2];
+                // Delete
+                delete req.session.selfLaunchState;
+                // Save session
+                return [4 /*yield*/, new Promise(function (resolve) {
+                        req.session.save(resolve);
+                    })];
+            case 1:
+                // Save session
+                _b.sent();
+                _b.label = 2;
+            case 2: 
+            // Return self launch state
+            return [2 /*return*/, selfLaunchState];
+        }
+    });
+}); };
+exports.getSelfLaunchState = getSelfLaunchState;
 /*----------------------------------------*/
 /*             Status Checker             */
 /*----------------------------------------*/
@@ -371,19 +408,25 @@ exports.redirectToAuth = redirectToAuth;
  *   self-launch is enabled via CACCL on the server.
  * @author Gabe Abrams
  * @param opts object containing all arguments
+ * @param opts.req express request object
  * @param opts.res express response object
  * @param opts.courseId the Canvas id of the course to launch from
  * @param [opts.canvasHost=defaultCanvasHost] host of the
  *   Canvas instance containing the course to launch from
  * @param [opts.appId=look up appId] id for this app as it is installed in
  *   Canvas in the course
- * @param [selfLaunchState] self launch state to add to launchInfo
- *   so you can keep track of state through the self launch process. This
- *   object will appear at launchInfo.selfLaunchState. Must be JSONifiable.
- *   Note: this information will be passed in the URL, so it should not
- *   be sensitive data.
+ * @param [selfLaunchState='self launch occurred with no state passed in'] self
+ *   launch state to pass through (retrievable via getSelfLaunchState function).
+ *   This is useful if you need to keep track of state through the self launch
+ *   process. Must be JSONifiable.
  */
 var redirectToSelfLaunch = function (opts) {
+    var _a;
+    // Store self launch state
+    opts.req.session.selfLaunchState = ((_a = opts.selfLaunchState) !== null && _a !== void 0 ? _a : 'self launch occurred with no state passed in');
+    // Save state asynchronously
+    opts.req.session.save();
+    // Redirect user
     return opts.res.redirect((0, caccl_lti_1.getSelfLaunchURL)(__assign(__assign({}, opts), { appId: (thisIsDevEnvironment
             ? CACCL_SIM_TOOL_ID_1.default
             : opts.appId) })));

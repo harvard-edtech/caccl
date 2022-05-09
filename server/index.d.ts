@@ -7,6 +7,11 @@ import InstallationCredentials from 'caccl-lti/lib/shared/types/InstallationCred
 import SelfLaunchConfig from 'caccl-lti/lib/shared/types/SelfLaunchConfig';
 import CACCLStatus from './shared/types/CACCLStatus';
 import ServerPassbackRequest from './shared/types/ServerPassbackRequest';
+declare module 'express-session' {
+    interface SessionData {
+        selfLaunchState: any;
+    }
+}
 /**
  * Send a request to another server
  * @author Gabe Abrams
@@ -40,6 +45,16 @@ declare const sendRequest: (opts: {
         [x: string]: any;
     };
 }>;
+/**
+ * Get current self launch state
+ * @author Gabe Abrams
+ * @param req express request instance
+ * @param [dontClear] if true, self launch state will be left until the next
+ *   time someone calls getSelfLaunchState
+ * @returns self launch state or undefined if a self launch did not recently
+ *   occur
+ */
+declare const getSelfLaunchState: (req: express.Request, dontClear?: boolean) => Promise<any | undefined>;
 /**
  * Get CACCL status from the server
  * @author Gabe Abrams
@@ -94,19 +109,20 @@ declare const redirectToAuth: (res: express.Response) => void;
  *   self-launch is enabled via CACCL on the server.
  * @author Gabe Abrams
  * @param opts object containing all arguments
+ * @param opts.req express request object
  * @param opts.res express response object
  * @param opts.courseId the Canvas id of the course to launch from
  * @param [opts.canvasHost=defaultCanvasHost] host of the
  *   Canvas instance containing the course to launch from
  * @param [opts.appId=look up appId] id for this app as it is installed in
  *   Canvas in the course
- * @param [selfLaunchState] self launch state to add to launchInfo
- *   so you can keep track of state through the self launch process. This
- *   object will appear at launchInfo.selfLaunchState. Must be JSONifiable.
- *   Note: this information will be passed in the URL, so it should not
- *   be sensitive data.
+ * @param [selfLaunchState='self launch occurred with no state passed in'] self
+ *   launch state to pass through (retrievable via getSelfLaunchState function).
+ *   This is useful if you need to keep track of state through the self launch
+ *   process. Must be JSONifiable.
  */
 declare const redirectToSelfLaunch: (opts: {
+    req: express.Request;
     res: express.Response;
     courseId: number;
     canvasHost?: string;
@@ -209,5 +225,5 @@ declare const initCACCL: (opts?: {
         postprocessor?: (app: express.Application) => void;
     };
 }) => Promise<express.Application>;
-export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, };
+export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, getSelfLaunchState, };
 export default initCACCL;
