@@ -36,7 +36,7 @@ const genExpressApp = (
       sessionMins?: number,
       sessionStore?: SessionStoreType,
       preprocessor?: (app: express.Application) => void,
-      behindReverseProxy?: boolean
+      tlsReverseProxy?: boolean
     },
   },
 ): express.Application => {
@@ -67,7 +67,7 @@ const genExpressApp = (
       checkPeriod: (sessionMins * 60000),
     })
   );
-  const tlsReverseProxy = opts.express?.behindReverseProxy || "TLS_REVERSE_PROXY" in process.env;
+  const tlsReverseProxy = opts.express?.tlsReverseProxy || "TLS_REVERSE_PROXY" in process.env;
 
   // Initialize express
   const app = express();
@@ -86,7 +86,6 @@ const genExpressApp = (
     cookie.sameSite = 'none';
     cookie.secure = true;
     if (tlsReverseProxy) {
-    // TODO: Remove
       console.log("Running in TLS Reverse Proxy mode");
       app.set('trust proxy', 1);
     }

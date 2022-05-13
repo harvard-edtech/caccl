@@ -28,7 +28,7 @@ declare const genExpressApp: (opts: {
         sessionMins?: number;
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
-        behindReverseProxy?: boolean;
+        tlsReverseProxy?: boolean;
     };
 }) => express.Application;
 export default genExpressApp;

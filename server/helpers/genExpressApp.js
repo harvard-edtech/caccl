@@ -48,7 +48,7 @@ var genExpressApp = function (opts) {
         || new ((0, memorystore_1.default)(express_session_1.default))({
             checkPeriod: (sessionMins * 60000),
         }));
-    var tlsReverseProxy = ((_f = opts.express) === null || _f === void 0 ? void 0 : _f.behindReverseProxy) || "TLS_REVERSE_PROXY" in process.env;
+    var tlsReverseProxy = ((_f = opts.express) === null || _f === void 0 ? void 0 : _f.tlsReverseProxy) || "TLS_REVERSE_PROXY" in process.env;
     // Initialize express
     var app = (0, express_1.default)();
     // Add body parsing
@@ -63,7 +63,6 @@ var genExpressApp = function (opts) {
         cookie.sameSite = 'none';
         cookie.secure = true;
         if (tlsReverseProxy) {
-            // TODO: Remove
             console.log("Running in TLS Reverse Proxy mode");
             app.set('trust proxy', 1);
         }
