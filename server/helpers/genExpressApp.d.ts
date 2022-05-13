@@ -15,9 +15,9 @@ import { Store as SessionStoreType } from 'express-session';
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
- * @param [opts.express.sameSiteNone|| false]
- *   set to true to use sameSiteNone on session cookies
-* @returns initialized express app
+ * @param [opts.express.tlsReverseProxy=env.TLS_REVERSE_PROXY (any value is true) || false]
+ *   set to true to send session cookie properly when this app is behind a reverse proxy terminating TLS
+ * @returns initialized express app
  */
 declare const genExpressApp: (opts: {
     express?: {
@@ -28,7 +28,7 @@ declare const genExpressApp: (opts: {
         sessionMins?: number;
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
-        sameSiteNone?: boolean;
+        behindReverseProxy?: boolean;
     };
 }) => express.Application;
 export default genExpressApp;

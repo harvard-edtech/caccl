@@ -214,7 +214,7 @@ declare const initCACCL: (opts?: {
         sessionStore: undefined;
         preprocessor: undefined;
         postprocessor: undefined;
-        sameSiteNone: undefined;
+        tlsReverseProxy: undefined;
     } | {
         app: undefined;
         port?: number;
@@ -224,7 +224,7 @@ declare const initCACCL: (opts?: {
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
         postprocessor?: (app: express.Application) => void;
-        sameSiteNone?: boolean;
+        tlsReverseProxy?: boolean;
     };
 }) => Promise<express.Application>;
 export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, getSelfLaunchState, };

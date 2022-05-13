@@ -24,9 +24,9 @@ var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
- * @param [opts.express.sameSiteNone|| false]
- *   set to true to use sameSiteNone on session cookies
-* @returns initialized express app
+ * @param [opts.express.tlsReverseProxy=env.TLS_REVERSE_PROXY (any value is true) || false]
+ *   set to true to send session cookie properly when this app is behind a reverse proxy terminating TLS
+ * @returns initialized express app
  */
 var genExpressApp = function (opts) {
     var _a, _b, _c, _d, _e, _f;
@@ -48,7 +48,7 @@ var genExpressApp = function (opts) {
         || new ((0, memorystore_1.default)(express_session_1.default))({
             checkPeriod: (sessionMins * 60000),
         }));
-    var sameSiteNone = (_f = opts.express) === null || _f === void 0 ? void 0 : _f.sameSiteNone;
+    var tlsReverseProxy = ((_f = opts.express) === null || _f === void 0 ? void 0 : _f.behindReverseProxy) || "TLS_REVERSE_PROXY" in process.env;
     // Initialize express
     var app = (0, express_1.default)();
     // Add body parsing
@@ -59,11 +59,14 @@ var genExpressApp = function (opts) {
         maxAge: (sessionMins * 60000),
     };
     // Add dev settings for cookie
-    if (thisIsDevEnvironment || sameSiteNone) {
-        // TODO: Remove
-        console.log("Running in Cookie sameSiteNonde mode");
+    if (thisIsDevEnvironment || tlsReverseProxy) {
         cookie.sameSite = 'none';
         cookie.secure = true;
+        if (tlsReverseProxy) {
+            // TODO: Remove
+            console.log("Running in TLS Reverse Proxy mode");
+            app.set('trust proxy', 1);
+        }
     }
     // Add express session
     app.use((0, express_session_1.default)({

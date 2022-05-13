@@ -522,7 +522,7 @@ const initCACCL = async (
         sessionStore: undefined,
         preprocessor: undefined,
         postprocessor: undefined,
-        sameSiteNone: undefined
+        tlsReverseProxy: undefined
       }
       // ...OR customize the CACCL-built express app
       | {
@@ -534,7 +534,7 @@ const initCACCL = async (
         sessionStore?: SessionStoreType,
         preprocessor?: (app: express.Application) => void,
         postprocessor?: (app: express.Application) => void,
-        sameSiteNone?: boolean
+        tlsReverseProxy?: boolean
       }
     ),
   } = {},
