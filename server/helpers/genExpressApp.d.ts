@@ -26,6 +26,7 @@ declare const genExpressApp: (opts: {
         sessionMins?: number;
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
+        sameSiteNone?: boolean;
     };
 }) => express.Application;
 export default genExpressApp;

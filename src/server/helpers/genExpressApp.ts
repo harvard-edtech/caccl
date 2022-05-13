@@ -34,6 +34,7 @@ const genExpressApp = (
       sessionMins?: number,
       sessionStore?: SessionStoreType,
       preprocessor?: (app: express.Application) => void,
+      sameSiteNone?: boolean
     },
   },
 ): express.Application => {
@@ -64,6 +65,7 @@ const genExpressApp = (
       checkPeriod: (sessionMins * 60000),
     })
   );
+  const sameSiteNone = opts.express?.sameSiteNone;
 
   // Initialize express
   const app = express();
@@ -78,7 +80,7 @@ const genExpressApp = (
   };
 
   // Add dev settings for cookie
-  if (thisIsDevEnvironment) {
+  if (thisIsDevEnvironment || sameSiteNone) {
     cookie.sameSite = 'none';
     cookie.secure = true;
   }
@@ -120,7 +122,7 @@ const genExpressApp = (
         },
       );
   }
-  
+
   // Return the app
   return app;
 };

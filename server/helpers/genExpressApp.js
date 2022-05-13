@@ -27,7 +27,7 @@ var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
  * @returns initialized express app
  */
 var genExpressApp = function (opts) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     // Get opts
     var port = Number.parseInt(String(((_a = opts.express) === null || _a === void 0 ? void 0 : _a.port)
         || process.env.PORT
@@ -46,6 +46,7 @@ var genExpressApp = function (opts) {
         || new ((0, memorystore_1.default)(express_session_1.default))({
             checkPeriod: (sessionMins * 60000),
         }));
+    var sameSiteNone = (_f = opts.express) === null || _f === void 0 ? void 0 : _f.sameSiteNone;
     // Initialize express
     var app = (0, express_1.default)();
     // Add body parsing
@@ -56,7 +57,7 @@ var genExpressApp = function (opts) {
         maxAge: (sessionMins * 60000),
     };
     // Add dev settings for cookie
-    if (thisIsDevEnvironment) {
+    if (thisIsDevEnvironment || sameSiteNone) {
         cookie.sameSite = 'none';
         cookie.secure = true;
     }
