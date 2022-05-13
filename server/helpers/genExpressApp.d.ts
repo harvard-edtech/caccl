@@ -15,7 +15,9 @@ import { Store as SessionStoreType } from 'express-session';
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
- * @returns initialized express app
+ * @param [opts.express.sameSiteNone|| false]
+ *   set to true to use sameSiteNone on session cookies
+* @returns initialized express app
  */
 declare const genExpressApp: (opts: {
     express?: {

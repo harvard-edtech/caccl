@@ -418,7 +418,7 @@ const redirectToSelfLaunch = (
 
   // Save state asynchronously
   opts.req.session.save();
-  
+
   // Redirect user
   return opts.res.redirect(getSelfLaunchURL({
     ...opts,
@@ -521,7 +521,8 @@ const initCACCL = async (
         sessionMins: undefined,
         sessionStore: undefined,
         preprocessor: undefined,
-        postprocessor: undefined
+        postprocessor: undefined,
+        sameSiteNone: undefined
       }
       // ...OR customize the CACCL-built express app
       | {
@@ -533,6 +534,7 @@ const initCACCL = async (
         sessionStore?: SessionStoreType,
         preprocessor?: (app: express.Application) => void,
         postprocessor?: (app: express.Application) => void,
+        sameSiteNone?: boolean
       }
     ),
   } = {},

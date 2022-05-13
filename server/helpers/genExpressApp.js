@@ -24,7 +24,9 @@ var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
- * @returns initialized express app
+ * @param [opts.express.sameSiteNone|| false]
+ *   set to true to use sameSiteNone on session cookies
+* @returns initialized express app
  */
 var genExpressApp = function (opts) {
     var _a, _b, _c, _d, _e, _f;
@@ -58,6 +60,8 @@ var genExpressApp = function (opts) {
     };
     // Add dev settings for cookie
     if (thisIsDevEnvironment || sameSiteNone) {
+        // TODO: Remove
+        console.log("Running in Cookie sameSiteNonde mode");
         cookie.sameSite = 'none';
         cookie.secure = true;
     }
