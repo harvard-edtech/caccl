@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.6
+
+Added support for api scopes. See readme section called "Add API Scopes"
+
 ## 2.0.0
 
 Entirety of CACCL has been redesigned with typescript. Some endpoints have been removed to reduce complexity. Automatic caching has also been removed. New features have been added including the ability for a CACCL-based app to launch itself via Canvas.
