@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.7
+
+Added new API functions to hide and show apps in nav (api.course.app.showInNav and api.course.app.hideFromNav), added docs for already-existing functions for the current user (api.user.self).
+
 ## 2.0.6
 
 Added support for api scopes. See readme section called "Add API Scopes"
