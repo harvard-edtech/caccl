@@ -477,6 +477,9 @@ const redirectToSelfLaunch = (
  * @param [opts.api.disableClientSideAPI] if true, do not allow the client
  *   to send Canvas API requests on behalf of the current user's auth
  *   credentials
+ * @param [opts.api.scopes] list of scope strings
+ *   (e.g. url:GET|/api/v1/courses). These scopes will be included
+ *   in all authorization requests
  * @param [opts.express] object containing all express configuration params.
  *   If excluded, express is initialized with all defaults
  * @param [opts.express.app] manually-initialized express app that uses
@@ -510,6 +513,7 @@ const initCACCL = async (
       developerCredentials?: DeveloperCredentials,
       initTokenStore?: InitCACCLStore,
       disableClientSideAPI?: boolean,
+      scopes?: string[],
     },
     express?: (
       // Either include an express app

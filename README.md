@@ -97,6 +97,22 @@ initCACCL({
 });
 ```
 
+#### III. Add API Scopes
+
+Sometimes, universities and schools limit the API scopes that apps are allowed to access. If your app is limited, you will need to include an array of scopes when initializing CACCL, included as `api.scopes`:
+
+```ts
+initCACCL({
+  api: {
+    scopes: [
+      'url:GET|/api/v1/courses',
+      'url:GET|/api/v1/courses/:course_id/assignments',
+      ...
+    ],
+  },
+});
+```
+
 ## 3. Setup Development Mode
 
 ### Create a Sandbox Course
