@@ -256,7 +256,7 @@ Import `getAPI`:
 import { getAPI } from 'caccl/server';
 ```
 
-From within a route, call `getAPI` with the express `req` instance:
+From within a route, call `getAPI` with the express `req` instance to get an instance of the api:
 
 ```ts
 const api = await getAPI({
@@ -278,7 +278,7 @@ Import `getAPI`:
 import { getAPI } from 'caccl/client';
 ```
 
-From within a route, call `getAPI`:
+Anywhere on the client, call `getAPI` to get an instance of the api:
 
 ```ts
 const api = await getAPI();
