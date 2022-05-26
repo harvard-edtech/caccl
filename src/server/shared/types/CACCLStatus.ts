@@ -1,4 +1,4 @@
-import LaunchInfo from 'caccl-lti/lib/types/LaunchInfo';
+import LaunchInfo from 'caccl-lti/lib/shared/types/LaunchInfo';
 
 /**
  * Status object passed back from CACCL status endpoint

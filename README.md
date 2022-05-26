@@ -170,6 +170,8 @@ If your app has any custom parameters that you want to include, add them in a `c
 }
 ```
 
+Remember that custom parameters cannot have capital letters. For example, `termName` is not allowed and should be replaced with simply `term` or `term_name`.
+
 ### Done!
 
 You can now head over to the [Using CACCL](https://harvard-edtech.github.io/caccl/#using-caccl) section.
@@ -214,7 +216,7 @@ If the user has launched via LTI, the status object will take the form:
 }
 ```
 
-Where `authorized` is true if the user is authorized to access the Canvas API and `launchInfo` contains all LTI launch info. See the [LaunchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/master/docs/LaunchInfo.md) for detailed information on all the properties in the `launchInfo` object.
+Where `authorized` is true if the user is authorized to access the Canvas API and `launchInfo` contains all LTI launch info. See the [LaunchInfo docs](https://github.com/harvard-edtech/caccl-lti/blob/main/docs/LaunchInfo.md) for detailed information on all the properties in the `launchInfo` object.
 
 ### On the server:
 

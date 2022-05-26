@@ -11,7 +11,7 @@ import initAPI from 'caccl-api';
 import cacclHandlePassback from 'caccl-grade-passback';
 import InitCACCLStore from 'caccl-memory-store/lib/InitCACCLStore';
 import CACCLError from 'caccl-error';
-import LaunchType from 'caccl-lti/lib/types/LaunchType';
+import LaunchType from 'caccl-lti/lib/shared/types/LaunchType';
 import API from 'caccl-api/lib/types/API';
 
 // Import types from other CACCL libs
@@ -30,6 +30,7 @@ import CACCL_SIM_TOOL_ID from './shared/constants/CACCL_SIM_TOOL_ID';
 
 // Import helpers
 import genExpressApp from './helpers/genExpressApp';
+import OutcomeDescription from 'caccl-lti/lib/shared/types/OutcomeDescription';
 
 // Check if this is a dev environment
 const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
@@ -236,9 +237,11 @@ const handlePassback = async (
       code: ErrorCode.NoAssignmentLaunch,
     });
   }
+  const outcome: OutcomeDescription = (launchInfo as any).outcome;
+
   if (
-    !launchInfo.outcome?.sourcedId
-    || !launchInfo.outcome?.url
+    !outcome.sourcedId
+    || !outcome.url
   ) {
     throw new CACCLError({
       message: 'We could not send grades back to Canvas via passback because we don\'t have the information from Canvas to send the request.',
@@ -248,10 +251,10 @@ const handlePassback = async (
 
   // Make sure Canvas can accept the request
   if (
-    (url && !launchInfo.outcome.urlSubmissionAccepted)
-    || (text && !launchInfo.outcome.textSubmissionAccepted)
-    || (score && !launchInfo.outcome.totalScoreAccepted)
-    || (submittedAt && !launchInfo.outcome.submittedAtAccepted)
+    (url && !outcome.urlSubmissionAccepted)
+    || (text && !outcome.textSubmissionAccepted)
+    || (score && !outcome.totalScoreAccepted)
+    || (submittedAt && !outcome.submittedAtAccepted)
   ) {
     // Canvas cannot accept our request
     throw new CACCLError({
@@ -288,8 +291,8 @@ const handlePassback = async (
         submittedAt: (submittedAt || (new Date()).toISOString()),
       },
       info: {
-        sourcedId: launchInfo.outcome.sourcedId,
-        url: launchInfo.outcome.url,
+        sourcedId: outcome.sourcedId,
+        url: outcome.url,
       },
       credentials: {
         consumerKey: launchInfo.consumerKey,

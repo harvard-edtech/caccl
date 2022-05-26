@@ -84,7 +84,7 @@ var caccl_authorizer_1 = __importStar(require("caccl-authorizer"));
 var caccl_api_1 = __importDefault(require("caccl-api"));
 var caccl_grade_passback_1 = __importDefault(require("caccl-grade-passback"));
 var caccl_error_1 = __importDefault(require("caccl-error"));
-var LaunchType_1 = __importDefault(require("caccl-lti/lib/types/LaunchType"));
+var LaunchType_1 = __importDefault(require("caccl-lti/lib/shared/types/LaunchType"));
 var ErrorCode_1 = __importDefault(require("./shared/types/ErrorCode"));
 // Import shared constants
 var CACCL_PATHS_1 = __importDefault(require("./shared/constants/CACCL_PATHS"));
@@ -236,10 +236,9 @@ exports.getStatus = getStatus;
  *   an ISO 8601 formatted string
  */
 var handlePassback = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
-    var req, text, url, score, percent, submittedAt, _a, launched, launchInfo, consumerSecret, success, err_2;
-    var _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var req, text, url, score, percent, submittedAt, _a, launched, launchInfo, outcome, consumerSecret, success, err_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 req = opts.req, text = opts.text, url = opts.url, score = opts.score, percent = opts.percent, submittedAt = opts.submittedAt;
                 _a = (0, caccl_lti_1.getLaunchInfo)(req), launched = _a.launched, launchInfo = _a.launchInfo;
@@ -264,18 +263,19 @@ var handlePassback = function (opts) { return __awaiter(void 0, void 0, void 0, 
                         code: ErrorCode_1.default.NoAssignmentLaunch,
                     });
                 }
-                if (!((_b = launchInfo.outcome) === null || _b === void 0 ? void 0 : _b.sourcedId)
-                    || !((_c = launchInfo.outcome) === null || _c === void 0 ? void 0 : _c.url)) {
+                outcome = launchInfo.outcome;
+                if (!outcome.sourcedId
+                    || !outcome.url) {
                     throw new caccl_error_1.default({
                         message: 'We could not send grades back to Canvas via passback because we don\'t have the information from Canvas to send the request.',
                         code: ErrorCode_1.default.NoOutcomeInfo,
                     });
                 }
                 // Make sure Canvas can accept the request
-                if ((url && !launchInfo.outcome.urlSubmissionAccepted)
-                    || (text && !launchInfo.outcome.textSubmissionAccepted)
-                    || (score && !launchInfo.outcome.totalScoreAccepted)
-                    || (submittedAt && !launchInfo.outcome.submittedAtAccepted)) {
+                if ((url && !outcome.urlSubmissionAccepted)
+                    || (text && !outcome.textSubmissionAccepted)
+                    || (score && !outcome.totalScoreAccepted)
+                    || (submittedAt && !outcome.submittedAtAccepted)) {
                     // Canvas cannot accept our request
                     throw new caccl_error_1.default({
                         message: 'We could not send grades back to Canvas via passback because Canvas does not support all of the parameters we want to send.',
@@ -296,9 +296,9 @@ var handlePassback = function (opts) { return __awaiter(void 0, void 0, void 0, 
                         code: ErrorCode_1.default.PassbackParamNotAccepted,
                     });
                 }
-                _d.label = 1;
+                _b.label = 1;
             case 1:
-                _d.trys.push([1, 3, , 4]);
+                _b.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, (0, caccl_grade_passback_1.default)({
                         request: {
                             text: text,
@@ -308,8 +308,8 @@ var handlePassback = function (opts) { return __awaiter(void 0, void 0, void 0, 
                             submittedAt: (submittedAt || (new Date()).toISOString()),
                         },
                         info: {
-                            sourcedId: launchInfo.outcome.sourcedId,
-                            url: launchInfo.outcome.url,
+                            sourcedId: outcome.sourcedId,
+                            url: outcome.url,
                         },
                         credentials: {
                             consumerKey: launchInfo.consumerKey,
@@ -317,14 +317,14 @@ var handlePassback = function (opts) { return __awaiter(void 0, void 0, void 0, 
                         },
                     })];
             case 2:
-                success = _d.sent();
+                success = _b.sent();
                 // Force failure if handlePassback fails
                 if (!success) {
                     throw new Error();
                 }
                 return [3 /*break*/, 4];
             case 3:
-                err_2 = _d.sent();
+                err_2 = _b.sent();
                 throw new caccl_error_1.default({
                     message: 'We could not send grades back to Canvas via passback because Canvas did not accept the appropriate updates.',
                     code: ErrorCode_1.default.PassbackUnsuccessful,
