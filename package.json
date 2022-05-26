@@ -1,10 +1,10 @@
 {
   "name": "caccl",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "description": "Canvas App Complete Connection Library: an all-in-one library for connecting your app to Canvas, handling lti, access tokens, and api.",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --project ./tsconfigClient.json && tsc --project ./tsconfigServer.json && rimraf types/ && copyfiles -f node_modules/caccl-api/lib/types/*.d.ts node_modules/caccl-lti/lib/types/*.d.ts server/shared/types/*.d.ts types/"
+    "build": "tsc --project ./tsconfigClient.json && tsc --project ./tsconfigServer.json && rimraf types/ && copyfiles -f node_modules/caccl-api/lib/types/*.d.ts node_modules/caccl-api/lib/shared/types/*.d.ts node_modules/caccl-lti/lib/types/*.d.ts node_modules/caccl-lti/lib/shared/types/*.d.ts server/shared/types/*.d.ts types/"
   },
   "repository": {
     "type": "git",

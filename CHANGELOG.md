@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.12
+
+Added back shared caccl sub-project types.
+
 ## 2.0.11
 
 Fixed rare issue where launch info from an LTI request might not be JSONifiable.
