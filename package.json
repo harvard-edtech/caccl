@@ -40,7 +40,7 @@
     "caccl-grade-passback": "^2.0.2",
     "caccl-lti": "^2.0.11",
     "caccl-memory-store": "^2.0.2",
-    "caccl-send-request": "^2.0.2",
+    "caccl-send-request": "^2.0.3",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "memorystore": "^1.6.7"
