@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.19
+
+Better descriptions of caccl-lti types, main exports now include `getLaunchInfo` alias.
+
+## 2.0.18
+
+While performing Canvas course content migrations, assignment group names that already exist will not be duplicated.
+
+## 2.0.17
+
+Added support for performing Canvas course content migrations.
+
 ## 2.0.12
 
 Added back shared caccl sub-project types.

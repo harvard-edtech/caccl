@@ -13,6 +13,7 @@ import InitCACCLStore from 'caccl-memory-store/lib/InitCACCLStore';
 import CACCLError from 'caccl-error';
 import LaunchType from 'caccl-lti/lib/shared/types/LaunchType';
 import API from 'caccl-api/lib/types/API';
+import OutcomeDescription from 'caccl-lti/lib/shared/types/OutcomeDescription';
 
 // Import types from other CACCL libs
 import DeveloperCredentials from 'caccl-authorizer/lib/shared/types/DeveloperCredentials';
@@ -30,7 +31,6 @@ import CACCL_SIM_TOOL_ID from './shared/constants/CACCL_SIM_TOOL_ID';
 
 // Import helpers
 import genExpressApp from './helpers/genExpressApp';
-import OutcomeDescription from 'caccl-lti/lib/shared/types/OutcomeDescription';
 
 // Check if this is a dev environment
 const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
@@ -549,7 +549,7 @@ const initCACCL = async (
   /*----------------------------------------*/
 
   // Initialize the express app
-  let app: express.Application = opts.express?.app;
+  let app: (express.Application | undefined) = opts.express?.app;
   if (!app) {
     app = genExpressApp(opts);
   }
@@ -667,9 +667,9 @@ const initCACCL = async (
           opts.api?.developerCredentials
           // Map from environment
           ?? {
-            [process.env.DEFAULT_CANVAS_HOST]: {
-              clientId: process.env.CLIENT_ID,
-              clientSecret: process.env.CLIENT_SECRET,
+            [process.env.DEFAULT_CANVAS_HOST ?? 'localhost:8088']: {
+              clientId: String(process.env.CLIENT_ID),
+              clientSecret: String(process.env.CLIENT_SECRET),
             },
           }
         )
@@ -807,9 +807,12 @@ const initCACCL = async (
 
   // Determine initial working directory
   const initialWorkingDirectory = (
-    process.env.PWD.endsWith('/server')
-      ? process.env.PWD.substring(0, process.env.PWD.length - '/server'.length)
-      : process.env.PWD
+    String(process.env.PWD).endsWith('/server')
+      ? String(process.env.PWD).substring(
+        0,
+        String(process.env.PWD).length - '/server'.length,
+      )
+      : String(process.env.PWD)
   );
 
   // Change config for dev environment
@@ -821,7 +824,7 @@ const initCACCL = async (
     // (delay so server can add routes)
     setTimeout(
       () => {
-        app.get(
+        (app as express.Application).get(
           '*',
           (
             req: express.Request,
@@ -866,6 +869,7 @@ export {
   redirectToAuth,
   redirectToSelfLaunch,
   getSelfLaunchState,
+  getLaunchInfo,
 };
 
 export default initCACCL;

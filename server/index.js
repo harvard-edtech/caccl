@@ -73,12 +73,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSelfLaunchState = exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
+exports.getLaunchInfo = exports.getSelfLaunchState = exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
 // Import libs
 var express_1 = __importDefault(require("express"));
 // Import caccl libs
 var caccl_send_request_1 = __importDefault(require("caccl-send-request"));
 var caccl_lti_1 = __importStar(require("caccl-lti"));
+Object.defineProperty(exports, "getLaunchInfo", { enumerable: true, get: function () { return caccl_lti_1.getLaunchInfo; } });
 var caccl_api_forwarder_1 = __importDefault(require("caccl-api-forwarder"));
 var caccl_authorizer_1 = __importStar(require("caccl-authorizer"));
 var caccl_api_1 = __importDefault(require("caccl-api"));
@@ -507,9 +508,9 @@ var initCACCL = function (opts) {
     return __awaiter(void 0, void 0, void 0, function () {
         var app, expressAppPreprocessor, installationCredentials, developerCredentials, disableClientSideAPI, initialWorkingDirectory, buildDir_1;
         var _a, _b;
-        var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-        return __generator(this, function (_q) {
-            switch (_q.label) {
+        var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        return __generator(this, function (_r) {
+            switch (_r.label) {
                 case 0:
                     app = (_c = opts.express) === null || _c === void 0 ? void 0 : _c.app;
                     if (!app) {
@@ -558,7 +559,7 @@ var initCACCL = function (opts) {
                                 || !authEnabled), app: app, installationCredentials: installationCredentials }))];
                 case 1:
                     // Initialize LTI
-                    _q.sent();
+                    _r.sent();
                     // Store installation credentials for later
                     mostRecentInstallationCreds = installationCredentials;
                     if (!authEnabled) return [3 /*break*/, 3];
@@ -572,23 +573,23 @@ var initCACCL = function (opts) {
                         : (
                         // Passed in map
                         (_m = (_l = opts.api) === null || _l === void 0 ? void 0 : _l.developerCredentials) !== null && _m !== void 0 ? _m : (_b = {},
-                            _b[process.env.DEFAULT_CANVAS_HOST] = {
-                                clientId: process.env.CLIENT_ID,
-                                clientSecret: process.env.CLIENT_SECRET,
+                            _b[(_o = process.env.DEFAULT_CANVAS_HOST) !== null && _o !== void 0 ? _o : 'localhost:8088'] = {
+                                clientId: String(process.env.CLIENT_ID),
+                                clientSecret: String(process.env.CLIENT_SECRET),
                             },
                             _b)));
                     // Initialize auth
                     return [4 /*yield*/, (0, caccl_authorizer_1.default)(__assign(__assign({}, opts === null || opts === void 0 ? void 0 : opts.api), { app: app, developerCredentials: developerCredentials }))];
                 case 2:
                     // Initialize auth
-                    _q.sent();
-                    disableClientSideAPI = !!((_o = opts === null || opts === void 0 ? void 0 : opts.api) === null || _o === void 0 ? void 0 : _o.disableClientSideAPI);
+                    _r.sent();
+                    disableClientSideAPI = !!((_p = opts === null || opts === void 0 ? void 0 : opts.api) === null || _p === void 0 ? void 0 : _p.disableClientSideAPI);
                     // Initialize auth forwarder
                     if (!disableClientSideAPI) {
                         // Client-side API is enabled. Add forwarder
                         (0, caccl_api_forwarder_1.default)({ app: app });
                     }
-                    _q.label = 3;
+                    _r.label = 3;
                 case 3:
                     /*----------------------------------------*/
                     /*          Server-side Endpoints         */
@@ -691,12 +692,12 @@ var initCACCL = function (opts) {
                     /*              React Client              */
                     /*----------------------------------------*/
                     // Run postprocessor first
-                    if ((_p = opts === null || opts === void 0 ? void 0 : opts.express) === null || _p === void 0 ? void 0 : _p.postprocessor) {
+                    if ((_q = opts === null || opts === void 0 ? void 0 : opts.express) === null || _q === void 0 ? void 0 : _q.postprocessor) {
                         opts.express.postprocessor(app);
                     }
-                    initialWorkingDirectory = (process.env.PWD.endsWith('/server')
-                        ? process.env.PWD.substring(0, process.env.PWD.length - '/server'.length)
-                        : process.env.PWD);
+                    initialWorkingDirectory = (String(process.env.PWD).endsWith('/server')
+                        ? String(process.env.PWD).substring(0, String(process.env.PWD).length - '/server'.length)
+                        : String(process.env.PWD));
                     // Change config for dev environment
                     if (thisIsDevEnvironment) {
                         // Print a notice

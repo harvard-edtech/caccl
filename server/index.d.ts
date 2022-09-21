@@ -1,5 +1,6 @@
 import express from 'express';
 import { Store as SessionStoreType } from 'express-session';
+import { getLaunchInfo } from 'caccl-lti';
 import InitCACCLStore from 'caccl-memory-store/lib/InitCACCLStore';
 import API from 'caccl-api/lib/types/API';
 import DeveloperCredentials from 'caccl-authorizer/lib/shared/types/DeveloperCredentials';
@@ -229,5 +230,5 @@ declare const initCACCL: (opts?: {
         postprocessor?: (app: express.Application) => void;
     };
 }) => Promise<express.Application>;
-export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, getSelfLaunchState, };
+export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, getSelfLaunchState, getLaunchInfo, };
 export default initCACCL;
