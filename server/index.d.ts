@@ -229,6 +229,6 @@ declare const initCACCL: (opts?: {
         preprocessor?: (app: express.Application) => void;
         postprocessor?: (app: express.Application) => void;
     };
-}) => Promise<express.Application>;
+}) => Promise<void>;
 export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, getSelfLaunchState, getLaunchInfo, };
 export default initCACCL;

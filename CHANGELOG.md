@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.0
+
+Breaking change: server-side `initCACCL` no longer returns an express app, forcing programmers to effectively use express preprocessor and postprocessor functions. If you need a copy of the express app, simply add an `express.postprocessor` or `express.preprocessor` function to the arguments passed into `initCACCL`.
+
+Also, added self-launch support for server infrastructure that externally uses ssl while communication to the app itself is non-ssl.
+
 ## 2.0.20
 
 Now allows users to exclude optional express arguments altogether when initializing CACCL. Previously, those express arguments would need to be included as `undefined`.

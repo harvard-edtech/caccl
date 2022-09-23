@@ -720,8 +720,7 @@ var initCACCL = function (opts) {
                             res.sendFile("".concat(buildDir_1, "/index.html"));
                         });
                     }
-                    // Return the express app
-                    return [2 /*return*/, app];
+                    return [2 /*return*/];
             }
         });
     });
