@@ -212,15 +212,15 @@ declare const initCACCL: (opts?: {
     };
     express?: {
         app: express.Application;
-        port: undefined;
-        sessionSecret: undefined;
-        cookieName: undefined;
-        sessionMins: undefined;
-        sessionStore: undefined;
-        preprocessor: undefined;
-        postprocessor: undefined;
+        port?: undefined;
+        sessionSecret?: undefined;
+        cookieName?: undefined;
+        sessionMins?: undefined;
+        sessionStore?: undefined;
+        preprocessor?: undefined;
+        postprocessor?: undefined;
     } | {
-        app: undefined;
+        app?: undefined;
         port?: number;
         sessionSecret?: string;
         cookieName?: string;

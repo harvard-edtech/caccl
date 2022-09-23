@@ -522,17 +522,17 @@ const initCACCL = async (
       // Either include an express app
       | {
         app: express.Application,
-        port: undefined,
-        sessionSecret: undefined,
-        cookieName: undefined,
-        sessionMins: undefined,
-        sessionStore: undefined,
-        preprocessor: undefined,
-        postprocessor: undefined
+        port?: undefined,
+        sessionSecret?: undefined,
+        cookieName?: undefined,
+        sessionMins?: undefined,
+        sessionStore?: undefined,
+        preprocessor?: undefined,
+        postprocessor?: undefined,
       }
       // ...OR customize the CACCL-built express app
       | {
-        app: undefined,
+        app?: undefined,
         port?: number,
         sessionSecret?: string,
         cookieName?: string,
