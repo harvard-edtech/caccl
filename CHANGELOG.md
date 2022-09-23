@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.20
+
+Now allows users to exclude optional express arguments altogether when initializing CACCL. Previously, those express arguments would need to be included as `undefined`.
+
 ## 2.0.19
 
 Better descriptions of caccl-lti types, main exports now include `getLaunchInfo` alias.
