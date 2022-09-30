@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.1
+
+Allow including a custom server host in client sendRequest calls, but defaults to caccl-defined server host (no change required to existing code).
+
 ## 2.1.0
 
 Breaking change: server-side `initCACCL` no longer returns an express app, forcing programmers to effectively use express preprocessor and postprocessor functions. If you need a copy of the express app, simply add an `express.postprocessor` or `express.preprocessor` function to the arguments passed into `initCACCL`.

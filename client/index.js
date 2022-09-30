@@ -84,13 +84,16 @@ var serverHost = (thisIsDevEnvironment
  *   one level of object nesting (values that are objects must be stringified
  *   using JSON.stringify and then parsed on the server)
  * @param [opts.header] object containing additional headers to include
+ * @param [opts.host=server host] custom hostname to send requests to
+ *   (if not the caccl-defined server host)
  * @param [opts.numRetries=3] number of times to retry the request if a network
  *   error occurs
  * @returns response object
  */
 var sendRequest = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, (0, caccl_send_request_1.default)(__assign(__assign({}, opts), { host: serverHost }))];
+    var _a;
+    return __generator(this, function (_b) {
+        return [2 /*return*/, (0, caccl_send_request_1.default)(__assign(__assign({}, opts), { host: ((_a = opts.host) !== null && _a !== void 0 ? _a : serverHost) }))];
     });
 }); };
 exports.sendRequest = sendRequest;

@@ -11,6 +11,8 @@ import ClientPassbackRequest from './shared/types/ClientPassbackRequest';
  *   one level of object nesting (values that are objects must be stringified
  *   using JSON.stringify and then parsed on the server)
  * @param [opts.header] object containing additional headers to include
+ * @param [opts.host=server host] custom hostname to send requests to
+ *   (if not the caccl-defined server host)
  * @param [opts.numRetries=3] number of times to retry the request if a network
  *   error occurs
  * @returns response object
@@ -25,6 +27,7 @@ declare const sendRequest: (opts: {
         [x: string]: any;
     };
     numRetries?: number;
+    host?: string;
 }) => Promise<{
     body: any;
     status: number;

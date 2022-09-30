@@ -43,6 +43,8 @@ const serverHost = (
  *   one level of object nesting (values that are objects must be stringified
  *   using JSON.stringify and then parsed on the server)
  * @param [opts.header] object containing additional headers to include
+ * @param [opts.host=server host] custom hostname to send requests to
+ *   (if not the caccl-defined server host)
  * @param [opts.numRetries=3] number of times to retry the request if a network
  *   error occurs
  * @returns response object
@@ -54,6 +56,7 @@ const sendRequest = async (
     params?: { [k in string]: any },
     headers?: { [k in string]: any },
     numRetries?: number,
+    host?: string,
   },
 ): Promise<{
   body: any,
@@ -62,7 +65,7 @@ const sendRequest = async (
 }> => {
   return cacclSendRequest({
     ...opts,
-    host: serverHost,
+    host: (opts.host ?? serverHost),
   });
 };
 
@@ -138,7 +141,7 @@ const handlePassback = async (request: ClientPassbackRequest) => {
       submittedAt: (
         typeof request.submittedAt === 'string'
           ? request.submittedAt
-          : request.submittedAt.toISOString()
+          : (request.submittedAt as any).toISOString()
       ),
     },
   });
@@ -183,7 +186,7 @@ const getAPI = async (
 ): Promise<API> => {
   // Look up in cache
   const cacheKey = JSON.stringify(opts);
-  let api: API = cachedAPIs.get(cacheKey);
+  let api: (API | undefined) = cachedAPIs.get(cacheKey);
 
   // Finish if we found a cached version of the API
   if (api) {
