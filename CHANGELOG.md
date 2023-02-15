@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.2
+
+New caccl-api endpoint for publishing/unpublishing a course.
+
 ## 2.1.1
 
 Allow including a custom server host in client sendRequest calls, but defaults to caccl-defined server host (no change required to existing code).
