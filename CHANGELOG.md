@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.3
+
+New caccl-api endpoint for publishing/unpublishing a discussion topic.
+
 ## 2.1.2
 
 New caccl-api endpoint for publishing/unpublishing a course.
