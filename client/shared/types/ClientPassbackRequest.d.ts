@@ -2,7 +2,7 @@
  * Grade passback request body
  * @author Gabe Abrams
  */
-declare type ClientPassbackRequest = {
+type ClientPassbackRequest = {
     text?: string;
     url?: string;
     score?: number;

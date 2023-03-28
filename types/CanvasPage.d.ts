@@ -1,4 +1,5 @@
 interface CanvasPage {
+    page_id: number;
     url: string;
     title: string;
     created_at: string;

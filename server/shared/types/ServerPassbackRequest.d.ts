@@ -3,7 +3,7 @@ import express from 'express';
  * Grade passback request body
  * @author Gabe Abrams
  */
-declare type ServerPassbackRequest = {
+type ServerPassbackRequest = {
     req: express.Request;
     text?: string;
     url?: string;
