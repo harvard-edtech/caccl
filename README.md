@@ -172,7 +172,7 @@ If your app has any custom parameters that you want to include, add them in a `c
 
 Remember that custom parameters cannot have capital letters. For example, `termName` is not allowed and should be replaced with simply `term` or `term_name`.
 
-Also, if your app doesn't get launched via the `/` path. This is an unusual case, but nevertheless, it is supported by `caccl`. To include custom launch paths, simply include them in a list:
+Also, we support the case where your app doesn't get launched via the `/` path. This is an unusual case, but nevertheless, it is supported by `caccl`. To include custom launch paths, simply include them in a list:
 
 ```ts
 {
