@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.5
+
+Support for custom launch paths in dev environment.
+
+## 2.1.4
+
+Small changes to page document types.
+
 ## 2.1.3
 
 New caccl-api endpoint for publishing/unpublishing a discussion topic.
