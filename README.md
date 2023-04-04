@@ -662,6 +662,8 @@ consumerKey = 'clientname-248915tjds8f';
 consumerSecret = 'fja8web7g9a9s8mue8t2b-3t7n-98asdn7f8v6as5dv76fb8a67sdtfsd-gne8g';
 ```
 
+You can either pass these values into the initializer function on the server, or you can add them as environment variables (`CONSUMER_KEY` and `CONSUMER_SECRET`).
+
 Developer credentials are created by whoever manages the Canvas instance that you're trying to integrate with. For example, if the instance for a university, try reaching out to their central IT department or Canvas admin team. If you are a 3rd party company, be prepared for your client to require a contract and security review at this point. Once you reach the appropriate person, ask them to generate a new "Developer Key" for your app, following the [How do I add a developer key for an account?](https://community.canvaslms.com/docs/DOC-12657-4214441833) instructions. Note: your `Redirect URI` should be `https://<AppHostName>/canvas/launch`.
 
 ## Build Your App
