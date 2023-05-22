@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.7
+
+Support for simpler launching of the Canvas simulator via `npm run canvas-simulator-start` instead of a direct file path call.
+
 ## 2.1.5
 
 Support for custom launch paths in dev environment.
