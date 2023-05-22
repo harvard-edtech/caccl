@@ -738,6 +738,14 @@ initCACCL({
 });
 ```
 
+### Store User API Tokens in a Database
+
+By default, when a user authorizes your app for API access, that authorization (packet containing token, expiration, refresh token) will be stored in memory. When your app is restarted or the memory is cleared, or when the user switches between multiple servers, their authorization will no longer be available and they will need to reauthorize the app.
+
+To store API authorization longer term, provide CACCL with a token store initialization function that, when called, creates a token store. Include it when calling `initCACCL` on the server: `api.initTokenStore`. The initTokenStore function must implement our [CACCLStore Initialization Function](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/InitCACCLStore.d.ts) interface, which is a function that returns a [CACCLStore](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/CACCLStore.d.ts) instance.
+
+Examples of such usage: create an `initTokenStore` function that returns a CACCLStore instance where `get` reads from a db and `set` writes to a db.
+
 ### Access API via Predefined Access Token
 
 Although we recommend using CACCL's oauth exchange process to authorize the user and then access the Canvas API on their behalf, sometimes you may already have an access token that is predefined. If this is the case, you can create your own instance of the CACCL API:
@@ -827,7 +835,7 @@ initCACCL({
 });
 ```
 
-If you include `lti.selfLaunch.adminAccessTokenMap`, CACCL will cache appIds in a store that implements our [CACCLStore](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/CACCLStore.d.ts) interface. We default to a memory-based token store, but you can provide your own store by including an `lti.selfLaunch.initAppIdStore` function that implement our [CACCLStore Initialization Function](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/InitCACCLStore.d.ts) interface. Pro tip: create your own custom store and pre-populate it with appIds (store keys take the form `${canvasHost}/${courseId}` and values are appIds).
+If you include `lti.selfLaunch.adminAccessTokenMap`, CACCL will cache appIds in a store that implements our [CACCLStore](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/CACCLStore.d.ts) interface. We default to a memory-based token store, but you can provide your own store by including an `lti.selfLaunch.initAppIdStore` function that implement our [CACCLStore Initialization Function](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/InitCACCLStore.d.ts) interface, which is a function that returns a [CACCLStore](https://github.com/harvard-edtech/caccl-memory-store/blob/main/lib/CACCLStore.d.ts) instance. Pro tip: create your own custom store and pre-populate it with appIds (store keys take the form `${canvasHost}/${courseId}` and values are appIds).
 
 ```ts
 initCACCL({
