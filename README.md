@@ -24,7 +24,7 @@ In `server/src/index.ts`, you'll find a call to `initCACCL({ ... })`. All CACCL 
 
 ### Required: Configure LTI
 
-All CACCL apps integrate with Canvas via LTI. You can think of LTI as a standardized interface between Canvas and an app that integrates with Canvas. For more info on LTI, check out the [IMS Global LTI Docs](https://www.imsglobal.org/activity/learning-tools-interoperability).
+All CACCL apps integrate with Canvas via LTI v1.1 (LTI v1.3 coming soon). You can think of LTI as a standardized interface between Canvas and an app that integrates with Canvas. For more info on LTI, check out the [IMS Global LTI Docs](https://www.imsglobal.org/activity/learning-tools-interoperability).
 
 #### I. Add Credentials
 
@@ -676,7 +676,7 @@ Once your app is built, simply run `npm run start` from the top-level directory 
 
 ## Install Your App
 
-To install your app into a course, you'll need to create an LTI configuration cartridge (XML). There are great tools online for building these XML files. Try googling "LTI XML Generator" or just use the [edu-apps xml generator](https://www.edu-apps.org/build_xml.html). Set the launch URL as `https://<AppHostName>/canvas/launch`.
+To install your app into a course, you'll need to create an LTI v1.1 (LTI v1.3 coming soon) configuration cartridge (XML). There are great tools online for building these XML files. Try googling "LTI XML Generator" or just use the [edu-apps xml generator](https://www.edu-apps.org/build_xml.html). Set the launch URL as `https://<AppHostName>/canvas/launch`.
 
 Once you have the cartridge, install your LTI app using these steps:
 
