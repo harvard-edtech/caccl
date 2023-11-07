@@ -195,6 +195,7 @@ var getMangoStore = function (opts) {
                     }
                 });
             }); })()
+                .then(callback)
                 .catch(function (err) {
                 if (callback) {
                     return callback(err);
@@ -223,6 +224,7 @@ var getMangoStore = function (opts) {
                     }
                 });
             }); })()
+                .then(callback)
                 .catch(function (err) {
                 if (callback) {
                     return callback(err);
@@ -250,6 +252,7 @@ var getMangoStore = function (opts) {
                     }
                 });
             }); })()
+                .then(callback)
                 .catch(function (err) {
                 if (callback) {
                     return callback(err);
@@ -339,7 +342,8 @@ var getMangoStore = function (opts) {
                     }
                 });
             }); })()
-                .then(callback);
+                .then(callback)
+                .catch(callback);
         };
         return MangoStore;
     }(express_session_1.Store));

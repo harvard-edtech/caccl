@@ -140,6 +140,7 @@ const getMangoStore = (
         // Insert
         await sessionCollection.insert(item);
       })()
+        .then(callback)
         .catch((err) => {
           if (callback) {
             return callback(err);
@@ -159,6 +160,7 @@ const getMangoStore = (
         // Destroy session
         await sessionCollection.delete({ sid });
       })()
+        .then(callback)
         .catch((err) => {
           if (callback) {
             return callback(err);
@@ -177,6 +179,7 @@ const getMangoStore = (
         // Destroy all sessions
         await sessionCollection.deleteAll({});
       })()
+        .then(callback)
         .catch((err) => {
           if (callback) {
             return callback(err);
@@ -246,7 +249,8 @@ const getMangoStore = (
         // Insert
         await sessionCollection.insert(item);
       })()
-        .then(callback);
+        .then(callback)
+        .catch(callback);
     }
   }
 
