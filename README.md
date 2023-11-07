@@ -722,9 +722,54 @@ initCACCL({
 });
 ```
 
-You can also include a custom [express-session](https://www.npmjs.com/package/express-session) store as `express.sessionStore`. By default, we use a non-leaking memory store.
+You can also include a custom [express-session](https://www.npmjs.com/package/express-session) store as `express.sessionStore`. By default, we use a non-leaking memory store. If you want sessions to be stored in a database, either initialize your own `sessionStore` or use a `dce-mango` collection to store sessions. If using a `dce-mango` collection, it's easy and already supported. See the section below.
 
 Finally, if there are any operations you'd like to perform on the express app after it is set up but before CACCL adds any routes to it, include an `express.preprocessor` function.
+
+#### Storing Session in a DCE-Mango Collection
+
+While initializing your `mango` collections, initialize another collection for storing sessions:
+
+```ts
+// Import caccl
+import { initSessionCollection } from 'caccl/server';
+import CACCLSessionItem from 'caccl/types/CACCLSessionItem';
+
+...
+
+// Sessions
+export const sessionCollection = (
+  initSessionCollection(Collection) as Collection<CACCLSessionItem>
+);
+```
+
+Then, when initializing caccl on the server, include the collection:
+
+```ts
+// Import session collection
+import { sessionCollection } from './helpers/mongo';
+
+...
+
+// Initialize CACCL
+initCACCL({
+  express: {
+    sessionCollection,
+  },
+});
+```
+
+Sessions are versioned with the version number in the top-level `package.json` of the project. When deploying a new version of the app, if you'd like to discard sessions from older versions of the app, include a `minSessionVersion` or a `MIN_SESSION_VERSION` environment variable (e.g. "1.2.4"). Any sessions that were last created/updated by a copy of the app with a version number strictly less than the `minSessionVersion` will be deleted the next time that session is retrieved.
+
+```ts
+// Initialize CACCL
+initCACCL({
+  express: {
+    sessionCollection,
+    minSessionVersion: '1.2.4',
+  },
+});
+```
 
 #### Provide Your Own Express App
 
