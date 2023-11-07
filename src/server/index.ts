@@ -24,6 +24,7 @@ import SelfLaunchConfig from 'caccl-lti/lib/shared/types/SelfLaunchConfig';
 import CACCLStatus from './shared/types/CACCLStatus';
 import ErrorCode from './shared/types/ErrorCode';
 import ServerPassbackRequest from './shared/types/ServerPassbackRequest';
+import SessionCollection from './shared/types/SessionCollection';
 
 // Import shared constants
 import CACCL_PATHS from './shared/constants/CACCL_PATHS';
@@ -31,6 +32,7 @@ import CACCL_SIM_TOOL_ID from './shared/constants/CACCL_SIM_TOOL_ID';
 
 // Import helpers
 import genExpressApp from './helpers/genExpressApp';
+import initSessionCollection from './helpers/initSessionCollection';
 
 // Check if this is a dev environment
 const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
@@ -498,6 +500,13 @@ const redirectToSelfLaunch = (
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
+ * @param [opts.express.sessionCollection] db collection instance to use for storing
+ *   user sessions
+ * @param [opts.express.minSessionVersion=env.MIN_SESSION_VERSION] only relevant if
+ *   using a sessionCollection. This version number is the minimum app version number
+ *   (from the top-level package.json) that will be allowed for user sessions. If a
+ *   user's session was initialized while the app's version number was older than this
+ *   value, the user's session will be destroyed
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
  * @param [opts.express.postprocessor] function to call after CACCL routes are
@@ -538,6 +547,8 @@ const initCACCL = async (
         cookieName?: string,
         sessionMins?: number,
         sessionStore?: SessionStoreType,
+        sessionCollection?: SessionCollection,
+        minSessionVersion?: string,
         preprocessor?: (app: express.Application) => void,
         postprocessor?: (app: express.Application) => void,
       }
@@ -867,6 +878,7 @@ export {
   redirectToSelfLaunch,
   getSelfLaunchState,
   getLaunchInfo,
+  initSessionCollection,
 };
 
 export default initCACCL;
