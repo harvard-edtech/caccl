@@ -73,7 +73,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLaunchInfo = exports.getSelfLaunchState = exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
+exports.initSessionCollection = exports.getLaunchInfo = exports.getSelfLaunchState = exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
 // Import libs
 var express_1 = __importDefault(require("express"));
 // Import caccl libs
@@ -92,6 +92,8 @@ var CACCL_PATHS_1 = __importDefault(require("./shared/constants/CACCL_PATHS"));
 var CACCL_SIM_TOOL_ID_1 = __importDefault(require("./shared/constants/CACCL_SIM_TOOL_ID"));
 // Import helpers
 var genExpressApp_1 = __importDefault(require("./helpers/genExpressApp"));
+var initSessionCollection_1 = __importDefault(require("./helpers/initSessionCollection"));
+exports.initSessionCollection = initSessionCollection_1.default;
 // Check if this is a dev environment
 var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
 // Force ignoring SSL issues
@@ -497,6 +499,13 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
+ * @param [opts.express.sessionCollection] db collection instance to use for storing
+ *   user sessions
+ * @param [opts.express.minSessionVersion=env.MIN_SESSION_VERSION] only relevant if
+ *   using a sessionCollection. This version number is the minimum app version number
+ *   (from the top-level package.json) that will be allowed for user sessions. If a
+ *   user's session was initialized while the app's version number was older than this
+ *   value, the user's session will be destroyed
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
  * @param [opts.express.postprocessor] function to call after CACCL routes are

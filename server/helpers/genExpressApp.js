@@ -7,6 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var express_session_1 = __importDefault(require("express-session"));
 var memorystore_1 = __importDefault(require("memorystore"));
+// Import shared helpers
+var getMangoStore_1 = __importDefault(require("./getMangoStore"));
 // Check if this is a dev environment
 var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
 /**
@@ -22,12 +24,19 @@ var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
+ * @param [opts.express.sessionCollection] db collection instance to use for storing
+ *   user sessions
+ * @param [opts.express.minSessionVersion=env.MIN_SESSION_VERSION] only relevant if
+ *   using a sessionCollection. This version number is the minimum app version number
+ *   (from the top-level package.json) that will be allowed for user sessions. If a
+ *   user's session was initialized while the app's version number was older than this
+ *   value, the user's session will be destroyed
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
  * @returns initialized express app
  */
 var genExpressApp = function (opts) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     // Get opts
     var port = Number.parseInt(String(((_a = opts.express) === null || _a === void 0 ? void 0 : _a.port)
         || process.env.PORT
@@ -42,7 +51,18 @@ var genExpressApp = function (opts) {
         || process.env.SESSION_MINS
         || 360 // 6 hours
     ));
-    var sessionStore = (((_e = opts.express) === null || _e === void 0 ? void 0 : _e.sessionStore)
+    var sessionStore = (
+    // Full session store included
+    ((_e = opts.express) === null || _e === void 0 ? void 0 : _e.sessionStore)
+        // Session collection included
+        || (((_f = opts.express) === null || _f === void 0 ? void 0 : _f.sessionCollection)
+            ? (0, getMangoStore_1.default)({
+                sessionMins: sessionMins,
+                sessionCollection: opts.express.sessionCollection,
+                minSessionVersion: ((_h = (_g = opts.express.minSessionVersion) !== null && _g !== void 0 ? _g : process.env.MIN_SESSION_VERSION) !== null && _h !== void 0 ? _h : '0.0.0'),
+            })
+            : undefined)
+        // Create new memory store
         || new ((0, memorystore_1.default)(express_session_1.default))({
             checkPeriod: (sessionMins * 60000),
         }));
