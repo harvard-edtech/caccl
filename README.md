@@ -739,7 +739,7 @@ import CACCLSessionItem from 'caccl/types/CACCLSessionItem';
 
 // Sessions
 export const sessionCollection = (
-  initSessionCollection(Collection) as Collection<CACCLSessionItem>
+  initSessionCollection(Collection, sessionMins) as Collection<CACCLSessionItem>
 );
 ```
 
