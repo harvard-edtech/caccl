@@ -230,6 +230,33 @@ var getMangoStore = function (opts) {
             });
         };
         /**
+         * Clear all sessions
+         * @author Gabe Abrams
+         * @param callback session callback function (called with error)
+         */
+        MangoStore.prototype.clear = function (callback) {
+            var _this = this;
+            // Wrap in asynchronous function
+            (function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: 
+                        // Destroy all sessions
+                        return [4 /*yield*/, sessionCollection.deleteAll({})];
+                        case 1:
+                            // Destroy all sessions
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); })()
+                .catch(function (err) {
+                if (callback) {
+                    return callback(err);
+                }
+            });
+        };
+        /**
          * Get all sessions
          * @author Gabe Abrams
          * @param callback session callback function (called with all session datas or error)
@@ -266,13 +293,13 @@ var getMangoStore = function (opts) {
             var _this = this;
             // Wrap in asynchronous function
             (function () { return __awaiter(_this, void 0, void 0, function () {
-                var results;
+                var numSessions;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, sessionCollection.find({})];
+                        case 0: return [4 /*yield*/, sessionCollection.count({})];
                         case 1:
-                            results = _a.sent();
-                            return [2 /*return*/, results.length];
+                            numSessions = _a.sent();
+                            return [2 /*return*/, numSessions];
                     }
                 });
             }); })()

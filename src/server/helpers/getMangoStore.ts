@@ -167,6 +167,24 @@ const getMangoStore = (
     }
 
     /**
+     * Clear all sessions
+     * @author Gabe Abrams
+     * @param callback session callback function (called with error)
+     */
+    public clear(callback?: (err?: any) => void): void {
+      // Wrap in asynchronous function
+      (async () => {
+        // Destroy all sessions
+        await sessionCollection.deleteAll({});
+      })()
+        .catch((err) => {
+          if (callback) {
+            return callback(err);
+          }
+        });
+    }
+
+    /**
      * Get all sessions
      * @author Gabe Abrams
      * @param callback session callback function (called with all session datas or error)
@@ -197,8 +215,8 @@ const getMangoStore = (
       // Wrap in asynchronous function
       (async () => {
         // Look up all sessions and return them
-        const results = await sessionCollection.find({});
-        return results.length;
+        const numSessions = await sessionCollection.count({});
+        return numSessions;
       })()
         .then((num: number) => {
           return callback(null, num);
