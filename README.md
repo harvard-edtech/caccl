@@ -724,6 +724,8 @@ initCACCL({
 
 You can also include a custom [express-session](https://www.npmjs.com/package/express-session) store as `express.sessionStore`. By default, we use a non-leaking memory store. If you want sessions to be stored in a database, either initialize your own `sessionStore` or use a `dce-mango` collection to store sessions. If using a `dce-mango` collection, it's easy and already supported. See the section below.
 
+Note that if you want sessions to remain stable across servers and deploys, you'll need to set a consistent, unique, and stable `sessionSecret` and a `cookieName`, instead of letting CACCL auto-generate a random value every time the app launches.
+
 Finally, if there are any operations you'd like to perform on the express app after it is set up but before CACCL adds any routes to it, include an `express.preprocessor` function.
 
 #### Storing Session in a DCE-Mango Collection

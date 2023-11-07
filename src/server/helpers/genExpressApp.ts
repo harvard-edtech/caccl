@@ -53,11 +53,14 @@ const genExpressApp = (
   },
 ): express.Application => {
   // Get opts
-  const port = Number.parseInt(String(
-    opts.express?.port
-    || process.env.PORT
-    || 8080
-  ));
+  const port = Number.parseInt(
+    String(
+      opts.express?.port
+      || process.env.PORT
+      || 8080
+    ),
+    10,
+  );
   const sessionSecret = String(
     opts.express?.sessionSecret
     || process.env.SESSION_SECRET

@@ -40,7 +40,7 @@ var genExpressApp = function (opts) {
     // Get opts
     var port = Number.parseInt(String(((_a = opts.express) === null || _a === void 0 ? void 0 : _a.port)
         || process.env.PORT
-        || 8080));
+        || 8080), 10);
     var sessionSecret = String(((_b = opts.express) === null || _b === void 0 ? void 0 : _b.sessionSecret)
         || process.env.SESSION_SECRET
         || "session-".concat(Date.now(), "-").concat(Math.random(), "-").concat(Math.random()));
