@@ -4,6 +4,12 @@ import session from 'express-session';
 import { Store as SessionStoreType } from 'express-session';
 import MemoryStore from 'memorystore';
 
+// Import shared types
+import SessionCollection from '../shared/types/SessionCollection';
+
+// Import shared helpers
+import getMangoStore from './getMangoStore';
+
 // Check if this is a dev environment
 const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
 
@@ -20,6 +26,13 @@ const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
  * @param [opts.express.sessionMins=env.SESSION_MINS || 360] number of minutes
  *   the session should last for
  * @param [opts.express.sessionStore=memory store] express-session store
+ * @param [opts.express.sessionCollection] db collection instance to use for storing
+ *   user sessions
+ * @param [opts.express.minSessionVersion=env.MIN_SESSION_VERSION] only relevant if
+ *   using a sessionCollection. This version number is the minimum app version number
+ *   (from the top-level package.json) that will be allowed for user sessions. If a
+ *   user's session was initialized while the app's version number was older than this
+ *   value, the user's session will be destroyed
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
  * @returns initialized express app
@@ -33,16 +46,21 @@ const genExpressApp = (
       cookieName?: string,
       sessionMins?: number,
       sessionStore?: SessionStoreType,
+      sessionCollection?: SessionCollection,
+      minSessionVersion?: string,
       preprocessor?: (app: express.Application) => void,
     },
   },
 ): express.Application => {
   // Get opts
-  const port = Number.parseInt(String(
-    opts.express?.port
-    || process.env.PORT
-    || 8080
-  ));
+  const port = Number.parseInt(
+    String(
+      opts.express?.port
+      || process.env.PORT
+      || 8080
+    ),
+    10,
+  );
   const sessionSecret = String(
     opts.express?.sessionSecret
     || process.env.SESSION_SECRET
@@ -58,8 +76,24 @@ const genExpressApp = (
     || process.env.SESSION_MINS
     || 360 // 6 hours
   ));
-  const sessionStore = (
+  const sessionStore: SessionStoreType = (
+    // Full session store included
     opts.express?.sessionStore
+    // Session collection included
+    || (
+      (opts.express?.sessionCollection)
+        ? getMangoStore({
+          sessionMins,
+          sessionCollection: opts.express.sessionCollection,
+          minSessionVersion: (
+            opts.express.minSessionVersion
+            ?? process.env.MIN_SESSION_VERSION
+            ?? '0.0.0'
+          ),
+        })
+        : undefined
+    )
+    // Create new memory store
     || new (MemoryStore(session))({
       checkPeriod: (sessionMins * 60000),
     })
