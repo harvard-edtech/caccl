@@ -51,7 +51,7 @@ interface SharedLaunchInfo {
  * Type for launch info that's added to user's session
  * @author Gabe Abrams
  */
-declare type LaunchInfo = ({
+type LaunchInfo = ({
     launchType: LaunchType.Assignment;
     assignment?: AssignmentDescription;
     outcome?: OutcomeDescription;

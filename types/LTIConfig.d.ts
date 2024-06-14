@@ -6,7 +6,7 @@ import SelfLaunchConfig from './SelfLaunchConfig';
  * Config options for caccl-lti
  * @author Gabe Abrams
  */
-declare type LTIConfig = {
+type LTIConfig = {
     app: express.Application;
     installationCredentials: InstallationCredentials;
     initNonceStore?: InitCACCLStore;

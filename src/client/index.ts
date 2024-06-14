@@ -16,7 +16,7 @@ import COURSE_ID_REPLACE_WITH_CURR from './shared/constants/COURSE_ID_REPLACE_WI
 import CACCL_SIM_TOOL_ID from './shared/constants/CACCL_SIM_TOOL_ID';
 
 // Check if this is a dev environment
-const thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
+const thisIsDevEnvironment = (window?.location?.hostname === 'localhost');
 
 // Get the server's hostname
 const serverHost = (

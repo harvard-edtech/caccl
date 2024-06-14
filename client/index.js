@@ -49,6 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.redirectToSelfLaunch = exports.redirectToAuth = exports.getAPI = exports.handlePassback = exports.getStatus = exports.sendRequest = void 0;
 // Import caccl libs
@@ -63,7 +64,7 @@ var CACCL_PATHS_1 = __importDefault(require("./shared/constants/CACCL_PATHS"));
 var COURSE_ID_REPLACE_WITH_CURR_1 = __importDefault(require("./shared/constants/COURSE_ID_REPLACE_WITH_CURR"));
 var CACCL_SIM_TOOL_ID_1 = __importDefault(require("./shared/constants/CACCL_SIM_TOOL_ID"));
 // Check if this is a dev environment
-var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
+var thisIsDevEnvironment = (((_a = window === null || window === void 0 ? void 0 : window.location) === null || _a === void 0 ? void 0 : _a.hostname) === 'localhost');
 // Get the server's hostname
 var serverHost = (thisIsDevEnvironment
     ? 'localhost:8080'
