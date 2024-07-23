@@ -121,9 +121,10 @@ var authEnabled;
  * @param [opts.params] object containing body/query parameters. Only allows
  *   one level of object nesting (values that are objects must be stringified
  *   using JSON.stringify and then parsed on the server)
- * @param [opts.header] object containing additional headers to include
- * @param [opts.numRetries=3] number of times to retry the request if a network
+ * @param [opts.headers] object containing additional headers to include
+ * @param [opts.numRetries=0] number of times to retry the request if a network
  *   error occurs
+ * @param [opts.responseType=ResponseType.JSON] expected response type
  * @returns response object
  */
 var sendRequest = function (opts) { return __awaiter(void 0, void 0, void 0, function () {

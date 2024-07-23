@@ -6,6 +6,7 @@ import API from 'caccl-api/lib/types/API';
 import DeveloperCredentials from 'caccl-authorizer/lib/shared/types/DeveloperCredentials';
 import InstallationCredentials from 'caccl-lti/lib/shared/types/InstallationCredentials';
 import SelfLaunchConfig from 'caccl-lti/lib/shared/types/SelfLaunchConfig';
+import ResponseType from 'caccl-send-request/lib/types/ResponseType';
 import CACCLStatus from './shared/types/CACCLStatus';
 import ServerPassbackRequest from './shared/types/ServerPassbackRequest';
 declare module 'express-session' {
@@ -23,9 +24,10 @@ declare module 'express-session' {
  * @param [opts.params] object containing body/query parameters. Only allows
  *   one level of object nesting (values that are objects must be stringified
  *   using JSON.stringify and then parsed on the server)
- * @param [opts.header] object containing additional headers to include
- * @param [opts.numRetries=3] number of times to retry the request if a network
+ * @param [opts.headers] object containing additional headers to include
+ * @param [opts.numRetries=0] number of times to retry the request if a network
  *   error occurs
+ * @param [opts.responseType=ResponseType.JSON] expected response type
  * @returns response object
  */
 declare const sendRequest: (opts: {
@@ -39,6 +41,7 @@ declare const sendRequest: (opts: {
         [x: string]: any;
     };
     numRetries?: number;
+    responseType?: ResponseType;
 }) => Promise<{
     body: any;
     status: number;
