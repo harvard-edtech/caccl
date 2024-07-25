@@ -124,7 +124,7 @@ var authEnabled;
  * @param [opts.headers] object containing additional headers to include
  * @param [opts.numRetries=0] number of times to retry the request if a network
  *   error occurs
- * @param [opts.responseType=ResponseType.JSON] expected response type
+ * @param [opts.responseType=JSON] expected response type
  * @returns response object
  */
 var sendRequest = function (opts) { return __awaiter(void 0, void 0, void 0, function () {

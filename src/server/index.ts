@@ -19,7 +19,6 @@ import OutcomeDescription from 'caccl-lti/lib/shared/types/OutcomeDescription';
 import DeveloperCredentials from 'caccl-authorizer/lib/shared/types/DeveloperCredentials';
 import InstallationCredentials from 'caccl-lti/lib/shared/types/InstallationCredentials';
 import SelfLaunchConfig from 'caccl-lti/lib/shared/types/SelfLaunchConfig';
-import ResponseType from 'caccl-send-request/lib/types/ResponseType';
 
 // Import shared types
 import CACCLStatus from './shared/types/CACCLStatus';
@@ -82,7 +81,7 @@ let authEnabled: boolean;
  * @param [opts.headers] object containing additional headers to include
  * @param [opts.numRetries=0] number of times to retry the request if a network
  *   error occurs
- * @param [opts.responseType=ResponseType.JSON] expected response type
+ * @param [opts.responseType=JSON] expected response type
  * @returns response object
  */
 const sendRequest = async (
@@ -93,7 +92,7 @@ const sendRequest = async (
     params?: { [k in string]: any },
     headers?: { [k in string]: any },
     numRetries?: number,
-    responseType?: ResponseType,
+    responseType?: 'Text' | 'JSON',
   },
 ): Promise<{
   body: any,
