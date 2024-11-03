@@ -47,6 +47,7 @@ const serverHost = (
  *   (if not the caccl-defined server host)
  * @param [opts.numRetries=3] number of times to retry the request if a network
  *   error occurs
+ * * @param [opts.responseType=ResponseType.JSON] expected response type
  * @returns response object
  */
 const sendRequest = async (
@@ -57,6 +58,7 @@ const sendRequest = async (
     headers?: { [k in string]: any },
     numRetries?: number,
     host?: string,
+    responseType?: 'Text' | 'JSON',
   },
 ): Promise<{
   body: any,
