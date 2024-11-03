@@ -15,6 +15,7 @@ import ClientPassbackRequest from './shared/types/ClientPassbackRequest';
  *   (if not the caccl-defined server host)
  * @param [opts.numRetries=3] number of times to retry the request if a network
  *   error occurs
+ * * @param [opts.responseType=ResponseType.JSON] expected response type
  * @returns response object
  */
 declare const sendRequest: (opts: {
@@ -28,6 +29,7 @@ declare const sendRequest: (opts: {
     };
     numRetries?: number;
     host?: string;
+    responseType?: 'Text' | 'JSON';
 }) => Promise<{
     body: any;
     status: number;

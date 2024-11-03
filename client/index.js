@@ -89,6 +89,7 @@ var serverHost = (thisIsDevEnvironment
  *   (if not the caccl-defined server host)
  * @param [opts.numRetries=3] number of times to retry the request if a network
  *   error occurs
+ * * @param [opts.responseType=ResponseType.JSON] expected response type
  * @returns response object
  */
 var sendRequest = function (opts) { return __awaiter(void 0, void 0, void 0, function () {
