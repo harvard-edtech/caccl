@@ -1,4 +1,4 @@
-declare type CanvasCourseLevelParticipationData = ({
+type CanvasCourseLevelParticipationData = ({
     date: string;
     participations: number;
     views: number;

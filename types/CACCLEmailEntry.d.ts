@@ -1,4 +1,4 @@
-declare type CACCLEmailEntry = {
+type CACCLEmailEntry = {
     email: string;
     createdAt: Date;
     position: number;

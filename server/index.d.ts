@@ -32,21 +32,15 @@ declare module 'express-session' {
 declare const sendRequest: (opts: {
     host: string;
     path: string;
-    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
-    params?: {
-        [x: string]: any;
-    };
-    headers?: {
-        [x: string]: any;
-    };
+    method: ("GET" | "POST" | "DELETE" | "PUT");
+    params?: { [k in string]: any; };
+    headers?: { [k in string]: any; };
     numRetries?: number;
-    responseType?: 'Text' | 'JSON';
+    responseType?: "Text" | "JSON";
 }) => Promise<{
     body: any;
     status: number;
-    headers: {
-        [x: string]: any;
-    };
+    headers: { [k in string]: any; };
 }>;
 /**
  * Get current self launch state
@@ -212,7 +206,7 @@ declare const initCACCL: (opts?: {
         disableClientSideAPI?: boolean;
         scopes?: string[];
     };
-    express?: {
+    express?: ({
         app: express.Application;
         port?: undefined;
         sessionSecret?: undefined;
@@ -230,7 +224,7 @@ declare const initCACCL: (opts?: {
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
         postprocessor?: (app: express.Application) => void;
-    };
+    });
 }) => Promise<void>;
 export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, getSelfLaunchState, getLaunchInfo, };
 export default initCACCL;

@@ -2,7 +2,7 @@
  * Configuration for endpoint call
  * @author Gabe Abrams
  */
-declare type APIConfig = {
+type APIConfig = {
     canvasHost?: string;
     accessToken?: string;
     numRetries?: number;

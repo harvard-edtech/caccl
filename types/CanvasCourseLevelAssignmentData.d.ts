@@ -1,4 +1,4 @@
-declare type CanvasCourseLevelAssignmentData = ({
+type CanvasCourseLevelAssignmentData = ({
     assignment_id: number;
     title: string;
     points_possible?: number | null;

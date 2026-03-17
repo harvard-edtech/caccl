@@ -3,7 +3,7 @@ import APIConfig from './APIConfig';
  * Visit endpoint function type definition
  * @author Gabe Abrams
  */
-declare type VisitEndpointFunc = ((opts: {
+type VisitEndpointFunc = ((opts: {
     path: string;
     method: ('GET' | 'POST' | 'PUT' | 'DELETE');
     action: string;

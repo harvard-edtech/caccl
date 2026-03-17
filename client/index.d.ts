@@ -20,22 +20,16 @@ import ClientPassbackRequest from './shared/types/ClientPassbackRequest';
  */
 declare const sendRequest: (opts: {
     path: string;
-    method: ('GET' | 'POST' | 'DELETE' | 'PUT');
-    params?: {
-        [x: string]: any;
-    };
-    headers?: {
-        [x: string]: any;
-    };
+    method: ("GET" | "POST" | "DELETE" | "PUT");
+    params?: { [k in string]: any; };
+    headers?: { [k in string]: any; };
     numRetries?: number;
     host?: string;
-    responseType?: 'Text' | 'JSON';
+    responseType?: "Text" | "JSON";
 }) => Promise<{
     body: any;
     status: number;
-    headers: {
-        [x: string]: any;
-    };
+    headers: { [k in string]: any; };
 }>;
 /**
  * Get CACCL status from the server

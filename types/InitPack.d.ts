@@ -4,7 +4,7 @@ import VisitEndpointFunc from './VisitEndpointFunc';
  * Arguments required for initializing an endpoint category
  * @author Gabe Abrams
  */
-declare type InitPack = {
+type InitPack = {
     visitEndpoint: VisitEndpointFunc;
     api: APIStructure;
     defaultCourseId?: number;

@@ -1,4 +1,4 @@
-declare type CanvasCourseLevelStudentSummaries = ({
+type CanvasCourseLevelStudentSummaries = ({
     id: number;
     page_views?: number | null;
     page_views_level?: string | null;
