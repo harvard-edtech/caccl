@@ -505,6 +505,8 @@ const redirectToSelfLaunch = (
  * @param [opts.express.postprocessor] function to call after CACCL routes are
  *   added but before the ('*' => react app) route is added. This is great for
  *   adding other server-side routes
+ * @param [opts.express.maxRequestBodySize] maximum request body size for incoming requests.
+ *   For example, '10mb'. Defaults to the express default.
  */
 const initCACCL = async (
   opts: {
@@ -531,6 +533,7 @@ const initCACCL = async (
         sessionStore?: undefined,
         preprocessor?: undefined,
         postprocessor?: undefined,
+        maxRequestBodySize?: string,
       }
       // ...OR customize the CACCL-built express app
       | {
@@ -542,6 +545,7 @@ const initCACCL = async (
         sessionStore?: SessionStoreType,
         preprocessor?: (app: express.Application) => void,
         postprocessor?: (app: express.Application) => void,
+        maxRequestBodySize?: string,
       }
     ),
   } = {},
@@ -720,8 +724,8 @@ const initCACCL = async (
       } catch (err) {
         return res.status(500).json({
           success: false,
-          message: (err.message || 'We could not get the current user\'s status.'),
-          code: (err.code || ErrorCode.StatusFailed),
+          message: ((err as any)?.message || 'We could not get the current user\'s status.'),
+          code: ((err as any)?.code || ErrorCode.StatusFailed),
         });
       }
     },
@@ -791,8 +795,8 @@ const initCACCL = async (
       } catch (err) {
         return res.status(500).json({
           success: false,
-          message: (err.message || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
-          code: (err.code || ErrorCode.PassbackUnsuccessful),
+          message: ((err as any)?.message || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
+          code: ((err as any)?.code || ErrorCode.PassbackUnsuccessful),
         })
       }
     },
