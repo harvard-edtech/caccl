@@ -24,10 +24,12 @@ var thisIsDevEnvironment = (process.env.NODE_ENV === 'development');
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
+ * @param [opts.express.maxRequestBodySize] maximum request body size for incoming requests.
+ *   For example, '10mb'. Defaults to the express default.
  * @returns initialized express app
  */
 var genExpressApp = function (opts) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f, _g;
     // Get opts
     var port = Number.parseInt(String(((_a = opts.express) === null || _a === void 0 ? void 0 : _a.port)
         || process.env.PORT
@@ -49,8 +51,8 @@ var genExpressApp = function (opts) {
     // Initialize express
     var app = (0, express_1.default)();
     // Add body parsing
-    app.use(express_1.default.json());
-    app.use(express_1.default.urlencoded({ extended: true }));
+    app.use(express_1.default.json({ limit: (_f = opts.express) === null || _f === void 0 ? void 0 : _f.maxRequestBodySize }));
+    app.use(express_1.default.urlencoded({ extended: true, limit: (_g = opts.express) === null || _g === void 0 ? void 0 : _g.maxRequestBodySize }));
     // Create cookie settings
     var cookie = {
         maxAge: (sessionMins * 60000),

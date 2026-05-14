@@ -192,6 +192,8 @@ declare const redirectToSelfLaunch: (opts: {
  * @param [opts.express.postprocessor] function to call after CACCL routes are
  *   added but before the ('*' => react app) route is added. This is great for
  *   adding other server-side routes
+ * @param [opts.express.maxRequestBodySize] maximum request body size for incoming requests.
+ *   For example, '10mb'. Defaults to the express default.
  */
 declare const initCACCL: (opts?: {
     lti?: {
@@ -215,6 +217,7 @@ declare const initCACCL: (opts?: {
         sessionStore?: undefined;
         preprocessor?: undefined;
         postprocessor?: undefined;
+        maxRequestBodySize?: string;
     } | {
         app?: undefined;
         port?: number;
@@ -224,6 +227,7 @@ declare const initCACCL: (opts?: {
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
         postprocessor?: (app: express.Application) => void;
+        maxRequestBodySize?: string;
     });
 }) => Promise<void>;
 export { sendRequest, getStatus, handlePassback, getAPI, redirectToAuth, redirectToSelfLaunch, getSelfLaunchState, getLaunchInfo, };

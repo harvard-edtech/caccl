@@ -522,6 +522,8 @@ exports.redirectToSelfLaunch = redirectToSelfLaunch;
  * @param [opts.express.postprocessor] function to call after CACCL routes are
  *   added but before the ('*' => react app) route is added. This is great for
  *   adding other server-side routes
+ * @param [opts.express.maxRequestBodySize] maximum request body size for incoming requests.
+ *   For example, '10mb'. Defaults to the express default.
  */
 var initCACCL = function () {
     var args_1 = [];
@@ -642,8 +644,8 @@ var initCACCL = function () {
                                     err_3 = _a.sent();
                                     return [2 /*return*/, res.status(500).json({
                                             success: false,
-                                            message: (err_3.message || 'We could not get the current user\'s status.'),
-                                            code: (err_3.code || ErrorCode_1.default.StatusFailed),
+                                            message: ((err_3 === null || err_3 === void 0 ? void 0 : err_3.message) || 'We could not get the current user\'s status.'),
+                                            code: ((err_3 === null || err_3 === void 0 ? void 0 : err_3.code) || ErrorCode_1.default.StatusFailed),
                                         })];
                                 case 3: return [2 /*return*/];
                             }
@@ -705,8 +707,8 @@ var initCACCL = function () {
                                     err_4 = _a.sent();
                                     return [2 /*return*/, res.status(500).json({
                                             success: false,
-                                            message: (err_4.message || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
-                                            code: (err_4.code || ErrorCode_1.default.PassbackUnsuccessful),
+                                            message: ((err_4 === null || err_4 === void 0 ? void 0 : err_4.message) || 'An unknown error occurred while attempting to send a grade passback to Canvas.'),
+                                            code: ((err_4 === null || err_4 === void 0 ? void 0 : err_4.code) || ErrorCode_1.default.PassbackUnsuccessful),
                                         })];
                                 case 3: return [2 /*return*/];
                             }

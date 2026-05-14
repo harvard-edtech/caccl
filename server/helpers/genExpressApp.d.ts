@@ -15,6 +15,8 @@ import { Store as SessionStoreType } from 'express-session';
  * @param [opts.express.sessionStore=memory store] express-session store
  * @param [opts.express.preprocessor] function to call after express app
  *   created but before any CACCL routes are added
+ * @param [opts.express.maxRequestBodySize] maximum request body size for incoming requests.
+ *   For example, '10mb'. Defaults to the express default.
  * @returns initialized express app
  */
 declare const genExpressApp: (opts: {
@@ -26,6 +28,7 @@ declare const genExpressApp: (opts: {
         sessionMins?: number;
         sessionStore?: SessionStoreType;
         preprocessor?: (app: express.Application) => void;
+        maxRequestBodySize?: string;
     };
 }) => express.Application;
 export default genExpressApp;
