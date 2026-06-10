@@ -52,7 +52,12 @@ var genExpressApp = function (opts) {
     var app = (0, express_1.default)();
     // Add body parsing
     app.use(express_1.default.json({ limit: (_f = opts.express) === null || _f === void 0 ? void 0 : _f.maxRequestBodySize }));
-    app.use(express_1.default.urlencoded({ extended: true, limit: (_g = opts.express) === null || _g === void 0 ? void 0 : _g.maxRequestBodySize }));
+    app.use(express_1.default.urlencoded({
+        extended: true,
+        limit: (_g = opts.express) === null || _g === void 0 ? void 0 : _g.maxRequestBodySize,
+        // Prevent 413 from the default parameter-count cap (1000) on form payloads.
+        parameterLimit: 50000,
+    }));
     // Create cookie settings
     var cookie = {
         maxAge: (sessionMins * 60000),
